@@ -24,7 +24,6 @@
 
     <el-table v-loading="loading" :data="auditList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="主键" align="center" prop="id"/>
       <el-table-column label="套餐名称" align="center" prop="serviceItemName"/>
       <el-table-column label="套餐备注" show-overflow-tooltip align="center" prop="serviceItemInfo"/>
       <el-table-column label="套餐价格" align="center" prop="serviceItemPrice"/>
@@ -37,7 +36,7 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
-      <el-table-column label="备注" show-overflow-tooltip align="center" prop="info"/>
+      <el-table-column label="完成时间" align="center" prop="finishedTime"/>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.cp_audit_status" :value="scope.row.status"/>
@@ -45,29 +44,6 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-              size="mini"
-              type="text"
-              @click="handleAudit(scope.row)"
-              v-if="scope.row.status === 0"
-          >审批
-          </el-button>
-          <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-refresh"
-              v-if="scope.row.status === 1"
-              @click="handleReapply(scope.row)"
-          >重新提交
-          </el-button>
-          <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleEditServiceItem(scope.row)"
-              v-if="scope.row.status === 1"
-          >修改表单
-          </el-button>
           <el-button
               size="mini"
               type="text"
@@ -94,51 +70,6 @@
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
     />
-
-    <!-- 审批弹框 -->
-    <el-dialog title="审批任务" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="审批结果">
-          <el-radio v-model="form.result" :label="true" border>通过</el-radio>
-          <el-radio v-model="form.result" :label="false" border>拒绝</el-radio>
-        </el-form-item>
-        <el-form-item label="备注信息">
-          <el-input type="textarea" v-model="form.info" placeholder="请输入审批备注信息"/>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 编辑服务单项对话框 -->
-    <el-dialog title="修改服务项" :visible.sync="serviceItemEditDialog" width="600px" append-to-body>
-      <el-form ref="serviceItemForm" :model="serviceItemForm" :rules="serviceItemRules" label-width="150px">
-        <el-form-item label="服务名称：" prop="name">
-          <el-input v-model="serviceItemForm.name"/>
-        </el-form-item>
-        <el-form-item label="服务原价：" prop="originalPrice">
-          <el-input v-model="serviceItemForm.originalPrice"/>
-        </el-form-item>
-        <el-form-item label="服务折扣价：" prop="discountPrice">
-          <el-input v-model="serviceItemForm.discountPrice"/>
-        </el-form-item>
-        <el-form-item label="服务分类：" prop="serviceCatalog">
-          <el-select size="medium" v-model="serviceItemForm.serviceCatalog">
-            <el-option label="维修" value="0"></el-option>
-            <el-option label="保养" value="1"></el-option>
-            <el-option label="其他" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注信息：" prop="info">
-          <el-input v-model="serviceItemForm.info"/>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitServiceItemForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
     <el-dialog title="流程图" :visible.sync="bpmnImageDialog" width="1200px" append-to-body>
       <div v-html="currentBpmnImage"/>
     </el-dialog>
@@ -168,13 +99,13 @@
       </div>
     </el-dialog>
   </div>
+
 </template>
 
 <script>
-import {historyList} from "@/api/workflow/done";
-import {getProcessingImage, listAudit} from "@/api/workflow/todo";
-import {doAudit, reapply} from "@/api/workflow/audit";
-import {getServiceItem, updateForAudit} from "@/api/business/serviceItem";
+import {historyList, listAudit} from "@/api/workflow/done";
+import {getProcessingImage} from "@/api/workflow/audit";
+import {formatDate, formatTotalDateSub} from "@/utils";
 
 export default {
   name: "Audit",
@@ -213,10 +144,6 @@ export default {
         pageSize: 10,
         createTime: null
       },
-      // 服务项校验
-      serviceItemRules: {},
-      // 服务项表单
-      serviceItemForm: {},
       // 表单参数
       form: {
         result: true,
@@ -231,6 +158,13 @@ export default {
     this.getList();
   },
   methods: {
+    formatDate(dateValue) {
+      return formatDate(dateValue)
+    },
+    // 日期格式化: yyyy年MM月dd日 HH时mm分ss秒
+    formatDuration(duration) {
+      return formatTotalDateSub(duration)
+    },
     /** 查询套餐审核列表 */
     getList() {
       this.loading = true;
@@ -278,58 +212,6 @@ export default {
       this.ids = selection.map(item => item.id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
-    },
-    handleAudit(row) {
-      this.open = true
-      this.form.id = row.id
-      this.form.taskId = row.taskId
-    },
-    submitForm() {
-      // 提交参数: 审核记录id/任务id/结果/备注信息
-      doAudit(this.form).then(res => {
-        // 刷新表格
-        this.getList()
-        // 提示消息
-        this.$modal.msgSuccess('审核成功')
-        // 关闭弹窗
-        this.cancel()
-      })
-    },
-    handleEditServiceItem(row) {
-      this.reset();
-      const id = row.serviceItemId;
-      getServiceItem({ id }).then(response => {
-        delete response.data.createTime;
-        this.serviceItemForm = response.data;
-        // 将审核记录的 id 携带到表单中
-        this.serviceItemForm.auditId = row.id;
-        this.serviceItemForm.serviceCatalog = this.serviceItemForm.serviceCatalog.toString();
-        this.serviceItemEditDialog = true;
-      });
-    },
-    handleReapply(row) {
-      // 弹框提示用户重新申请
-      this.$modal.confirm('确认重新提交吗?').then(function(data) {
-        return reapply({id: row.id, taskId: row.taskId});
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("重新提交成功");
-      }).catch(() => {
-        console.log("提交失败")
-      });
-    },
-    submitServiceItemForm() {
-      this.$refs["serviceItemForm"].validate(valid => {
-        if (valid) {
-          // 请求用于审核页面修改服务想的接口
-          // 将当前审核记录的id放进去
-          updateForAudit(this.serviceItemForm).then(response => {
-            this.$modal.msgSuccess("修改成功");
-            this.cancel();
-            this.getList();
-          });
-        }
-      });
     },
     handleHistory(row) {
       historyList({instaanceId: row.instaanceId}).then(res => {

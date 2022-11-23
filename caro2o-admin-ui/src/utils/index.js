@@ -16,6 +16,20 @@ export function formatDate(cellValue) {
 }
 
 /**
+ * 计算出相差天数
+ * @param secondSub
+ */
+export function formatTotalDateSub (secondSub) {
+  var days = Math.floor(secondSub / (24 * 3600));     // 计算出小时数
+  var leave1 = secondSub % (24*3600) ;                // 计算天数后剩余的毫秒数
+  var hours = Math.floor(leave1 / 3600);              // 计算相差分钟数
+  var leave2 = leave1 % (3600);                       // 计算小时数后剩余的毫秒数
+  var minutes = Math.floor(leave2 / 60);              // 计算相差秒数
+  var leave3 = leave2 % 60;                           // 计算分钟数后剩余的毫秒数
+  var seconds = Math.round(leave3);
+  return days + " 天 " + hours + " 时 " + minutes + " 分 " + seconds + ' 秒';
+}
+/**
  * @param {number} time
  * @param {string} option
  * @returns {string}

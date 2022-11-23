@@ -31,6 +31,7 @@ public class CarPackageAuditController extends BaseController {
     @Autowired
     private ICarPackageAuditService carPackageAuditService;
 
+
     /**
      * 查询套餐审核列表
      */
@@ -48,7 +49,6 @@ public class CarPackageAuditController extends BaseController {
         InputStream in = carPackageAuditService.getProcessingImage(instanceId);
         IOUtils.copy(in, resp.getOutputStream());
     }
-
     /**
      * 套餐审核接口
      */
@@ -64,6 +64,13 @@ public class CarPackageAuditController extends BaseController {
         carPackageAuditService.doAudit(id, taskId, result, info);
         return AjaxResult.success("审核成功");
     }
+
+    @PostMapping("/reapply")
+    public AjaxResult reapply(Long id, String taskId) {
+        carPackageAuditService.reapply(id, taskId);
+        return AjaxResult.success("重新申请成功");
+    }
+
 
     /**
      * 撤销审核记录

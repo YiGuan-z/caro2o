@@ -1,5 +1,7 @@
 package com.ruoyi.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.business.domain.ServiceItem;
 import com.ruoyi.business.service.IServiceItemService;
@@ -17,6 +19,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
@@ -135,11 +139,11 @@ public class CarPackageAuditServiceImpl extends ServiceImpl<CarPackageAuditMappe
     @Override
     public InputStream getProcessingImage(String instanceId) {
         // 1. 基于流程实例 id 查询流程实例对象
-        ProcessInstance instance = runtimeService.createProcessInstanceQuery()
+        HistoricProcessInstance instance = historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(instanceId)
                 .singleResult();
         if (instance == null) {
-            throw new ServiceException("流程已结束");
+            throw new ServiceException("非法操作");
         }
         // 2. 基于仓库 service 查询 bpmnModel 对象
         BpmnModel bpmnModel = repositoryService.getBpmnModel(instance.getProcessDefinitionId());
@@ -208,16 +212,15 @@ public class CarPackageAuditServiceImpl extends ServiceImpl<CarPackageAuditMappe
             throw new ServiceException("非法操作, 任务不存在");
         }
         // 3. 设置流程变量(审核结果)
-        Map<String, Object> variables = new HashMap<>();
         // 流程变量名 == 任务的 key
-        variables.put(task.getTaskDefinitionKey(), result);
+        taskService.setVariable(taskId, task.getTaskDefinitionKey(),result);
         // 4. 领取任务/完成任务/添加批注
         // 领取任务
         taskService.claim(taskId, username);
         // 添加批注
         taskService.addComment(taskId, task.getProcessInstanceId(), info);
         // 完成任务, 携带流程变量
-        taskService.complete(taskId, variables);
+        taskService.complete(taskId);
 
         // 5. 基于流程实例查询下一个进行中的任务, 根据是否有下一个任务判断流程是否结束
         Task nextTask = taskService.createTaskQuery()
@@ -242,6 +245,9 @@ public class CarPackageAuditServiceImpl extends ServiceImpl<CarPackageAuditMappe
                 taskService.addCandidateUser(nextTask.getId(), sysUser.getUserName());
                 // 6.3.3. 更新服务项的状态为重新调整
                 serviceItemService.changeStatus(audit.getServiceItemId(), ServiceItem.AUDITSTATUS_REPLY);
+                // 更新审核记录的状态为审核拒绝
+                audit.setStatus(CarPackageAudit.PACKAGE_AUDIT_STATUS_REJECTED);
+                this.updateById(audit);
             }
         } else {
             // 7. 没有任务, 在我们的流程中代表结果一定为通过, 且流程结束
@@ -251,5 +257,66 @@ public class CarPackageAuditServiceImpl extends ServiceImpl<CarPackageAuditMappe
             audit.setStatus(CarPackageAudit.PACKAGE_AUDIT_STATUS_PASSED);
             this.updateById(audit);
         }
+    }
+
+    @Override
+    public void updateServiceItem(Long auditId, ServiceItem serviceItem) {
+        // 根据 id 更新审核对象中的服务项信息
+        // 创建更新条件构造对象， 设置泛型
+        // update bus_car_package_audit
+        // set service_item_name = ?, service_item_info = ?, service_item_price = ?
+        // where id = ?
+        super.update(new LambdaUpdateWrapper<CarPackageAudit>()
+                // 指定修改 serviceItemName 属性
+                .set(CarPackageAudit::getServiceItemName,serviceItem.getName())
+                // 指定修改 getServiceItemInfo 属性
+                .set(CarPackageAudit::getServiceItemInfo,serviceItem.getInfo())
+                // 指定修改 getServiceItemPrice 属性
+                .set(CarPackageAudit::getServiceItemPrice,serviceItem.getDiscountPrice())
+                // 修改条件为 id = auditId
+                .eq(CarPackageAudit::getId, auditId));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void reapply(Long id, String taskId) {
+        //     1. 基于审核记录id查询审核记录对象
+        CarPackageAudit audit = this.getById(id);
+        //     2. 验证当前状态是否是审核拒绝, 如果不是审核拒绝, 直接抛出异常
+        if (!CarPackageAudit.PACKAGE_AUDIT_STATUS_REJECTED.equals(audit.getStatus())) {
+            throw new ServiceException("非法操作");
+        }
+        //     3. 基于任务 id + 当前用户名查询任务对象, 确认是否是审核人
+        String username = SecurityUtils.getUsername();
+        Task task = taskService.createTaskQuery()
+                .taskId(taskId)
+                .taskCandidateOrAssigned(username)
+                .singleResult();
+        if (task == null) {
+            throw new ServiceException("非法操作");
+        }
+
+        //     5. 如果能查到, 领取并完成任务, 同时设置流程变量
+        taskService.claim(taskId, username);
+        taskService.complete(taskId);
+        //     6. 查询下一个代办任务
+        Task nextTask = taskService.createTaskQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .singleResult();
+        // 设置流程变量
+        taskService.setVariable(nextTask.getId(),"money",audit.getServiceItemPrice().longValue());
+        //     7. 基于该任务查询候选人列表
+        List<SysUser> users = bpmnNodeService.selectUsersByNodeKey(nextTask.getTaskDefinitionKey());
+        //     8. 为该任务设置候选人
+        for (SysUser user : users) {
+            taskService.addCandidateUser(nextTask.getId(), user.getUserName());
+        }
+        //     9. 重新将服务项/审核记录的状态修改为审核中
+        // 修改为审核中
+        serviceItemService.changeStatus(audit.getServiceItemId(),ServiceItem.AUDITSTATUS_AUDITING);
+        // 进行中
+        audit.setStatus(CarPackageAudit.PACKAGE_AUDIT_STATUS_PENDING);
+        this.updateById(audit);
+
     }
 }

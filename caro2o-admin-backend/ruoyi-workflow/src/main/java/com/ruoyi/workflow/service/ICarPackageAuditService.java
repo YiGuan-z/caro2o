@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.business.domain.ServiceItem;
 import com.ruoyi.workflow.domain.CarPackageAudit;
 
 /**
@@ -48,4 +49,19 @@ public interface ICarPackageAuditService extends IService<CarPackageAudit> {
      * @param info   批注信息
      */
     void doAudit(Long id, String taskId, boolean result, String info);
+
+    /**
+     * 更新服务项信息
+     *
+     * @param auditId
+     * @param serviceItem 服务项
+     */
+    void updateServiceItem(Long auditId, ServiceItem serviceItem);
+
+    /**
+     * 重新申请审核
+     * @param id 审核记录id
+     * @param taskId 任务 id
+     */
+    void reapply(Long id, String taskId);
 }

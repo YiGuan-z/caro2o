@@ -80,8 +80,10 @@ public class BpmnInfoController extends BaseController {
     @PostMapping("/deploy")
     public AjaxResult deploy(MultipartFile file, BpmnInfo bpmnInfo) throws Exception {
         // 文件类型校验
-        String filename = file.getOriginalFilename(); // 原始的文件名
-        String suffix = FileUtils.getSuffix(filename); // 文件后缀名
+        // 原始的文件名
+        String filename = file.getOriginalFilename();
+        // 文件后缀名
+        String suffix = FileUtils.getSuffix(filename);
         if (!SUPPORT_SUFFIXES.contains(suffix)) {
             return AjaxResult.error(HttpStatus.BAD_REQUEST, "目前仅支持提交" + SUPPORT_SUFFIXES + "类型的流程文件");
         }

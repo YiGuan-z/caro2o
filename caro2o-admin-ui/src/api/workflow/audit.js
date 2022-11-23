@@ -30,6 +30,20 @@ export function getProcessingImage(instanceId) {
   })
 }
 
+// 重新申请
+export function reapply(params) {
+  let formParams = qs.stringify(params, {indices: false});
+
+  return request({
+    url: '/workflow/carPackageAudit/reapply',
+    data: formParams,
+    headers: {'content-type': 'application/x-www-form-urlencoded'}, // 表单参数
+    method: 'post'
+  })
+}
+
+
+
 // 取消申请
 export function cancel(id, reason) {
   let params = {id, reason}

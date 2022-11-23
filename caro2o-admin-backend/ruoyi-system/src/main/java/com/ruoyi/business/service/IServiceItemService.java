@@ -59,4 +59,11 @@ public interface IServiceItemService {
     void saleOff(Long id);
 
     void changeStatus(Long serviceItemId, Integer status);
+
+    /**
+     * 审核记录下重新修改表单
+     *
+     * @param serviceItem
+     */
+    void updateForAudit(ServiceItem serviceItem);
 }

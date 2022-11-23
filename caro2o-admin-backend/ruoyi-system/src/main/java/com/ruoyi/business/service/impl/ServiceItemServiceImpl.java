@@ -7,6 +7,7 @@ import com.ruoyi.business.query.ServiceItemQuery;
 import com.ruoyi.business.service.IServiceItemService;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +15,16 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author 20463
+ */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ServiceItemServiceImpl implements IServiceItemService {
 
     @Resource
     private ServiceItemMapper serviceItemMapper;
+
 
     @Override
     public List<ServiceItem> query(ServiceItemQuery qo) {
@@ -29,7 +34,7 @@ public class ServiceItemServiceImpl implements IServiceItemService {
 
     @Override
     public void save(ServiceItem serviceItem) {
-        //对于前台传入的参数,一般需要谨慎处理.
+        // 对于前台传入的参数,一般需要谨慎处理.
         ServiceItem newObj = new ServiceItem();
         newObj.setName(serviceItem.getName());
         newObj.setOriginalPrice(serviceItem.getOriginalPrice());
@@ -38,11 +43,13 @@ public class ServiceItemServiceImpl implements IServiceItemService {
         newObj.setInfo(serviceItem.getInfo());
         newObj.setCreateTime(new Date());
         newObj.setServiceCatalog(serviceItem.getServiceCatalog());
-        //判断是否套餐
+        // 判断是否套餐
         if (ServiceItem.CARPACKAGE_YES.equals(newObj.getCarPackage())) {
-            newObj.setAuditStatus(ServiceItem.AUDITSTATUS_INIT);//设置状态为初始化
+            // 设置状态为初始化
+            newObj.setAuditStatus(ServiceItem.AUDITSTATUS_INIT);
         } else {
-            newObj.setAuditStatus(ServiceItem.AUDITSTATUS_NO_REQUIRED);//设置状态为无需审核
+            // 设置状态为无需审核
+            newObj.setAuditStatus(ServiceItem.AUDITSTATUS_NO_REQUIRED);
         }
         serviceItemMapper.insert(newObj);
     }
@@ -52,20 +59,51 @@ public class ServiceItemServiceImpl implements IServiceItemService {
         return serviceItemMapper.selectByPrimaryKey(id);
     }
 
+    @Override
+    public void updateForAudit(ServiceItem serviceItem) {
+        ServiceItem oldObj = this.get(serviceItem.getId());
+        // 如果不是重新跳转， 不允许修改
+        if (!ServiceItem.AUDITSTATUS_REPLY.equals(oldObj.getAuditStatus())) {
+            throw new BusinessException("非法操作");
+        }
+        // 更新属性
+        this.doUpdate(oldObj,serviceItem);
+
+        // 更新审核记录
+
+
+    }
+
+    /**
+     * 更新服务的方法
+     * @param serviceItemIndb 数据库查询对象
+     * @param serviceItemFronted 前端传入的对象
+     */
+    private void doUpdate(ServiceItem serviceItemIndb,ServiceItem serviceItemFronted) {
+        // 将前台的属性设置到当前对象中
+        serviceItemIndb.setName(serviceItemFronted.getName());
+        serviceItemIndb.setOriginalPrice(serviceItemFronted.getOriginalPrice());
+        serviceItemIndb.setDiscountPrice(serviceItemFronted.getDiscountPrice());
+        serviceItemIndb.setServiceCatalog(serviceItemFronted.getServiceCatalog());
+        serviceItemIndb.setInfo(serviceItemFronted.getInfo());
+        serviceItemMapper.updateByPrimaryKey(serviceItemIndb);
+    }
 
     @Override
     public void update(ServiceItem serviceItem) {
         ServiceItem oldObj = this.get(serviceItem.getId());
-        //处于上架状态，处于审核中的状态不能进行修改.
-        if (ServiceItem.SALESTATUS_ON.equals(oldObj.getSaleStatus()) //处于上架状态
-                || ServiceItem.AUDITSTATUS_AUDITING.equals(oldObj.getAuditStatus())) {//处于审核中
+        // 处于上架状态，处于审核中的状态不能进行修改.
+        // 处于上架状态
+        if (ServiceItem.SALESTATUS_ON.equals(oldObj.getSaleStatus())
+                // 处于审核中
+                || ServiceItem.AUDITSTATUS_AUDITING.equals(oldObj.getAuditStatus())) {
             throw new BusinessException("非法操作");
         }
-        //如果是套餐，如果已经审核通过，然后进行修改,变成初始化
+        // 如果是套餐，如果已经审核通过，然后进行修改,变成初始化
         if (ServiceItem.AUDITSTATUS_APPROVED.equals(oldObj.getAuditStatus())) {
             oldObj.setAuditStatus(ServiceItem.AUDITSTATUS_INIT);
         }
-        //把前台的属性设置当当前对象中
+        // 把前台的属性设置当当前对象中
         oldObj.setName(serviceItem.getName());
         oldObj.setOriginalPrice(serviceItem.getOriginalPrice());
         oldObj.setDiscountPrice(serviceItem.getDiscountPrice());
@@ -89,19 +127,20 @@ public class ServiceItemServiceImpl implements IServiceItemService {
 
     @Override
     public void saleOn(Long id) {
-        //合理化校验
+        // 合理化校验
         ServiceItem oldObj = this.get(id);
         if (oldObj != null) {
-            //1.如果处于上架状态,不需要做事情
+            // 1.如果处于上架状态,不需要做事情
             if (ServiceItem.SALESTATUS_ON.equals(oldObj.getSaleStatus())) {
                 return;
             }
-            //2.如果套餐且处于非审核通过,不允许进行上架操作
-            if (ServiceItem.CARPACKAGE_YES.equals(oldObj.getCarPackage()) //是套餐
+            // 2.如果套餐且处于非审核通过,不允许进行上架操作
+            // 是套餐
+            if (ServiceItem.CARPACKAGE_YES.equals(oldObj.getCarPackage())
                     && !ServiceItem.AUDITSTATUS_APPROVED.equals(oldObj.getAuditStatus())) {
                 throw new BusinessException("未审核通过套餐不允许上架");
             }
-            //其他情况都可以进行上架
+            // 其他情况都可以进行上架
             serviceItemMapper.updateSaleStatus(id, ServiceItem.SALESTATUS_ON);
         }
     }

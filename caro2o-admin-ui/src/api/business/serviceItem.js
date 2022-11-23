@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 
 // 查询参数列表
 export function listServiceItem(query) {
@@ -16,6 +16,19 @@ export function addServiceItem(params) {
     url: '/business/serviceItem',
     method: 'post',
     data: params
+  })
+}
+
+// 在审核页面修改服务项
+export function updateForAudit(params) {
+  // 将 {name : value} 转换为 name = value
+  let formParams = qs.stringify(params, {indices: false});
+  return request({
+    url: '/business/serviceItem/reEdit',
+    method: 'put',
+    // 表单类型参数
+    data: formParams,
+    headers: {'content-type': 'application/x-www-form-urlencoded'}, // 表单参数
   })
 }
 

@@ -10,7 +10,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.workflow.domain.CarPackageAudit;
-import com.ruoyi.workflow.domain.CarPackageAuditVo;
+import com.ruoyi.workflow.domain.vo.CarPackageAuditVo;
 import com.ruoyi.workflow.service.IBpmnNodeService;
 import com.ruoyi.workflow.service.ICarPackageAuditService;
 import com.ruoyi.workflow.service.ITodoTaskService;
