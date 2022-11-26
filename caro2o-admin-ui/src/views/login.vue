@@ -75,7 +75,7 @@ export default {
         username: "admin",
         password: "admin123",
         rememberMe: false,
-        code: "",
+        code: "1111",
         uuid: ""
       },
       loginRules: {
@@ -121,10 +121,12 @@ export default {
       const username = Cookies.get("username");
       const password = Cookies.get("password");
       const rememberMe = Cookies.get('rememberMe')
+      const code = Cookies.get('code')
       this.loginForm = {
         username: username === undefined ? this.loginForm.username : username,
         password: password === undefined ? this.loginForm.password : decrypt(password),
-        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
+        code: code === undefined ? this.loginForm.code : code
       };
     },
     handleLogin() {
