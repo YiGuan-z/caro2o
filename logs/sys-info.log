@@ -907,3 +907,15 @@
 22:30:42.546 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,31] - ====关闭后台任务任务线程池====
 22:30:42.553 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2051] - {dataSource-1} closing ...
 22:30:42.586 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2124] - {dataSource-1} closed
+20:24:33.937 [restartedMain] INFO  c.r.RuoYiApplication - [logStarting,55] - Starting RuoYiApplication using Java 11.0.9 on dxy with PID 22684 (D:\workspace\dome\caro2o\caro2o-admin-backend\ruoyi-admin\target\classes started by 25135 in D:\workspace\dome\caro2o)
+20:24:33.940 [restartedMain] INFO  c.r.RuoYiApplication - [logStartupProfileInfo,686] - The following 1 profile is active: "druid"
+20:24:33.966 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.2.3.Final
+20:24:40.340 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9803"]
+20:24:40.340 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+20:24:40.341 [restartedMain] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.63]
+20:24:40.487 [restartedMain] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+20:24:48.727 [restartedMain] INFO  c.a.d.p.DruidDataSource - [init,972] - {dataSource-1} inited
+20:24:48.737 [Druid-ConnectionPool-Create-1644972029] INFO  c.a.d.p.DruidAbstractDataSource - [setFailContinuous,1790] - {dataSource-1} failContinuous is true
+20:24:48.746 [restartedMain] INFO  c.a.d.p.DruidDataSource - [close,2051] - {dataSource-1} closing ...
+20:24:48.748 [restartedMain] INFO  c.a.d.p.DruidDataSource - [close,2124] - {dataSource-1} closed
+20:24:48.790 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Stopping service [Tomcat]
