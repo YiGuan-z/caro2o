@@ -919,3 +919,98 @@
 20:24:48.746 [restartedMain] INFO  c.a.d.p.DruidDataSource - [close,2051] - {dataSource-1} closing ...
 20:24:48.748 [restartedMain] INFO  c.a.d.p.DruidDataSource - [close,2124] - {dataSource-1} closed
 20:24:48.790 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Stopping service [Tomcat]
+21:17:35.696 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.2.3.Final
+21:17:35.698 [restartedMain] INFO  c.r.RuoYiApplication - [logStarting,55] - Starting RuoYiApplication using Java 19.0.1 on caseychengdeMacBook-Pro.local with PID 25446 (/Users/caseycheng/tmp/Java/caro2o/caro2o-admin-backend/ruoyi-admin/target/classes started by caseycheng in /Users/caseycheng/tmp/Java/caro2o)
+21:17:35.698 [restartedMain] INFO  c.r.RuoYiApplication - [logStartupProfileInfo,686] - The following 1 profile is active: "druid"
+21:17:37.215 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9803"]
+21:17:37.215 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+21:17:37.215 [restartedMain] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.63]
+21:17:37.263 [restartedMain] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+21:17:53.414 [restartedMain] INFO  c.a.d.p.DruidDataSource - [init,972] - {dataSource-1} inited
+21:17:54.077 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1550] - Found 1 Process Engine Configurators in total:
+21:17:54.078 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1552] - class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$7d5db475 (priority:10000)
+21:17:54.078 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsBeforeInit,1562] - Executing beforeInit() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$7d5db475 (priority:10000)
+21:17:54.281 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsAfterInit,1569] - Executing configure() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$7d5db475 (priority:10000)
+21:17:54.980 [restartedMain] INFO  o.a.e.i.ProcessEngineImpl - [<init>,74] - ProcessEngine default created
+21:17:56.413 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1220] - Using default implementation for ThreadExecutor
+21:17:56.418 [restartedMain] INFO  o.q.c.SchedulerSignalerImpl - [<init>,61] - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+21:17:56.419 [restartedMain] INFO  o.q.c.QuartzScheduler - [<init>,229] - Quartz Scheduler v.2.3.2 created.
+21:17:56.419 [restartedMain] INFO  o.q.s.RAMJobStore - [initialize,155] - RAMJobStore initialized.
+21:17:56.419 [restartedMain] INFO  o.q.c.QuartzScheduler - [initialize,294] - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+21:17:56.419 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1374] - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+21:17:56.419 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1378] - Quartz scheduler version: 2.3.2
+21:17:56.419 [restartedMain] INFO  o.q.c.QuartzScheduler - [setJobFactory,2293] - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@3c57b878
+21:18:16.095 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9803"]
+21:18:16.221 [restartedMain] INFO  o.q.c.QuartzScheduler - [start,547] - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+21:18:16.232 [restartedMain] INFO  c.r.RuoYiApplication - [logStarted,61] - Started RuoYiApplication in 40.803 seconds (JVM running for 41.528)
+21:18:16.683 [RMI TCP Connection(16)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+21:37:01.318 [SpringApplicationShutdownHook] INFO  o.q.c.QuartzScheduler - [standby,585] - Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+21:37:01.354 [SpringApplicationShutdownHook] INFO  o.q.c.QuartzScheduler - [shutdown,666] - Scheduler quartzScheduler_$_NON_CLUSTERED shutting down.
+21:37:01.354 [SpringApplicationShutdownHook] INFO  o.q.c.QuartzScheduler - [standby,585] - Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+21:37:01.354 [SpringApplicationShutdownHook] INFO  o.q.c.QuartzScheduler - [shutdown,740] - Scheduler quartzScheduler_$_NON_CLUSTERED shutdown complete.
+21:37:01.354 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,31] - ====关闭后台任务任务线程池====
+21:37:01.361 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2051] - {dataSource-1} closing ...
+21:37:01.361 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2124] - {dataSource-1} closed
+21:37:09.010 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.2.3.Final
+21:37:09.015 [restartedMain] INFO  c.r.RuoYiApplication - [logStarting,55] - Starting RuoYiApplication using Java 11.0.16 on caseychengdeMacBook-Pro.local with PID 26177 (/Users/caseycheng/tmp/Java/caro2o/caro2o-admin-backend/ruoyi-admin/target/classes started by caseycheng in /Users/caseycheng/tmp/Java/caro2o)
+21:37:09.016 [restartedMain] INFO  c.r.RuoYiApplication - [logStartupProfileInfo,686] - The following 1 profile is active: "druid"
+21:37:10.620 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9803"]
+21:37:10.620 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+21:37:10.620 [restartedMain] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.63]
+21:37:10.671 [restartedMain] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+21:37:30.924 [restartedMain] INFO  c.a.d.p.DruidDataSource - [init,972] - {dataSource-1} inited
+21:37:31.952 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1550] - Found 1 Process Engine Configurators in total:
+21:37:31.954 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1552] - class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$a57e55b1 (priority:10000)
+21:37:31.954 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsBeforeInit,1562] - Executing beforeInit() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$a57e55b1 (priority:10000)
+21:37:32.203 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsAfterInit,1569] - Executing configure() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$a57e55b1 (priority:10000)
+21:37:32.750 [restartedMain] INFO  o.a.e.i.ProcessEngineImpl - [<init>,74] - ProcessEngine default created
+21:37:34.996 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1220] - Using default implementation for ThreadExecutor
+21:37:35.001 [restartedMain] INFO  o.q.c.SchedulerSignalerImpl - [<init>,61] - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+21:37:35.001 [restartedMain] INFO  o.q.c.QuartzScheduler - [<init>,229] - Quartz Scheduler v.2.3.2 created.
+21:37:35.001 [restartedMain] INFO  o.q.s.RAMJobStore - [initialize,155] - RAMJobStore initialized.
+21:37:35.001 [restartedMain] INFO  o.q.c.QuartzScheduler - [initialize,294] - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+21:37:35.001 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1374] - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+21:37:35.002 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1378] - Quartz scheduler version: 2.3.2
+21:37:35.002 [restartedMain] INFO  o.q.c.QuartzScheduler - [setJobFactory,2293] - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@568a3a03
+21:37:45.956 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.2.3.Final
+21:37:45.957 [restartedMain] INFO  c.r.RuoYiApplication - [logStarting,55] - Starting RuoYiApplication using Java 11.0.16 on caseychengdeMacBook-Pro.local with PID 26197 (/Users/caseycheng/tmp/Java/caro2o/caro2o-admin-backend/ruoyi-admin/target/classes started by caseycheng in /Users/caseycheng/tmp/Java/caro2o)
+21:37:45.958 [restartedMain] INFO  c.r.RuoYiApplication - [logStartupProfileInfo,686] - The following 1 profile is active: "druid"
+21:37:47.608 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9803"]
+21:37:47.608 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+21:37:47.608 [restartedMain] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.63]
+21:37:47.720 [restartedMain] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+21:38:11.352 [restartedMain] INFO  c.a.d.p.DruidDataSource - [init,972] - {dataSource-1} inited
+21:38:12.107 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1550] - Found 1 Process Engine Configurators in total:
+21:38:12.107 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [initConfigurators,1552] - class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$ac9dd359 (priority:10000)
+21:38:12.107 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsBeforeInit,1562] - Executing beforeInit() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$ac9dd359 (priority:10000)
+21:38:12.322 [restartedMain] INFO  o.a.e.i.c.ProcessEngineConfigurationImpl - [configuratorsAfterInit,1569] - Executing configure() of class org.activiti.spring.process.autoconfigure.ProcessExtensionsConfiguratorAutoConfiguration$$EnhancerBySpringCGLIB$$ac9dd359 (priority:10000)
+21:38:13.215 [restartedMain] INFO  o.a.e.i.ProcessEngineImpl - [<init>,74] - ProcessEngine default created
+21:38:14.826 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1220] - Using default implementation for ThreadExecutor
+21:38:14.832 [restartedMain] INFO  o.q.c.SchedulerSignalerImpl - [<init>,61] - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+21:38:14.832 [restartedMain] INFO  o.q.c.QuartzScheduler - [<init>,229] - Quartz Scheduler v.2.3.2 created.
+21:38:14.832 [restartedMain] INFO  o.q.s.RAMJobStore - [initialize,155] - RAMJobStore initialized.
+21:38:14.832 [restartedMain] INFO  o.q.c.QuartzScheduler - [initialize,294] - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+21:38:14.832 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1374] - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+21:38:14.832 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1378] - Quartz scheduler version: 2.3.2
+21:38:14.832 [restartedMain] INFO  o.q.c.QuartzScheduler - [setJobFactory,2293] - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@10bf2403

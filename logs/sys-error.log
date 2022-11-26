@@ -2402,3 +2402,7 @@ Caused by: java.sql.SQLException: null,  message from server: "Host '192.168.10.
 	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:117)
 	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
 	... 151 common frames omitted
+21:18:21.287 [restartedMain] ERROR c.a.d.f.s.StatFilter - [internalAfterStatementExecute,504] - slow sql 1131 millis. select * from ACT_GE_BYTEARRAY where DEPLOYMENT_ID_ = ? order by NAME_ asc["10010"]
+21:18:26.408 [restartedMain] ERROR c.a.d.f.s.StatFilter - [internalAfterStatementExecute,504] - slow sql 1047 millis. select * from ACT_GE_BYTEARRAY 
+    where DEPLOYMENT_ID_ = ?
+          AND NAME_ = ?["30001","process1668415956470.bpmn"]
