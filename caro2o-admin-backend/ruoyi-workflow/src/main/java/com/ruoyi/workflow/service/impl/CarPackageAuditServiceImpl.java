@@ -317,6 +317,5 @@ public class CarPackageAuditServiceImpl extends ServiceImpl<CarPackageAuditMappe
         // 进行中
         audit.setStatus(CarPackageAudit.PACKAGE_AUDIT_STATUS_PENDING);
         this.updateById(audit);
-
-    }
+    } 
 }
