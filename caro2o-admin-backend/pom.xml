@@ -213,6 +213,11 @@
                 <artifactId>ruoyi-common</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.cqsd</groupId>
+                <artifactId>command</artifactId>
+                <version>1.0.1</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

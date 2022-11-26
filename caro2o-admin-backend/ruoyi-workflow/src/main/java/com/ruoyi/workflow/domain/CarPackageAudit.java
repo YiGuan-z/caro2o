@@ -43,7 +43,6 @@ public class CarPackageAudit extends BaseEntity {
      * 主键
      */
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private Long id;
 
     /**

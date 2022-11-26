@@ -29,7 +29,6 @@ public class BpmnNode extends BaseEntity
     /** 主键 */
     @Excel(name = "主键")
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private Long id;
 
     /** 流程信息 */

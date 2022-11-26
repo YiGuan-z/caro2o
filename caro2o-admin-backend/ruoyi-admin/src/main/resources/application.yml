@@ -9,7 +9,7 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: E:\aaaaaa\caro2o\caro2o-admin-backend\upload
+  profile: /Users/caseycheng/tmp/Java/caro2o/caro2o-admin-backend/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -77,7 +77,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password:
+    password: 5201314zFy@
     # 连接超时时间
     timeout: 10s
     lettuce:

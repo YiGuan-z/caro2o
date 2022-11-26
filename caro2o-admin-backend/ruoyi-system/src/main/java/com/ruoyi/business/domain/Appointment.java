@@ -1,5 +1,6 @@
 package com.ruoyi.business.domain;
 
+import com.cqsd.command.entry.base.Entry;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.Date;
 @Setter
 @Getter
 @ToString
-public class Appointment implements Serializable {
+public class Appointment extends Entry implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final Integer STATUS_APPOINTMENT = 0;//预约中
     public static final Integer STATUS_ARRIVAL = 1;//已到店

@@ -25,7 +25,6 @@ public class StoreInfo extends BaseEntity
 
     /** 主键 */
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private Long id;
 
     /** 门店名称 */
