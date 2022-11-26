@@ -213,11 +213,11 @@
                 <artifactId>ruoyi-common</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.cqsd</groupId>
-                <artifactId>command</artifactId>
-                <version>1.0.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.cqsd</groupId>-->
+<!--                <artifactId>command</artifactId>-->
+<!--                <version>1.0.1</version>-->
+<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
@@ -257,13 +257,13 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/YiGuan-z/command</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+<!--        <repository>-->
+<!--            <id>github</id>-->
+<!--            <url>https://maven.pkg.github.com/YiGuan-z/command</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
     </repositories>
 
     <pluginRepositories>
