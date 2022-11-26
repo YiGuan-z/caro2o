@@ -1,6 +1,5 @@
 package com.ruoyi.business.domain;
 
-import com.cqsd.command.entry.base.Entry;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
