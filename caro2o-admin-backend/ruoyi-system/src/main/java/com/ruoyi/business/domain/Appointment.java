@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
+import springfox.documentation.schema.Entry;
+
 
 import java.io.Serializable;
 import java.util.Date;

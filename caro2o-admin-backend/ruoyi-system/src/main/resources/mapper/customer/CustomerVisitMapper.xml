@@ -31,7 +31,7 @@
                cl.likman as linkman_name
         from customer_visit cv
                  join customer sc on cv.customer_id = sc.id
-                 join customer_linkman cl on cv.linkmman_id = cl.id
+                 join customer_linkmane cl on cv.linkman_id = cl.id
     </sql>
 
     <select id="selectCustomerVisitList" parameterType="CustomerVisit" resultMap="CustomerVisitResult">

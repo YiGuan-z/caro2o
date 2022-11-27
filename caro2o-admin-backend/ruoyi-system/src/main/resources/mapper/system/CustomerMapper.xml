@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CustomerMapper">
+
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="id"    column="id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="legalLeader"    column="legal_leader"    />
+        <result property="registerDate"    column="register_date"    />
+        <result property="openState"    column="open_state"    />
+        <result property="province"    column="province"    />
+        <result property="regCapital"    column="reg_capital"    />
+        <result property="industry"    column="industry"    />
+        <result property="scope"    column="scope"    />
+        <result property="regAddr"    column="reg_addr"    />
+        <result property="inputTime"    column="input_time"    />
+        <result property="inputUser"    column="input_userId"    />
+        <result property="inputUserName" column="input_user"/>
+        <result property="userMarket" column="input_market"/>
+
+    </resultMap>
+
+  <sql id="selectCustomerVo">
+    select id, customer_name, legal_leader, register_date, open_state, province, reg_capital, industry, scope, reg_addr, input_time, input_userId,
+     input_user,input_market
+     from customer
+  </sql>
+
+  <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
+    <include refid="selectCustomerVo"/>
+    <where>
+                  <if test="legalLeader != null  and legalLeader != ''"> and legal_leader like concat('%', #{legalLeader}, '%')</if>
+                  <if test="openState != null "> and open_state = #{openState}</if>
+                  <if test="province != null  and province != ''"> and province = #{province}</if>
+                  <if test="industry != null  and industry != ''"> and industry like concat('%', #{industry}, '%')</if>
+    </where>
+  </select>
+</mapper>

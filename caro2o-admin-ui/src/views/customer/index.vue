@@ -100,7 +100,7 @@
 
 <script>
 import {validatePhone} from '@/utils/validate'
-import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/customer/customer"
+import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/system/customer"
 import {listAllUser} from "@/api/system/user";
 
 export default {
