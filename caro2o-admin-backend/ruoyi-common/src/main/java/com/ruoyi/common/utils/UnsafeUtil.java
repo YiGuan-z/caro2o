@@ -2,6 +2,8 @@ package com.ruoyi.common.utils;
 
 import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
+
 /**
  * @author caseycheng
  * @date 2022/11/7-21:34
@@ -11,7 +13,7 @@ public class UnsafeUtil {
 	
 	static {
 		try {
-			final var field = Unsafe.class.getDeclaredField("theUnsafe");
+			final Field field = Unsafe.class.getDeclaredField("theUnsafe");
 			field.setAccessible(true);
 			unsafe = (Unsafe) field.get(null);
 		} catch (Exception e) {

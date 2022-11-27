@@ -32,7 +32,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     
     @Override
     public Goods selectById(String id) {
-        return baseMapper.selectById(id);
+        return baseMapper.selectByGoodsId(id);
     }
     
     @Override

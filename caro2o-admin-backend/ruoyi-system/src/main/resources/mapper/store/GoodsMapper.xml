@@ -12,9 +12,6 @@
         <result property="brand" column="brand"/>
         <result property="spec" column="spec"/>
         <result property="goodsDesc" column="goods_desc"/>
-<!--        <association property="son" -->
-<!--                     select="com.ruoyi.store.mapper.GoodsMapper.selectById"-->
-<!--                     resultMap="com.ruoyi.store.mapper.GoodsStoreMapper.GoodsStoreResult"/>-->
     </resultMap>
 
     <sql id="selectGoodsVo">
@@ -38,7 +35,7 @@
             </if>
         </where>
     </select>
-    <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
+    <select id="selectByGoodsId" resultType="com.ruoyi.store.domain.Goods">
         <include refid="selectGoodsVo"/>
         where id=#{id}
     </select>
