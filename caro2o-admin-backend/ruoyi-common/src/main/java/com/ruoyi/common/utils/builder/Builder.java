@@ -1,7 +1,6 @@
 package com.ruoyi.common.utils.builder;
 
 
-
 import com.ruoyi.common.utils.Assert;
 import com.ruoyi.common.utils.builder.interfaces.args.InjectComsumerArgs;
 import com.ruoyi.common.utils.builder.interfaces.args.InjectsConsumer2;
@@ -112,8 +111,8 @@ final public class Builder<T> {
 	 * @return 获取的参数列表
 	 */
 	public static <T> List<Object> getParams(Class<T> t, Object... args) {
-		final var list = List.of(args);
-		final var ret = list.stream()
+		final List<Object> list = Arrays.asList(args);
+		final List<Object> ret = list.stream()
 				.filter(ar -> ar.getClass() == t).collect(Collectors.toList());
 		return ret.size() == 0 ? null : ret;
 	}
@@ -188,8 +187,8 @@ final public class Builder<T> {
 			instanceObj = ((ConstructorArgs<T>) this.constructor).get(constructorArgs);
 		} else if (this.constructor instanceof Constructor) {
 			instanceObj = ((Constructor<T>) this.constructor).get();
-		}else {
-			Assert.assertFalse(this.constructor, c -> c instanceof Const,"方法未实现");
+		} else {
+			Assert.assertFalse(this.constructor, c -> c instanceof Const, "方法未实现");
 			throw new RuntimeException("方法未实现");
 		}
 		final T instance = instanceObj;

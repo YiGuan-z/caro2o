@@ -3,22 +3,25 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="分类名称" prop="categoryName">
         <el-input
-          v-model="queryParams.categoryName"
-          placeholder="请输入分类名称"
-          clearable
-          @keyup.enter.native="handleQuery"
+            v-model="queryParams.categoryName"
+            placeholder="请输入分类名称"
+            clearable
+            @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="上级分类" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入上级分类"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-cascader :options="options" clearable>
+          <template slot-scope="{ node, data }">
+            <span>{{ data.label }}</span>
+            <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+          </template>
+        </el-cascader>
+        <!--        <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
+                  @keyup.enter.native="handleQuery"
+                </el-select>-->
       </el-form-item>
       <el-form-item>
-	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -26,62 +29,58 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['workflow:category:add']"
-        >新增</el-button>
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['workflow:category:add']"
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="info"
-          plain
-          icon="el-icon-sort"
-          size="mini"
-          @click="toggleExpandAll"
-        >展开/折叠</el-button>
+            type="info"
+            plain
+            icon="el-icon-sort"
+            size="mini"
+            @click="toggleExpandAll"
+        >展开/折叠
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table
-      v-if="refreshTable"
-      v-loading="loading"
-      :data="categoryList"
-      row-key="id"
-      :default-expand-all="isExpandAll"
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+        v-if="refreshTable"
+        v-loading="loading"
+        :data="categoryList"
+        row-key="id"
+        :default-expand-all="isExpandAll"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="序号" prop="id" />
-      <el-table-column label="上级分类" prop="categoryName" />
-      <el-table-column label="描述" align="center" prop="categoryDesc" />
-      <el-table-column label="id层级结构" align="center" prop="busiPath" />
-      <el-table-column label="上级分类" align="center" prop="parentId" />
+      <el-table-column label="序号" prop="id"/>
+      <el-table-column label="上级分类" prop="parentId"/>
+      <el-table-column label="分类" align="center" prop="busiPath"/>
+      <el-table-column label="概述" align="center" prop="categoryDesc"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['workflow:category:edit']"
-          >修改</el-button>
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['workflow:category:edit']"
+          >修改
+          </el-button>
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-plus"
-            @click="handleAdd(scope.row)"
-            v-hasPermi="['workflow:category:add']"
-          >新增</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['workflow:category:remove']"
-          >删除</el-button>
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['workflow:category:remove']"
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,16 +89,22 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="分类名称" prop="categoryName">
-          <el-input v-model="form.categoryName" placeholder="请输入分类名称" />
+          <el-input v-model="form.categoryName" placeholder="请输入分类名称"/>
         </el-form-item>
         <el-form-item label="描述" prop="categoryDesc">
-          <el-input v-model="form.categoryDesc" placeholder="请输入描述" />
+          <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
         </el-form-item>
-        <el-form-item label="id层级结构" prop="busiPath">
-          <treeselect v-model="form.busiPath" :options="categoryOptions" :normalizer="normalizer" placeholder="请选择id层级结构" />
-        </el-form-item>
+
         <el-form-item label="上级分类" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入上级分类" />
+          <el-cascader :options="options" clearable>
+            <template slot-scope="{ node, data }">
+              <span>{{ data.label }}</span>
+              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+            </template>
+          </el-cascader>
+          <!--          <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
+                      @keyup.enter.native="handleQuery"
+                    </el-select>-->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,9 +116,10 @@
 </template>
 
 <script>
-import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/workflow/category";
+import {listCategory, getCategory, delCategory, addCategory, updateCategory} from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listMenu} from "@/api/system/menu";
 
 export default {
   name: "Category",
@@ -122,6 +128,7 @@ export default {
   },
   data() {
     return {
+      options: [{}],
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -148,8 +155,7 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      }
+      rules: {}
     };
   },
   created() {
@@ -175,11 +181,11 @@ export default {
         children: node.children
       };
     },
-	/** 查询物品分类信息下拉树结构 */
+    /** 查询物品分类信息下拉树结构 */
     getTreeselect() {
       listCategory().then(response => {
         this.categoryOptions = [];
-        const data = { id: 0, categoryName: '顶级节点', children: [] };
+        const data = {id: 0, categoryName: '顶级节点', children: []};
         data.children = this.handleTree(response.data, "id", "busiPath");
         this.categoryOptions.push(data);
       });
@@ -264,12 +270,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除物品分类信息编号为"' + row.id + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除物品分类信息编号为"' + row.id + '"的数据项？').then(function () {
         return delCategory(row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     }
   }
 };

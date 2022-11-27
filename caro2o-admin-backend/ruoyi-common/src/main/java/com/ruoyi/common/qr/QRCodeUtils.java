@@ -40,8 +40,8 @@ public class QRCodeUtils {
 			throw new RuntimeException(e);
 		}
 		int width = bitMatrix.getWidth();
-		final var height = bitMatrix.getHeight();
-		final var image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		final int height = bitMatrix.getHeight();
+		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				image.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
@@ -50,7 +50,7 @@ public class QRCodeUtils {
 		return image;
 	}
 	public static void witeImage(String content, OutputStream outputStream){
-		final var image = createQRImage(content);
+		final BufferedImage image = createQRImage(content);
 		try {
 			ImageIO.write(image,"jpeg",outputStream);
 		} catch (IOException e) {

@@ -10,11 +10,14 @@
         />
       </el-form-item>
       <el-form-item label="仓库" prop="storeId">
-<!--        TODO 这里需要仓库API查出所有仓库-->
         <el-select v-model="queryParams.storeId" clearable>
-          <el-option value="" label=""></el-option>
+          <el-option v-for="item in allStoreList"
+                     :key="item.id"
+                     :value="item.id"
+                     :label="`${item.storeName} ${item.storeAddress}`"/>
         </el-select>
       </el-form-item>
+<!--      TODO 这里需要一个分类的api-->
       <el-form-item label="分类" prop="classify">
         <el-select v-model="queryParams.classify" clearable>
           <el-option value="" label=""></el-option>
@@ -35,7 +38,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['store:store:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -46,7 +50,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['store:store:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -73,13 +78,13 @@
     </el-row>
 
     <el-table v-loading="loading" :data="storeList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="物品" align="center" prop="goodsId" />
-      <el-table-column label="名称" align="center" prop="goodsId" />
-      <el-table-column label="品牌" align="center" prop="goodsId" />
-      <el-table-column label="分类" align="center" prop="amounts" />
-      <el-table-column label="数量" align="center" prop="amounts" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="序号" align="center" prop="id"/>
+      <el-table-column label="物品" align="center" prop="goodsId"/>
+      <el-table-column label="名称" align="center" prop="goodsId"/>
+      <el-table-column label="品牌" align="center" prop="goodsId"/>
+      <el-table-column label="分类" align="center" prop="amounts"/>
+      <el-table-column label="数量" align="center" prop="amounts"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -88,14 +93,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['store:store:edit']"
-          >编辑</el-button>
+          >编辑
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['store:store:remove']"
-          >出入库明细</el-button>
+          >出入库明细
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -112,13 +119,13 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="物品id" prop="goodsId">
-          <el-input v-model="form.goodsId" placeholder="请输入物品id" />
+          <el-input v-model="form.goodsId" placeholder="请输入物品id"/>
         </el-form-item>
         <el-form-item label="仓库id" prop="storeId">
-          <el-input v-model="form.storeId" placeholder="请输入仓库id" />
+          <el-input v-model="form.storeId" placeholder="请输入仓库id"/>
         </el-form-item>
         <el-form-item label="库存数量" prop="amounts">
-          <el-input v-model="form.amounts" placeholder="请输入库存数量" />
+          <el-input v-model="form.amounts" placeholder="请输入库存数量"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -130,12 +137,15 @@
 </template>
 
 <script>
-import { listStore, getStore, delStore, addStore, updateStore } from "@/api/store/goods_store";
+import {listStore, getStore, delStore, addStore, updateStore} from "@/api/store/goods_store";
+import {listWarehouse} from '@/api/workflow/warehouse'
 
 export default {
   name: "Store",
   data() {
     return {
+      //所有仓库的选择区
+      allStoreList:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -165,14 +175,18 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      }
+      rules: {}
     };
   },
   created() {
     this.getList();
+    this.getAllStore()
   },
   methods: {
+    async getAllStore() {
+      const {rows}= await listWarehouse(null)
+      this.allStoreList=rows
+    },
     /** 查询物品库存列表 */
     getList() {
       this.loading = true;
@@ -210,7 +224,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -252,12 +266,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除物品库存编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除物品库存编号为"' + ids + '"的数据项？').then(function () {
         return delStore(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

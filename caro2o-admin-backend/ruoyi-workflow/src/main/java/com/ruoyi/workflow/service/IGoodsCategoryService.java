@@ -1,9 +1,8 @@
 package com.ruoyi.workflow.service;
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.workflow.domain.GoodsCategory;
-
-import java.util.List;
 
 /**
  * 物品分类信息Service接口

@@ -21,5 +21,5 @@ public interface GoodsMapper extends BaseMapper<Goods> {
    * @return 物品信息集合
    */
   public List<Goods> selectGoodsList(Goods goods);
-  Goods selectById(String id);
+  Goods selectByGoodsId(String id);
 }
