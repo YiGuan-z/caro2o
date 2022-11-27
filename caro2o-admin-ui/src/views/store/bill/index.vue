@@ -187,11 +187,17 @@
             prop="price"
             label="价格"
             width="120">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.price" type="text" :rows="5"  style="width:100%" placeholder="请输入内容" />
+            </template>
           </el-table-column>
           <el-table-column
             prop="amounts"
             label="数量"
             width="120">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.amounts" type="text" :rows="5"  style="width:100%" placeholder="请输入内容" />
+            </template>
           </el-table-column>
           <el-table-column
             prop="sum"
@@ -272,7 +278,7 @@ export default {
     itemFrom:{
       deep:true,
       handler(val, oldVal) {
-        // this.itemFrom
+        console.log(val);
       }
     }
   },
