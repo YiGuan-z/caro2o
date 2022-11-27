@@ -1,9 +1,8 @@
 package com.ruoyi.workflow.mapper;
 
+import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.workflow.domain.GoodsCategory;
-
-import java.util.List;
 
 /**
  * 物品分类信息Mapper接口

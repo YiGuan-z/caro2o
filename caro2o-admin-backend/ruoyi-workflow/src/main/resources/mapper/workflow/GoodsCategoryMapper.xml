@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.workflow.mapper.GoodsCategoryMapper">
 
     <resultMap type="GoodsCategory" id="GoodsCategoryResult">
@@ -12,17 +12,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="parentId"    column="parent_id"    />
     </resultMap>
 
-  <sql id="selectGoodsCategoryVo">
-    select id, category_name, category_desc, busi_path, parent_id from goods_category
-  </sql>
+    <sql id="selectGoodsCategoryVo">
+        select id, category_name, category_desc, busi_path, parent_id from goods_category
+    </sql>
 
-  <select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">
-    <include refid="selectGoodsCategoryVo"/>
-    <where>
-                  <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
-                  <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc = #{categoryDesc}</if>
-                  <if test="busiPath != null  and busiPath != ''"> and busi_path = #{busiPath}</if>
-                  <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
-    </where>
-  </select>
+    <select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">
+        <include refid="selectGoodsCategoryVo"/>
+        <where>
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc like concat('%', #{categoryDesc}, '%')</if>
+            <if test="params.beginParentId != null and params.beginParentId != '' and params.endParentId != null and params.endParentId != ''"> and parent_id between #{params.beginParentId} and #{params.endParentId}</if>
+        </where>
+    </select>
 </mapper>
