@@ -36,15 +36,6 @@ public class GoodsStoreController extends BaseController {
 	@Autowired
 	private IGoodsStoreService goodsStoreService;
 	
-	/**
-	 * 查询所有仓库
-	 */
-	@GetMapping("/all/store")
-	@PreAuthorize("@ss.hasPermi('store:store:list')")
-	public AjaxResult getAllStore() {
-		Map<String,Map<String,Object>> ret = goodsStoreService.selectAllStore();
-		return AjaxResult.success(ret);
-	}
 	
 	/**
 	 * 查询物品库存列表

@@ -14,12 +14,12 @@
           <el-option v-for="item in allStoreList"
                      :key="item.id"
                      :value="item.id"
-                     :label="`${item.storeName} ${item.storeAddress}`"/>
+                     :label="`${item['storeName']} ${item['storeAddress']}`"/>
         </el-select>
       </el-form-item>
-<!--      TODO 这里需要一个分类的api-->
+      <!--      TODO 这里需要一个分类的api-->
       <el-form-item label="分类" prop="classify">
-        <el-select v-model="queryParams.classify" clearable>
+        <el-select v-model="queryParams['classify']" clearable>
           <el-option value="" label=""></el-option>
         </el-select>
       </el-form-item>
@@ -62,7 +62,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['store:store:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -72,7 +73,8 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['store:store:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -139,13 +141,16 @@
 <script>
 import {listStore, getStore, delStore, addStore, updateStore} from "@/api/store/goods_store";
 import {listWarehouse} from '@/api/workflow/warehouse'
+import {listCategory} from '@/api/workflow/category'
 
 export default {
   name: "Store",
   data() {
     return {
+      //分类的选择区
+      classify:[],
       //所有仓库的选择区
-      allStoreList:[],
+      allStoreList: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -181,11 +186,39 @@ export default {
   created() {
     this.getList();
     this.getAllStore()
+    this.getAllCateGory()
   },
   methods: {
+    //查询所有仓库
     async getAllStore() {
-      const {rows}= await listWarehouse(null)
-      this.allStoreList=rows
+      const {rows} = await listWarehouse(null)
+      this.allStoreList = rows
+    },
+    //listCategory
+    async getAllCateGory() {
+      const {data} = await listCategory(null)
+      // console.log(rows)
+      const rootNodes = []
+      const cache = new Map()
+      data.forEach(node => {
+        cache.set(node.busiPath, node)
+      })
+      cache.forEach(node => {
+        //判断是否为顶级节点
+        //顶级节点长度为1
+        const nodeData = node.busiPath.split(':');
+        const nodeLength = nodeData.length;
+        if (nodeLength === 1) {
+          rootNodes.push(node)
+        } else {
+          //如果不是顶级节点
+          //通过减少子节点字符就可以拿到父节点的key
+          const parentKey = node.busiPath.substring(0,node.busiPath.length-2);
+          const parentNode = cache.get(parentKey);
+          parentNode.children.push(node)
+        }
+      })
+      this.classify=rootNodes
     },
     /** 查询物品库存列表 */
     getList() {
