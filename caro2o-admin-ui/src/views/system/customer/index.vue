@@ -20,12 +20,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属省份" prop="province">
-        <el-input
-          v-model="queryParams.province"
-          placeholder="请输入所属省份"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.province" placeholder="请选择">
+          <el-option
+            v-for="item in city"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="所属行业" prop="industry">
         <el-input
@@ -113,12 +115,11 @@
       <el-table-column label="所属行业" align="center" prop="industry"/>
       <el-table-column label="经营范围" align="center" prop="scope"/>
       <el-table-column label="注册地址" align="center" prop="regAddr"/>
+
+      <el-table-column label="录入人" align="center" prop="inputUserName"/>
+      <el-table-column label="营销人" align="center" prop="userMarket"/>
       <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
-      <el-table-column label="录入人" align="center" prop="inputUser"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button

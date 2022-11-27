@@ -3,6 +3,8 @@ package com.ruoyi.system.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -18,6 +20,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author csj
  * @date 2022-11-27
  */
+@Setter
+@Getter
 @TableName("customer")
 public class Customer extends BaseEntity
 {
@@ -81,134 +85,16 @@ public class Customer extends BaseEntity
     private Date inputTime;
 
     /** 录入人 */
-    @Excel(name = "录入人")
-    @TableField("input_user")
+    @Excel(name = "录入人Id")
+    @TableField("input_userId")
     private Long inputUser;
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
+    @Excel(name = "录入人")
+    @TableField("input_user")
+    private String inputUserName;
 
-    public String getId()
-    {
-        return id;
-    }
-    public void setCustomerName(String customerName)
-    {
-        this.customerName = customerName;
-    }
+    @Excel(name = "营销人")
+    @TableField("input_market")
+    private String userMarket;
 
-    public String getCustomerName()
-    {
-        return customerName;
-    }
-    public void setLegalLeader(String legalLeader)
-    {
-        this.legalLeader = legalLeader;
-    }
-
-    public String getLegalLeader()
-    {
-        return legalLeader;
-    }
-    public void setRegisterDate(Date registerDate)
-    {
-        this.registerDate = registerDate;
-    }
-
-    public Date getRegisterDate()
-    {
-        return registerDate;
-    }
-    public void setOpenState(Integer openState)
-    {
-        this.openState = openState;
-    }
-
-    public Integer getOpenState()
-    {
-        return openState;
-    }
-    public void setProvince(String province)
-    {
-        this.province = province;
-    }
-
-    public String getProvince()
-    {
-        return province;
-    }
-    public void setRegCapital(BigDecimal regCapital)
-    {
-        this.regCapital = regCapital;
-    }
-
-    public BigDecimal getRegCapital()
-    {
-        return regCapital;
-    }
-    public void setIndustry(String industry)
-    {
-        this.industry = industry;
-    }
-
-    public String getIndustry()
-    {
-        return industry;
-    }
-    public void setScope(String scope)
-    {
-        this.scope = scope;
-    }
-
-    public String getScope()
-    {
-        return scope;
-    }
-    public void setRegAddr(String regAddr)
-    {
-        this.regAddr = regAddr;
-    }
-
-    public String getRegAddr()
-    {
-        return regAddr;
-    }
-    public void setInputTime(Date inputTime)
-    {
-        this.inputTime = inputTime;
-    }
-
-    public Date getInputTime()
-    {
-        return inputTime;
-    }
-    public void setInputUser(Long inputUser)
-    {
-        this.inputUser = inputUser;
-    }
-
-    public Long getInputUser()
-    {
-        return inputUser;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("customerName", getCustomerName())
-            .append("legalLeader", getLegalLeader())
-            .append("registerDate", getRegisterDate())
-            .append("openState", getOpenState())
-            .append("province", getProvince())
-            .append("regCapital", getRegCapital())
-            .append("industry", getIndustry())
-            .append("scope", getScope())
-            .append("regAddr", getRegAddr())
-            .append("inputTime", getInputTime())
-            .append("inputUser", getInputUser())
-            .toString();
-    }
 }

@@ -16,12 +16,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="scope"    column="scope"    />
         <result property="regAddr"    column="reg_addr"    />
         <result property="inputTime"    column="input_time"    />
-        <result property="inputUser"    column="input_user"    />
+        <result property="inputUser"    column="input_userId"    />
+        <result property="inputUserName" column="input_user"/>
+        <result property="userMarket" column="input_market"/>
 
     </resultMap>
 
   <sql id="selectCustomerVo">
-    select id, customer_name, legal_leader, register_date, open_state, province, reg_capital, industry, scope, reg_addr, input_time, input_user from customer
+    select id, customer_name, legal_leader, register_date, open_state, province, reg_capital, industry, scope, reg_addr, input_time, input_userId,
+     input_user,input_market
+     from customer
   </sql>
 
   <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
