@@ -1,11 +1,10 @@
 import request from '@/utils/request'
 
 // 查询出入库单据列表
-export function listBillItem(query) {
+export function listBillItem() {
   return request({
     url: '/store/billItem/list',
     method: 'get',
-    params: query
   })
 }
 

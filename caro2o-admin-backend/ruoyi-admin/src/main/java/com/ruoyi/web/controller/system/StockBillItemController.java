@@ -35,25 +35,13 @@ public class StockBillItemController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('store:bill:list')")
     @GetMapping("/list")
-    public TableDataInfo list(StockBillItem stockBillItem)
+    public TableDataInfo list()
     {
         startPage();
-        List<StockBillItem> list = stockBillItemService.selectStockBillItemList(stockBillItem);
+        List<StockBillItem> list = stockBillItemService.list();
         return getDataTable(list);
     }
 
-    /**
-     * 导出出入库单据列表
-     */
-    @PreAuthorize("@ss.hasPermi('store:bill:export')")
-    @Log(title = "出入库单据", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, StockBillItem stockBillItem)
-    {
-        List<StockBillItem> list = stockBillItemService.selectStockBillItemList(stockBillItem);
-        ExcelUtil<StockBillItem> util = new ExcelUtil<StockBillItem>(StockBillItem.class);
-        util.exportExcel(response, list, "出入库单据数据");
-    }
 
     /**
      * 获取出入库单据详细信息
@@ -62,7 +50,7 @@ public class StockBillItemController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
-        return AjaxResult.success(stockBillItemService.getById(id));
+        return AjaxResult.success(stockBillItemService.getByBillId(id));
     }
 
     /**

@@ -115,7 +115,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleQuery(scope.row)"
+            @click="itemQuery(scope.row)"
             v-hasPermi="['store:bill:remove']"
           >查看</el-button>
         </template>
@@ -169,32 +169,32 @@
           </el-col>
         </el-row>
         <el-table
-          :data="itemData"
+          :data="itemFrom"
           border
           style="width: 100%">
           <el-table-column
             fixed
-            prop="date"
+            prop="id"
             label="序号"
             width="150">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="goods_id"
             label="物品"
             width="120">
           </el-table-column>
           <el-table-column
-            prop="province"
+            prop="price"
             label="价格"
             width="120">
           </el-table-column>
           <el-table-column
-            prop="city"
+            prop="amounts"
             label="数量"
             width="120">
           </el-table-column>
           <el-table-column
-            prop="address"
+            prop="sum"
             label="小计"
             width="300">
           </el-table-column>
@@ -260,12 +260,23 @@ export default {
         busiDate: null,
         status: null,
       },
+      itemFrom:{
+      }
+      ,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
       }
     };
+  },
+  watch:{
+    itemFrom:{
+      deep:true,
+      handler(val, oldVal) {
+        this.itemFrom
+      }
+    }
   },
   created() {
     this.getList();
@@ -285,6 +296,7 @@ export default {
         this.loading = false;
       });
     },
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -336,6 +348,22 @@ export default {
         this.open = true;
         this.title = "修改出入库单据";
       });
+    },
+    itemQuery(row){
+      getBillItem(row.id).then(res=>{
+        let {data}=res
+
+       data= data.map(s=>{
+         console.log(s)
+         return{
+           ...s,
+           sum:s.price*s.amounts
+         }
+        })
+        console.log(data)
+        this.itemFrom=data
+        this.open=true
+      })
     },
     /** 提交按钮 */
     submitForm() {

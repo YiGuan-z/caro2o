@@ -9,6 +9,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -24,137 +25,41 @@ import java.util.Date;
  */
 @Getter
 @Setter
-@TableName("stock_bill")
+@ToString
+@TableName("stock_bill_item")
 public class StockBillItem extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 序号 */
-    @Excel(name = "序号")
+    /** 物品id */
+    @Excel(name = "id")
     @TableId(type = IdType.ASSIGN_ID)
     @TableField("id")
     private String id;
 
-    /** 类型 */
-    @Excel(name = "类型")
-    @TableField("type")
-    private Integer type;
+    /** 数量 */
+    @Excel(name = "物品id")
+    @TableField("goods_id")
+    private String goodsId;
 
     /**
-     * 总金额
+     * 单价
      */
-    @Excel(name = "总金额")
-    @TableField(exist = false)
-    private BigDecimal totalMoney;
+    @Excel(name = "数量")
+    private Integer amounts;
 
     /**
-     * 总数量
+     * 单据id
      */
-    @Excel(name = "总数量")
-    @TableField(exist = false)
-    private Long totalNum;
-    /** 仓库 */
-    @Excel(name = "仓库")
-    @TableField("store_id")
-    private String storeId;
-
-    /** 出入库时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "出入库时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @TableField("busi_date")
-    private Date busiDate;
+    @Excel(name = "单价")
+    private Long price;
 
     /** 状态 */
+    @Excel(name = "单据id")
+    @TableField("bill_id")
+    private String billId;
+
     @Excel(name = "状态")
-    @TableField("status")
-    private Integer status;
-
-    /** 录入时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "录入时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @TableField("operate_date")
-    private Date operateDate;
-
-    /** 录入人 */
-    @Excel(name = "录入人")
-    @TableField("operator_id")
-    private Long operatorId;
-
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
-    public String getId()
-    {
-        return id;
-    }
-    public void setType(Integer type)
-    {
-        this.type = type;
-    }
-
-    public Integer getType()
-    {
-        return type;
-    }
-    public void setStoreId(String storeId)
-    {
-        this.storeId = storeId;
-    }
-
-    public String getStoreId()
-    {
-        return storeId;
-    }
-    public void setBusiDate(Date busiDate)
-    {
-        this.busiDate = busiDate;
-    }
-
-    public Date getBusiDate()
-    {
-        return busiDate;
-    }
-    public void setStatus(Integer status)
-    {
-        this.status = status;
-    }
-
-    public Integer getStatus()
-    {
-        return status;
-    }
-    public void setOperateDate(Date operateDate)
-    {
-        this.operateDate = operateDate;
-    }
-
-    public Date getOperateDate()
-    {
-        return operateDate;
-    }
-    public void setOperatorId(Long operatorId)
-    {
-        this.operatorId = operatorId;
-    }
-
-    public Long getOperatorId()
-    {
-        return operatorId;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("type", getType())
-            .append("storeId", getStoreId())
-            .append("busiDate", getBusiDate())
-            .append("status", getStatus())
-            .append("operateDate", getOperateDate())
-            .append("operatorId", getOperatorId())
-            .append("remark", getRemark())
-            .toString();
-    }
+    @TableField("state")
+    private String state;
 }

@@ -1,5 +1,6 @@
 package com.ruoyi.store.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.store.domain.StockBill;
@@ -8,6 +9,7 @@ import com.ruoyi.store.mapper.StockBillItemMapper;
 import com.ruoyi.store.service.IStockBillItemService;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,23 +22,11 @@ import java.util.List;
 @Service
 public class StockBillItemServiceImpl extends ServiceImpl<StockBillItemMapper, StockBillItem> implements IStockBillItemService {
 
-    /**
-     * 查询出入库单据列表
-     *
-     * @param stockBill 出入库单据
-     * @return 出入库单据
-     */
     @Override
-    public List<StockBillItem> selectStockBillItemList(StockBillItem stockBillItem) {
-        return getBaseMapper().selectStockBillItemList(stockBillItem);
-    }
-
-    @Override
-    public boolean removeBatchByIds(Collection<?> list) {
-        LambdaUpdateWrapper<StockBillItem> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.set(StockBillItem::getStatus,-1);
-        wrapper.in(StockBillItem::getId,list);
-        int update = baseMapper.update(null, wrapper);
-        return update>0;
+    public List<StockBillItem> getByBillId(String id) {
+        LambdaQueryWrapper<StockBillItem> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StockBillItem::getBillId,id);
+        List<StockBillItem> stockBillItems = baseMapper.selectList(wrapper);
+        return stockBillItems;
     }
 }

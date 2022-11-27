@@ -14,11 +14,5 @@ import java.util.List;
  */
 public interface StockBillItemMapper extends BaseMapper<StockBillItem> {
 
-  /**
-   * 查询出入库单据列表
-   *
-   * @param stockBill 出入库单据
-   * @return 出入库单据集合
-   */
-  public List<StockBillItem> selectStockBillItemList(StockBillItem stockBill);
+
 }

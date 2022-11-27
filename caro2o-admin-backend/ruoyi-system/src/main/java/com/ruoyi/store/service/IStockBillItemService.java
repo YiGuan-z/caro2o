@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.store.domain.StockBill;
 import com.ruoyi.store.domain.StockBillItem;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,12 +15,5 @@ import java.util.List;
  */
 public interface IStockBillItemService extends IService<StockBillItem> {
 
-    /**
-     * 查询出入库单据列表
-     *
-     * @param stockBill 出入库单据
-     * @return 出入库单据集合
-     */
-    public List<StockBillItem> selectStockBillItemList(StockBillItem stockBillItem);
-
+    List<StockBillItem> getByBillId(String id);
 }
