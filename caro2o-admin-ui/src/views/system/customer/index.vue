@@ -268,7 +268,7 @@
 </template>
 
 <script>
-  import {listCustomer, getCustomer, delCustomer, addCustomer, updateCustomer} from "@/api/system/customer";
+  import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/system/customer";
 
   export default {
     name: "Customer",
