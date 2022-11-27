@@ -65,7 +65,13 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="物品名称" align="center" prop="goodsName" />
-      <el-table-column label="封面" align="center" prop="goodsCover" />
+      <el-table-column label="封面" align="center" prop="goodsCover" >
+        <template v-slot="scope">
+          <div @click="handleViewImage(scope)">
+            <el-avatar :src="scope.row.goodsCover" />
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="分类" align="center" prop="categoryId" />
       <el-table-column label="品牌" align="center" prop="brand" />
       <el-table-column label="规格" align="center" prop="spec" />
@@ -105,7 +111,19 @@
           <el-input v-model="form.goodsName" placeholder="请输入物品名称" />
         </el-form-item>
         <el-form-item label="封面" prop="goodsCover">
-          <el-input v-model="form.goodsCover" placeholder="请输入封面" />
+            <el-upload
+              class="avatar-uploader"
+              action="/dev-api/common/upload1"
+              :headers="headler"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <el-image v-if="form.goodsCover"
+                        :src="form.goodsCover"
+                        class="avatar"/>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+
         </el-form-item>
         <el-form-item label="分类" prop="categoryId">
           <el-input v-model="form.categoryId" placeholder="请输入分类" />
@@ -125,16 +143,25 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="imageVisible" >
+      <el-image width="100%" :src="viewImage" alt=""/>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { listGoods, getGoods, delGoods, addGoods, updateGoods } from "@/api/store/goods";
+import {getToken} from "@/utils/auth";
 
 export default {
   name: "Goods",
   data() {
     return {
+      headler:{
+        Authorization: `Bearer ${getToken()}`
+      },
+      viewImage:null,
+      imageVisible:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -182,6 +209,31 @@ export default {
     this.getList();
   },
   methods: {
+    handleViewImage({row}){
+      const {goodsCover}=row
+      this.viewImage=goodsCover
+      this.imageVisible=true
+    },
+    //文件上传成功操作
+    handleAvatarSuccess(res, file) {
+      console.log(res)
+      const{url}=res
+      this.form.goodsCover=url
+      // this.form.goodsCover = URL.createObjectURL(file.raw);
+    },
+    //文件上传之前的检查操作
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt5m = file.size / 1024 / 1024 < 5;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt5m) {
+        this.$message.error('上传头像图片大小不能超过 5MB!');
+      }
+      return isJPG && isLt5m;
+    },
     /** 查询物品信息列表 */
     getList() {
       this.loading = true;
