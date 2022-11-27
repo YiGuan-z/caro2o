@@ -203,7 +203,7 @@ public class JavaBeanDef<T> {
 	 * @throws IllegalAccessException      非法访问异常
 	 */
 	private Object invoke(String methodName, Object... args) throws DangerousoperationException, InvocationTargetException, IllegalAccessException {
-		final var method = getMethod(methodName);
+		final Method method = getMethod(methodName);
 		method.setAccessible(true);
 		return method.invoke(this.value, args);
 	}
