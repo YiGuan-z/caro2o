@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.store.mapper.GoodsStoreMapper">
+
+    <resultMap type="GoodsStore" id="GoodsStoreResult">
+        <result property="id"    column="id"    />
+        <result property="goodsId"    column="goods_id"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="amounts"    column="amounts"    />
+    </resultMap>
+
+  <sql id="selectGoodsStoreVo">
+    select id, goods_id, store_id, amounts from goods_store
+  </sql>
+
+  <select id="selectGoodsStoreList" parameterType="GoodsStore" resultMap="GoodsStoreResult">
+    <include refid="selectGoodsStoreVo"/>
+    <where>
+                  <if test="goodsId != null  and goodsId != ''"> and goods_id = #{goodsId}</if>
+                  <if test="storeId != null  and storeId != ''"> and store_id = #{storeId}</if>
+                  <if test="amounts != null "> and amounts = #{amounts}</if>
+    </where>
+  </select>
+</mapper>
