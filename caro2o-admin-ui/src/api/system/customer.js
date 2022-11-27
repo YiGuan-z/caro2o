@@ -9,6 +9,16 @@ export function listCustomer(query) {
   })
 }
 
+
+export function listAll() {
+  return request({
+    url: '/system/customer/listAll',
+    method: 'get',
+  })
+}
+
+
+
 // 查询客户信息详细
 export function getCustomer(id) {
   return request({

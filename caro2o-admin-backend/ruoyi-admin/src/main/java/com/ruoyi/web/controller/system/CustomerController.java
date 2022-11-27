@@ -47,6 +47,19 @@ public class CustomerController extends BaseController
         return getDataTable(list);
     }
 
+
+
+
+    @GetMapping("/listAll")
+    public AjaxResult listAll(Customer customer)
+    {
+        List<Customer> list = customerService.selectCustomerList(customer);
+        return AjaxResult.success(list);
+    }
+
+
+
+
     /**
      * 导出客户信息列表
      */
