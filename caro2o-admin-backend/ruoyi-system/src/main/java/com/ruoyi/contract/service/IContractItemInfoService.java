@@ -20,4 +20,11 @@ public interface IContractItemInfoService extends IService<ContractItemInfo> {
      */
     public List<ContractItemInfo> selectContractItemInfoList(ContractItemInfo contractItemInfo);
 
+    void auditPass(Long id);
+
+    void reject(Long id);
+
+    void confirm(Long id);
+
+    void failure(Long id);
 }

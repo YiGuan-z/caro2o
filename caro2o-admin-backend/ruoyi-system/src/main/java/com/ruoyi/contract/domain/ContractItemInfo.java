@@ -21,6 +21,24 @@ import com.ruoyi.common.core.domain.BaseEntity;
 @TableName("contract")
 public class ContractItemInfo extends BaseEntity
 {
+    /** 审核状态 */
+    // 未审核
+    public static final Integer DEFAULTED_AUDIT_INIT = 0;
+    // 审核中
+    public static final Integer DEFAULTED_AUDIT_REJECT = -1;
+    // 审核通过
+    public static final Integer DEFAULTED_AUDIT_PASSED = 1;
+    /** 是否使用 */
+    // 再用
+    public static final Integer DEFAULTED_USE_ING = 0;
+    // 作废
+    public static final Integer DEFAULTED_USE_REJECT = -1;
+    /** 确认状态 */
+    // 是
+    public static final Integer DEFAULTED_CONFIRM_SUCCESS = 1;
+    // 否
+    public static final Integer DEFAULTED_CONFIRM_FAILED = 0;
+
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */

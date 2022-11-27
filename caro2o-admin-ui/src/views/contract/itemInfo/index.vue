@@ -77,7 +77,7 @@
 
     <el-table v-loading="loading" :data="itemInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="${comment}" align="center" prop="id"/>
+      <el-table-column label="id" align="center" prop="id"/>
       <el-table-column label="客户id" align="center" prop="customerId"/>
       <el-table-column label="合同名称" align="center" prop="contractName"/>
       <el-table-column label="合同编号" align="center" prop="contractCode"/>
@@ -114,7 +114,7 @@
           <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -122,15 +122,43 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['contract:itemInfo:edit']"
-          >修改
+          >编辑
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            v-if="scope.row.nullifyState !== -1 "
+            @click="handlePass(scope.row)"
+            v-hasPermi="['contract:itemInfo:edit']"
+          >审核通过
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            v-if="scope.row.nullifyState !== -1 || scope.row.affixSealState === 0"
+            @click="auditConfirm(scope.row)"
+            v-hasPermi="['contract:itemInfo:edit']"
+          >确认盖章
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            v-if="scope.row.nullifyState !== -1"
+            @click="auditReject(scope.row)"
+            v-hasPermi="['contract:itemInfo:edit']"
+          >审核不通过
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
+            v-if="scope.row.nullifyState !== -1"
+            @click="failure(scope.row)"
             v-hasPermi="['contract:itemInfo:remove']"
-          >删除
+          >作废
           </el-button>
         </template>
       </el-table-column>
@@ -145,95 +173,83 @@
     />
 
     <!-- 添加或修改合同项信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-select v-model="form.customerId" placeholder="请选择客户">
-              <el-option
-                v-for="item in customerList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同名称" prop="contractName">
-              <el-input v-model="form.contractName" placeholder="请输入合同名称"/>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple">
+              <el-form-item label="客户名称" prop="customerId">
+                <el-select v-model="form.customerId" placeholder="请选择客户">
+                  <el-option
+                    v-for="item in customerList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="合同名称" prop="contractName">
+                <el-input v-model="form.contractName" placeholder="请输入合同名称"/>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-form-item label="合同编号" prop="contractCode">
-              <el-input v-model="form.contractCode" placeholder="请输入合同编号"/>
-            </el-form-item>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同金额" prop="amounts">
-              <el-input v-model="form.amounts" placeholder="请输入合同金额"/>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple">
+              <el-form-item label="合同编号" prop="contractCode">
+                <el-input v-model="form.contractCode" placeholder="请输入合同编号"/>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="合同金额" prop="amounts">
+                <el-input v-model="form.amounts" placeholder="请输入合同金额"/>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple"></div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light"></div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple"></div>
+          </el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light"></div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-form-item label="合同生效开始时间" prop="startDate">
-              <el-date-picker clearable
-                              v-model="form.startDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择合同生效开始时间">
-              </el-date-picker>
-            </el-form-item>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同失效时间" prop="endDate">
-              <el-date-picker clearable
-                              v-model="form.endDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择合同失效时间">
-              </el-date-picker>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple">
+              <el-form-item label="开始时间" prop="startDate">
+                <el-date-picker clearable
+                                v-model="form.startDate"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="请选择合同生效开始时间">
+                </el-date-picker>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="失效时间" prop="endDate">
+                <el-date-picker clearable
+                                v-model="form.endDate"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="请选择合同失效时间">
+                </el-date-picker>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-form-item label="附件">
           <file-upload v-model="form.appendix"/>
-        </el-form-item>
-        <el-form-item label="是否确认盖章" prop="affixSealState">
-          <el-select v-model="form.affixSealState" placeholder="请选择是否盖章">
-            <el-option
-              v-for="dict in dict.type.item_confirm_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审核状态" prop="auditState">
-          <el-select v-model="form.auditState" placeholder="请选择审核状态">
-            <el-option
-              v-for="dict in dict.type.item_audit_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否作废" prop="nullifyState">
-          <el-select v-model="form.nullifyState" placeholder="请选择是否作废">
-            <el-option
-              v-for="dict in dict.type.item_use_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -245,7 +261,19 @@
 </template>
 
 <script>
-import {listItemInfo, getItemInfo, delItemInfo, addItemInfo, updateItemInfo} from "@/api/contract/itemInfo";
+import {
+  listItemInfo,
+  getItemInfo,
+  delItemInfo,
+  addItemInfo,
+  updateItemInfo,
+  auditPass,
+  auditConfirm,
+  auditReject,
+  failure
+} from "@/api/contract/itemInfo";
+import {listAll} from "@/api/system/customer";
+import log from "@/views/monitor/job/log";
 
 export default {
   name: "ItemInfo",
@@ -271,7 +299,7 @@ export default {
       // 是否显示弹出层
       open: false,
       // 客户列表
-      customerList:[],
+      customerList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -286,6 +314,11 @@ export default {
     };
   },
   created() {
+    listAll().then(resp => {
+      let temp = resp.data.map(u => ({value:u.id, label:u.legalLeader}))
+      this.customerList = temp;
+      console.log(this.customerList);
+    })
     this.getList();
   },
   methods: {
@@ -377,11 +410,54 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除合同项信息编号为"' + ids + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认废除合同项信息编号为"' + ids + '"的数据项？').then(function () {
         return delItemInfo(ids);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.$modal.msgSuccess("作废成功");
+      }).catch(() => {
+      });
+    },
+    /** 审核通过按钮操作 */
+    handlePass(row) {
+      this.$modal.confirm('是否确认通过合同项信息编号为"' + ids + '"的数据项？').then(function () {
+        return auditPass(row.id);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("审核通过");
+      }).catch(() => {
+      });
+    },
+    /** 审核拒绝按钮操作 */
+    auditReject(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认拒绝合同项信息编号为"' + ids + '"的数据项？').then(function () {
+        return auditReject(ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("审核拒绝");
+      }).catch(() => {
+      });
+    },
+    /** 确认盖章按钮操作 */
+    auditConfirm(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认合同项信息编号为"' + ids + '"的数据项？').then(function () {
+        return auditConfirm(row.id);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("确认盖章");
+      }).catch(() => {
+      });
+    },
+    /** 作废按钮操作 */
+    failure(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认合同项信息编号为"' + ids + '"的数据项？').then(function () {
+        return failure(row.id);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("确认盖章");
       }).catch(() => {
       });
     },
