@@ -135,7 +135,7 @@
           <el-input v-model="form.spec" placeholder="请输入规格" />
         </el-form-item>
         <el-form-item label="描述" prop="goodsDesc">
-          <el-input v-model="form.goodsDesc" placeholder="请输入描述" />
+          <el-input type="textarea" v-model="form.goodsDesc" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
