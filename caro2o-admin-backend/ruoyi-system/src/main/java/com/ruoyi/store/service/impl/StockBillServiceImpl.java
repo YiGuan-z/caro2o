@@ -1,6 +1,9 @@
 package com.ruoyi.store.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.store.mapper.StockBillMapper;
@@ -25,5 +28,14 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
     @Override
     public List<StockBill> selectStockBillList(StockBill stockBill) {
         return getBaseMapper().selectStockBillList(stockBill);
+    }
+
+    @Override
+    public boolean removeBatchByIds(Collection<?> list) {
+        LambdaUpdateWrapper<StockBill> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(StockBill::getStatus,-1);
+        wrapper.in(StockBill::getId,list);
+        int update = baseMapper.update(null, wrapper);
+        return update>0;
     }
 }

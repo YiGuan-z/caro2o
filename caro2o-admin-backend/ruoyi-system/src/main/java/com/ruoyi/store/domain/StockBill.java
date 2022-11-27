@@ -24,7 +24,7 @@ public class StockBill extends BaseEntity
 
     /** 序号 */
     @Excel(name = "序号")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     @TableField("id")
     private String id;
 
