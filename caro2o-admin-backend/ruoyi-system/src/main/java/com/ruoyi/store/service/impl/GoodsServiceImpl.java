@@ -2,6 +2,7 @@ package com.ruoyi.store.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.utils.Assert;
 import com.ruoyi.store.domain.Goods;
 import com.ruoyi.store.mapper.GoodsMapper;
 import com.ruoyi.store.service.IGoodsService;
@@ -27,5 +28,20 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Override
     public List<Goods> selectGoodsList(Goods goods) {
         return getBaseMapper().selectGoodsList(goods);
+    }
+    
+    @Override
+    public Goods selectById(String id) {
+        return baseMapper.selectById(id);
+    }
+    
+    @Override
+    public boolean save(Goods entity) {
+        Assert.assertTrue(entity,(e)-> e.
+                getCategoryId()!=null &&
+                e.getGoodsCover()!=null &&
+                e.getGoodsName()!=null,
+                "必填字段为空");
+        return super.save(entity);
     }
 }

@@ -1,5 +1,7 @@
 package com.ruoyi.store.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -16,6 +18,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @date 2022-11-27
  */
 @TableName("goods")
+@Setter
+@Getter
 public class Goods extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -53,81 +57,7 @@ public class Goods extends BaseEntity
     @Excel(name = "描述")
     @TableField("goods_desc")
     private String goodsDesc;
-
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
-    public String getId()
-    {
-        return id;
-    }
-    public void setGoodsName(String goodsName)
-    {
-        this.goodsName = goodsName;
-    }
-
-    public String getGoodsName()
-    {
-        return goodsName;
-    }
-    public void setGoodsCover(String goodsCover)
-    {
-        this.goodsCover = goodsCover;
-    }
-
-    public String getGoodsCover()
-    {
-        return goodsCover;
-    }
-    public void setCategoryId(String categoryId)
-    {
-        this.categoryId = categoryId;
-    }
-
-    public String getCategoryId()
-    {
-        return categoryId;
-    }
-    public void setBrand(String brand)
-    {
-        this.brand = brand;
-    }
-
-    public String getBrand()
-    {
-        return brand;
-    }
-    public void setSpec(String spec)
-    {
-        this.spec = spec;
-    }
-
-    public String getSpec()
-    {
-        return spec;
-    }
-    public void setGoodsDesc(String goodsDesc)
-    {
-        this.goodsDesc = goodsDesc;
-    }
-
-    public String getGoodsDesc()
-    {
-        return goodsDesc;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("goodsName", getGoodsName())
-            .append("goodsCover", getGoodsCover())
-            .append("categoryId", getCategoryId())
-            .append("brand", getBrand())
-            .append("spec", getSpec())
-            .append("goodsDesc", getGoodsDesc())
-            .toString();
-    }
+    
+    @TableField(exist = false)
+    private Goods son;
 }
