@@ -28,18 +28,27 @@ public class CustomerVisit extends BaseEntity
 
     /** 唯一id */
     @Excel(name = "唯一id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
+    @TableField("id")
     private String id;
 
     /** 客户id */
     @Excel(name = "客户id")
     @TableField("customer_id")
     private String customerId;
+    /** 客户 名字 */
+    @TableField(exist = false)
+    private String customerName;
 
     /** 联系人id */
     @Excel(name = "联系人id")
     @TableField("linkman_id")
     private String linkmanId;
+
+    /** 联系人名字 */
+    @TableField(exist = false)
+    private String linkmanName;
+
 
     /** 拜访方式, 1 上门走访, 2 电话拜访 */
     @Excel(name = "拜访方式, 1 上门走访, 2 电话拜访")

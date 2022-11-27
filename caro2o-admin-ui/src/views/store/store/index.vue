@@ -1,24 +1,29 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="关键字" prop="goodsId">
+      <el-form-item label="物品id" prop="goodsId">
         <el-input
           v-model="queryParams.goodsId"
-          placeholder="请输入查找关键字"
+          placeholder="请输入物品id"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="仓库" prop="storeId">
-<!--        TODO 这里需要仓库API查出所有仓库-->
-        <el-select v-model="queryParams.storeId" clearable>
-          <el-option value="" label=""></el-option>
-        </el-select>
+      <el-form-item label="仓库id" prop="storeId">
+        <el-input
+          v-model="queryParams.storeId"
+          placeholder="请输入仓库id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="分类" prop="classify">
-        <el-select v-model="queryParams.classify" clearable>
-          <el-option value="" label=""></el-option>
-        </el-select>
+      <el-form-item label="库存数量" prop="amounts">
+        <el-input
+          v-model="queryParams.amounts"
+          placeholder="请输入库存数量"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -74,12 +79,10 @@
 
     <el-table v-loading="loading" :data="storeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="物品" align="center" prop="goodsId" />
-      <el-table-column label="名称" align="center" prop="goodsId" />
-      <el-table-column label="品牌" align="center" prop="goodsId" />
-      <el-table-column label="分类" align="center" prop="amounts" />
-      <el-table-column label="数量" align="center" prop="amounts" />
+      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="物品id" align="center" prop="goodsId" />
+      <el-table-column label="仓库id" align="center" prop="storeId" />
+      <el-table-column label="库存数量" align="center" prop="amounts" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -88,18 +91,18 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['store:store:edit']"
-          >编辑</el-button>
+          >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['store:store:remove']"
-          >出入库明细</el-button>
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -130,7 +133,7 @@
 </template>
 
 <script>
-import { listStore, getStore, delStore, addStore, updateStore } from "@/api/store/goods_store";
+import { listStore, getStore, delStore, addStore, updateStore } from "@/api/store/store";
 
 export default {
   name: "Store",

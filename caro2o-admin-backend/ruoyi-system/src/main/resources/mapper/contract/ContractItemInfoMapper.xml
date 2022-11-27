@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.contract.mapper.ContractItemInfoMapper">
+
+    <resultMap type="ContractItemInfo" id="ContractItemInfoResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="contractName"    column="contract_name"    />
+        <result property="contractCode"    column="contract_code"    />
+        <result property="amounts"    column="amounts"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="endDate"    column="end_date"    />
+        <result property="appendix"    column="appendix"    />
+        <result property="affixSealState"    column="affix_seal_state"    />
+        <result property="auditState"    column="audit_state"    />
+        <result property="nullifyState"    column="nullify_state"    />
+        <result property="inputUser"    column="input_user"    />
+        <result property="inputTime"    column="input_time"    />
+    </resultMap>
+
+  <sql id="selectContractItemInfoVo">
+    select id, customer_id, contract_name, contract_code, amounts, start_date, end_date, appendix, affix_seal_state, audit_state, nullify_state, input_user, input_time from contract
+  </sql>
+
+  <select id="selectContractItemInfoList" parameterType="ContractItemInfo" resultMap="ContractItemInfoResult">
+    <include refid="selectContractItemInfoVo"/>
+    <where>
+                  <if test="auditState != null "> and audit_state = #{auditState}</if>
+                  <if test="inputTime != null "> and input_time = #{inputTime}</if>
+    </where>
+  </select>
+</mapper>
