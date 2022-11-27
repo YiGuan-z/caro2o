@@ -130,10 +130,9 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:customer:remove']"
-          >删除
+            @click="handleSelect(scope.row)"
+            v-hasPermi="['system:customer:selectById']"
+          >详情
           </el-button>
         </template>
       </el-table-column>
@@ -147,10 +146,45 @@
       @pagination="getList"
     />
 
+    <el-dialog :title="title" :visible.sync="opens" width="700px" append-to-body>
+      <el-form ref="form" :model="selectInfo"  label-width="100px">
+        <el-descriptions title="客户信息">
+          <el-descriptions-item label="企业名称">
+            {{selectInfo.customerName}}
+          </el-descriptions-item>
+          <el-descriptions-item label="法定代表人">
+            {{selectInfo.legalLeader}}
+          </el-descriptions-item>
+          <el-descriptions-item label="成立时间">
+            {{selectInfo.registerDate}}
+          </el-descriptions-item>
+          <el-descriptions-item label="经营状态">
+              <dict-tag :options="dict.type.sys_customer_status" :value="selectInfo.openState"/>
+<!--            {{selectInfo.openState}}-->
+          </el-descriptions-item>
+          <el-descriptions-item label="所属省份">
+            <dict-tag :options="city" :value="selectInfo.openState"/>
+
+          </el-descriptions-item>
+          <el-descriptions-item label="注册资本">
+            {{selectInfo.regCapital}}
+          </el-descriptions-item>
+          <el-descriptions-item label="所属行业">
+            {{selectInfo.openState}}
+          </el-descriptions-item>
+          <el-descriptions-item label="经营范围">
+            {{selectInfo.scope}}
+          </el-descriptions-item>
+          <el-descriptions-item label="注册地址">
+            {{selectInfo.regAddr}}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-form>
+    </el-dialog>
+
     <!-- 添加或修改客户信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-
         <el-row>
           <el-col span="12">
             <el-form-item label="企业名称" prop="customerName">
@@ -163,7 +197,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col span="12">
             <el-form-item label="成立时间" prop="registerDate">
@@ -210,7 +243,7 @@
         </el-row>
 
         <el-form-item label="注册资本,(万元)" prop="regCapital">
-          <el-input v-model="form.regCapital" placeholder="请输入注册资本,(万元)"/>
+          <el-input type="number" v-model="form.regCapital" placeholder="请输入注册资本,(万元)"/>
         </el-form-item>
 
         <el-form-item label="经营范围" prop="scope">
@@ -249,6 +282,7 @@
           label: '南京'
         }],
 
+        selectInfo:{},
         // 遮罩层
         loading: true,
         // 选中数组
@@ -267,6 +301,7 @@
         title: "",
         // 是否显示弹出层
         open: false,
+        opens:false,
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -278,6 +313,7 @@
         },
         // 表单参数
         form: {},
+        particulars:{},
         // 表单校验
         rules: {
           customerName: [
@@ -317,6 +353,7 @@
       // 取消按钮
       cancel() {
         this.open = false;
+        this.opens = false;
         this.reset();
       },
       // 表单重置
@@ -389,16 +426,11 @@
           }
         });
       },
-      /** 删除按钮操作 */
-      handleDelete(row) {
-        const ids = row.id || this.ids;
-        this.$modal.confirm('是否确认删除客户信息编号为"' + ids + '"的数据项？').then(function () {
-          return delCustomer(ids);
-        }).then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        }).catch(() => {
-        });
+
+      //
+      handleSelect(row) {
+        this.opens = true;
+        this.selectInfo = {...row}
       },
       /** 导出按钮操作 */
       handleExport() {
