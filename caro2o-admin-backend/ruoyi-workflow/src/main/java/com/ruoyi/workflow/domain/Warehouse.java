@@ -22,7 +22,6 @@ public class Warehouse extends BaseEntity
 
     /** 序号 */
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private String id;
 
     /** 仓库名字 */
