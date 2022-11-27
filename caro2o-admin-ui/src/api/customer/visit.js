@@ -1,15 +1,15 @@
 import request from '@/utils/request'
 
-// 查询客户关怀列表
+// 查询拜访信息列表
 export function listVisit(query) {
   return request({
-    url: '/customer/visit',
+    url: '/customer/visit/list',
     method: 'get',
     params: query
   })
 }
 
-// 查询客户关怀详细
+// 查询拜访信息详细
 export function getVisit(id) {
   return request({
     url: '/customer/visit/' + id,
@@ -17,7 +17,7 @@ export function getVisit(id) {
   })
 }
 
-// 新增客户关怀
+// 新增拜访信息
 export function addVisit(data) {
   return request({
     url: '/customer/visit',
@@ -26,9 +26,19 @@ export function addVisit(data) {
   })
 }
 
-export function listAllCustomer(){
+// 修改拜访信息
+export function updateVisit(data) {
   return request({
-    url: '/customer/all',
-    method: 'get',
+    url: '/customer/visit',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除拜访信息
+export function delVisit(id) {
+  return request({
+    url: '/customer/visit/' + id,
+    method: 'delete'
   })
 }
