@@ -1,58 +1,29 @@
 package com.ruoyi.customer.service.impl;
 
-import java.util.Date;
 import java.util.List;
-
-import com.ruoyi.common.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.customer.mapper.CustomerVisitMapper;
 import com.ruoyi.customer.domain.CustomerVisit;
 import com.ruoyi.customer.service.ICustomerVisitService;
 
 /**
- * 客户关怀Service业务层处理
+ * 拜访信息Service业务层处理
  *
- * @author xiaoxiao
- * @date 2022-08-26
+ * @author xiaochen
+ * @date 2022-11-27
  */
 @Service
-public class CustomerVisitServiceImpl implements ICustomerVisitService {
-    @Autowired
-    private CustomerVisitMapper customerVisitMapper;
+public class CustomerVisitServiceImpl extends ServiceImpl<CustomerVisitMapper, CustomerVisit> implements ICustomerVisitService {
 
     /**
-     * 查询客户关怀
+     * 查询拜访信息列表
      *
-     * @param id 客户关怀主键
-     * @return 客户关怀
-     */
-    @Override
-    public CustomerVisit selectCustomerVisitById(Long id) {
-        return customerVisitMapper.selectCustomerVisitById(id);
-    }
-
-    /**
-     * 查询客户关怀列表
-     *
-     * @param customerVisit 客户关怀
-     * @return 客户关怀
+     * @param customerVisit 拜访信息
+     * @return 拜访信息
      */
     @Override
     public List<CustomerVisit> selectCustomerVisitList(CustomerVisit customerVisit) {
-        return customerVisitMapper.selectCustomerVisitList(customerVisit);
-    }
-
-    /**
-     * 新增客户关怀
-     *
-     * @param customerVisit 客户关怀
-     * @return 结果
-     */
-    @Override
-    public int insertCustomerVisit(CustomerVisit customerVisit) {
-        customerVisit.setInputUserId(SecurityUtils.getUserId());
-        customerVisit.setEntryTime(new Date());
-        return customerVisitMapper.insertCustomerVisit(customerVisit);
+        return getBaseMapper().selectCustomerVisitList(customerVisit);
     }
 }
