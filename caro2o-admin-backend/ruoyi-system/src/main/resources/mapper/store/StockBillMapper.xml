@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.store.mapper.StockBillMapper">
+
+    <resultMap type="StockBill" id="StockBillResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="busiDate"    column="busi_date"    />
+        <result property="status"    column="status"    />
+        <result property="operateDate"    column="operate_date"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+  <sql id="selectStockBillVo">
+    select id, type, store_id, busi_date, status, operate_date, operator_id, remark from stock_bill
+  </sql>
+
+  <select id="selectStockBillList" parameterType="StockBill" resultMap="StockBillResult">
+    <include refid="selectStockBillVo"/>
+    <where>
+                  <if test="type != null "> and type = #{type}</if>
+                  <if test="storeId != null  and storeId != ''"> and store_id = #{storeId}</if>
+                  <if test="params.beginBusiDate != null and params.beginBusiDate != '' and params.endBusiDate != null and params.endBusiDate != ''"> and busi_date between #{params.beginBusiDate} and #{params.endBusiDate}</if>
+                  <if test="status != null "> and status = #{status}</if>
+    </where>
+  </select>
+</mapper>

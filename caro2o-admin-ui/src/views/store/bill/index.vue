@@ -11,13 +11,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="出入库时间" prop="busiDate">
-        <el-date-picker clearable
-          v-model="queryParams.busiDate"
-          type="date"
+      <el-form-item label="出入库时间">
+        <el-date-picker
+          v-model="daterangeBusiDate"
+          style="width: 240px"
           value-format="yyyy-MM-dd"
-          placeholder="请选择出入库时间">
-        </el-date-picker>
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
@@ -28,14 +31,6 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="录入时间" prop="operateDate">
-        <el-date-picker clearable
-          v-model="queryParams.operateDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择录入时间">
-        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -133,7 +128,7 @@
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -222,6 +217,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 备注时间范围
+      daterangeBusiDate: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -230,7 +227,6 @@ export default {
         storeId: null,
         busiDate: null,
         status: null,
-        operateDate: null,
       },
       // 表单参数
       form: {},
@@ -246,6 +242,11 @@ export default {
     /** 查询出入库单据列表 */
     getList() {
       this.loading = true;
+      this.queryParams.params = {};
+      if (null != this.daterangeBusiDate && '' != this.daterangeBusiDate) {
+        this.queryParams.params["beginBusiDate"] = this.daterangeBusiDate[0];
+        this.queryParams.params["endBusiDate"] = this.daterangeBusiDate[1];
+      }
       listBill(this.queryParams).then(response => {
         this.billList = response.rows;
         this.total = response.total;
@@ -278,6 +279,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.daterangeBusiDate = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
