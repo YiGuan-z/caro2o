@@ -62,8 +62,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['store:store:remove']"
-        >删除
-        </el-button>
+        >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -73,8 +72,7 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['store:store:export']"
-        >导出
-        </el-button>
+        >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -146,6 +144,7 @@ export default {
   name: "Store",
   data() {
     return {
+      //所有仓库的选择区
       allStoreList:[],
       // 遮罩层
       loading: true,

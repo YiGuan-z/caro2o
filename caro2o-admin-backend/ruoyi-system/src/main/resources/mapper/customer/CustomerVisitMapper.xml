@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.customer.mapper.CustomerVisitMapper">
+
+    <resultMap type="CustomerVisit" id="CustomerVisitResult">
+        <result property="id" column="id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="linkmanId" column="linkman_id"/>
+        <result property="visitType" column="visit_type"/>
+        <result property="visitReason" column="visit_reason"/>
+        <result property="content" column="content"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="linkmanName" column="linkman_name"/>
+        <result property="visitDate" column="visit_date"/>
+        <result property="inputUser" column="input_user"/>
+        <result property="inputTime" column="input_time"/>
+    </resultMap>
+    <sql id="selectCustomerVisitVo">
+        select id,
+               cv.customer_id,
+               cv.linkman_id,
+               cv.visit_type,
+               cv.visit_reason,
+               cv.content,
+               cv.visit_date,
+               cv.input_user,
+               cv.input_time,
+               sc.customer_name,
+               cl.likman as linkman_name
+        from customer_visit cv
+                 join customer sc on cv.customer_id = sc.id
+                 join customer_linkman cl on cv.linkmman_id = cl.id
+    </sql>
+
+    <select id="selectCustomerVisitList" parameterType="CustomerVisit" resultMap="CustomerVisitResult">
+        <include refid="selectCustomerVisitVo"/>
+        <where>
+            <if test="visitType != null ">and visit_type = #{visitType}</if>
+            <if test="visitReason != null  and visitReason != ''">and visit_reason like concat('%', #{visitReason},
+                '%')
+            </if>
+            <if test="visitDate != null ">and visit_date = #{visitDate}</if>
+            <if test="params.startVisitDate != null">
+                and visit_date >= #{startVisitDate}
+            </if>
+            <if test="params.endVisitDate != null">
+                and visit_date &lt;= #{endVisitDate}
+            </if>
+        </where>
+    </select>
+</mapper>
