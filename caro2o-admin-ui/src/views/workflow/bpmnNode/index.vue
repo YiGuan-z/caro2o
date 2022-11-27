@@ -24,7 +24,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['workflow:bpmnNode:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -35,7 +36,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['workflow:bpmnNode:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -46,7 +48,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['workflow:bpmnNode:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -56,17 +59,18 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['workflow:bpmnNode:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="bpmnNodeList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="流程信息" align="center" prop="bpmnInfoId" />
-      <el-table-column label="节点 Key" align="center" prop="nodeKey" />
-      <el-table-column label="节点描述" align="center" prop="nodeDesc" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="主键" align="center" prop="id"/>
+      <el-table-column label="流程信息" align="center" prop="bpmnInfoId"/>
+      <el-table-column label="节点 Key" align="center" prop="nodeKey"/>
+      <el-table-column label="节点描述" align="center" prop="nodeDesc"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -75,14 +79,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['workflow:bpmnNode:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['workflow:bpmnNode:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,14 +96,17 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="节点 Key" prop="nodeKey">
-          <el-input v-model="form.nodeKey" placeholder="请输入节点 Key" />
+          <el-input v-model="form.nodeKey" placeholder="请输入节点 Key"/>
         </el-form-item>
         <el-form-item label="节点描述" prop="nodeDesc">
-          <el-input v-model="form.nodeDesc" placeholder="请输入节点描述" />
+          <el-input v-model="form.nodeDesc" placeholder="请输入节点描述"/>
         </el-form-item>
         <el-form-item label="审核人员" prop="auditors">
           <el-select v-model="form.auditors" multiple filterable>
-            <el-option v-for="u in users" :value="u.userId" :label="u.nickName || u.userName"/>
+            <el-option v-for="u in users"
+                       :value="u.userId"
+                       :key="u.userId"
+                       :label="u.nickName || u.userName"/>
           </el-select>
         </el-form-item>
       </el-form>
@@ -110,8 +119,8 @@
 </template>
 
 <script>
-import { listBpmnNode, getBpmnNode, delBpmnNode, addBpmnNode, updateBpmnNode } from "@/api/workflow/bpmnNode";
-import { listAllUser } from '@/api/system/user'
+import {listBpmnNode, getBpmnNode, delBpmnNode, addBpmnNode, updateBpmnNode} from "@/api/workflow/bpmnNode";
+import {listAllUser} from '@/api/system/user'
 
 export default {
   name: "BpmnNode",
@@ -142,10 +151,10 @@ export default {
       // 表单校验
       rules: {
         nodeKey: [
-          { required: true, message: '请输入用户节点 Key', trigger: 'blur' }
+          {required: true, message: '请输入用户节点 Key', trigger: 'blur'}
         ],
         auditors: [
-          { required: true, message: '请选择审核人员', trigger: 'blur' }
+          {required: true, message: '请选择审核人员', trigger: 'blur'}
         ],
       },
       // 所有用户列表
@@ -198,7 +207,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -243,12 +252,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除流程定义节点编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除流程定义节点编号为"' + ids + '"的数据项？').then(function () {
         return delBpmnNode(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
