@@ -1,23 +1,47 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="拜访方式, 1 上门走访, 2 电话拜访" prop="visitType">
-        <el-select v-model="queryParams.visitType" placeholder="请选择拜访方式, 1 上门走访, 2 电话拜访" clearable>
+      <el-form-item label="出入库时间">
+        <el-date-picker
+          v-model="daterangeBusiDate"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <el-select v-model="queryParams.type" placeholder="请选择类型" clearable>
           <el-option
-            v-for="dict in dict.type.bus_customer_type"
+            v-for="dict in dict.type.sb_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="拜访时间" prop="visitDate">
-        <el-date-picker clearable
-          v-model="queryParams.visitDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择拜访时间">
-        </el-date-picker>
+
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+          <el-option
+            v-for="dict in dict.type.sb_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="仓库" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择仓库" clearable>
+          <el-option
+            v-for="dict in dict.type.sb_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -33,7 +57,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['customer:visit:add']"
+          v-hasPermi="['store:bill:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -44,7 +68,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['customer:visit:edit']"
+          v-hasPermi="['store:bill:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -55,7 +79,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['customer:visit:remove']"
+          v-hasPermi="['store:bill:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -65,55 +89,58 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['customer:visit:export']"
+          v-hasPermi="['store:bill:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="visitList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="billList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="唯一id" align="center" prop="id" />
-      <el-table-column label="客户id" align="center" prop="customerId" />
-      <el-table-column label="联系人id" align="center" prop="linkmanId" />
-      <el-table-column label="拜访方式, 1 上门走访, 2 电话拜访" align="center" prop="visitType">
+      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="类型" align="center" prop="type">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.bus_customer_type" :value="scope.row.visitType"/>
+          <dict-tag :options="dict.type.sb_type" :value="scope.row.type"/>
         </template>
       </el-table-column>
-      <el-table-column label="拜访原因" align="center" prop="visitReason" />
-      <el-table-column label="交流内容" align="center" prop="content" />
-      <el-table-column label="拜访时间" align="center" prop="visitDate" width="180">
+      <el-table-column label="仓库" align="center" prop="storeId" />
+      <el-table-column label="出入库时间" align="center" prop="busiDate" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.visitDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.busiDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="录入人" align="center" prop="inputUser" />
-      <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
+      <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
+          <dict-tag :options="dict.type.sb_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
+      <el-table-column label="录入时间" align="center" prop="operateDate" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.operateDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="录入人" align="center" prop="operatorId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['customer:visit:edit']"
-          >修改</el-button>
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['store:bill:edit']"
+            v-if="scope.row.status==0"
+          >作废</el-button>
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['customer:visit:remove']"
-          >删除</el-button>
+            icon="el-icon-edit"
+            @click="handleQuery(scope.row)"
+            v-hasPermi="['store:bill:remove']"
+          >查看</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -122,46 +149,50 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改拜访信息对话框 -->
+    <!-- 添加或修改出入库单据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="联系人id" prop="linkmanId">
-          <el-input v-model="form.linkmanId" placeholder="请输入联系人id" />
-        </el-form-item>
-        <el-form-item label="拜访方式, 1 上门走访, 2 电话拜访" prop="visitType">
-          <el-select v-model="form.visitType" placeholder="请选择拜访方式, 1 上门走访, 2 电话拜访">
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择类型">
             <el-option
-              v-for="dict in dict.type.bus_customer_type"
+              v-for="dict in dict.type.sb_type"
               :key="dict.value"
               :label="dict.label"
 :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="拜访原因" prop="visitReason">
-          <el-input v-model="form.visitReason" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="交流内容" prop="content">
-          <el-input v-model="form.content" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="拜访时间" prop="visitDate">
+        <el-form-item label="出入库时间" prop="busiDate">
           <el-date-picker clearable
-            v-model="form.visitDate"
+            v-model="form.busiDate"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择拜访时间">
+            placeholder="请选择出入库时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="录入人" prop="inputUser">
-          <el-input v-model="form.inputUser" placeholder="请输入录入人" />
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择状态">
+            <el-option
+              v-for="dict in dict.type.sb_status"
+              :key="dict.value"
+              :label="dict.label"
+:value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="录入时间" prop="inputTime">
+        <el-form-item label="录入时间" prop="operateDate">
           <el-date-picker clearable
-            v-model="form.inputTime"
+            v-model="form.operateDate"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="请选择录入时间">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="录入人" prop="operatorId">
+          <el-input v-model="form.operatorId" placeholder="请输入录入人" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -173,11 +204,11 @@
 </template>
 
 <script>
-import { listVisit, getVisit, delVisit, addVisit, updateVisit } from "@/api/customer/visit";
+import { listBill, getBill, delBill, addBill, updateBill } from "@/api/store/bill";
 
 export default {
-  name: "Visit",
-  dicts: ['bus_customer_type'],
+  name: "Bill",
+  dicts: ['sb_type', 'sb_status'],
   data() {
     return {
       // 遮罩层
@@ -192,19 +223,22 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 拜访信息表格数据
-      visitList: [],
+      // 出入库单据表格数据
+      billList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      // 备注时间范围
+      daterangeBusiDate: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        visitType: null,
-        visitReason: null,
-        visitDate: null,
+        type: null,
+        storeId: null,
+        busiDate: null,
+        status: null,
       },
       // 表单参数
       form: {},
@@ -217,11 +251,16 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询拜访信息列表 */
+    /** 查询出入库单据列表 */
     getList() {
       this.loading = true;
-      listVisit(this.queryParams).then(response => {
-        this.visitList = response.rows;
+      this.queryParams.params = {};
+      if (null != this.daterangeBusiDate && '' != this.daterangeBusiDate) {
+        this.queryParams.params["beginBusiDate"] = this.daterangeBusiDate[0];
+        this.queryParams.params["endBusiDate"] = this.daterangeBusiDate[1];
+      }
+      listBill(this.queryParams).then(response => {
+        this.billList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -235,14 +274,13 @@ export default {
     reset() {
       this.form = {
         id: null,
-        customerId: null,
-        linkmanId: null,
-        visitType: null,
-        visitReason: null,
-        content: null,
-        visitDate: null,
-        inputUser: null,
-        inputTime: null
+        type: null,
+        storeId: null,
+        busiDate: null,
+        status: null,
+        operateDate: null,
+        operatorId: null,
+        remark: null
       };
       this.resetForm("form");
     },
@@ -253,6 +291,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.daterangeBusiDate = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -266,16 +305,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加拜访信息";
+      this.title = "添加出入库单据";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getVisit(id).then(response => {
+      getBill(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改拜访信息";
+        this.title = "修改出入库单据";
       });
     },
     /** 提交按钮 */
@@ -283,13 +322,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateVisit(this.form).then(response => {
+            updateBill(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addVisit(this.form).then(response => {
+            addBill(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -301,8 +340,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除拜访信息编号为"' + ids + '"的数据项？').then(function() {
-        return delVisit(ids);
+      this.$modal.confirm('是否确认删除出入库单据编号为"' + ids + '"的数据项？').then(function() {
+        return delBill(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -310,9 +349,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('customer/visit/export', {
+      this.download('store/bill/export', {
         ...this.queryParams
-      }, `visit_${new Date().getTime()}.xlsx`)
+      }, `bill_${new Date().getTime()}.xlsx`)
     }
   }
 };
