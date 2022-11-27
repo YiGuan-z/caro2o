@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="regAddr"    column="reg_addr"    />
         <result property="inputTime"    column="input_time"    />
         <result property="inputUser"    column="input_user"    />
+
     </resultMap>
 
   <sql id="selectCustomerVo">

@@ -106,7 +106,9 @@
           <dict-tag :options="dict.type.sys_customer_status" :value="scope.row.openState"/>
         </template>
       </el-table-column>
-      <el-table-column label="所属省份" align="center" prop="province"/>
+      <el-table-column label="所属省份" align="center" prop="province">
+
+      </el-table-column>
       <el-table-column label="注册资本,(万元)" align="center" prop="regCapital"/>
       <el-table-column label="所属行业" align="center" prop="industry"/>
       <el-table-column label="经营范围" align="center" prop="scope"/>
@@ -130,6 +132,7 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-info"
             @click="handleSelect(scope.row)"
             v-hasPermi="['system:customer:selectById']"
           >详情
@@ -160,11 +163,10 @@
           </el-descriptions-item>
           <el-descriptions-item label="经营状态">
               <dict-tag :options="dict.type.sys_customer_status" :value="selectInfo.openState"/>
-<!--            {{selectInfo.openState}}-->
           </el-descriptions-item>
           <el-descriptions-item label="所属省份">
-            <dict-tag :options="city" :value="selectInfo.openState"/>
-
+            <tag :options="city" :value="selectInfo.province"/>
+<!--            {{selectInfo.province}}-->
           </el-descriptions-item>
           <el-descriptions-item label="注册资本">
             {{selectInfo.regCapital}}
@@ -242,7 +244,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="注册资本,(万元)" prop="regCapital">
+        <el-form-item label="注册资本" prop="regCapital">
           <el-input type="number" v-model="form.regCapital" placeholder="请输入注册资本,(万元)"/>
         </el-form-item>
 
@@ -339,8 +341,15 @@
     },
     created() {
       this.getList();
+      this.getCity();
     },
     methods: {
+
+      getCity(){
+
+        console.log(this.city)
+      },
+
       /** 查询客户信息列表 */
       getList() {
         this.loading = true;
