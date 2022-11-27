@@ -7,13 +7,14 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.utils.bean.Entry;
 
 /**
  * Entity基类
  *
  * @author ruoyi
  */
-public class BaseEntity implements Serializable
+public class BaseEntity extends Entry implements Serializable
 {
     private static final long serialVersionUID = 1L;
 

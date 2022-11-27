@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.workflow.mapper.WarehouseMapper">
+
+    <resultMap type="Warehouse" id="WarehouseResult">
+        <result property="id"    column="id"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="storeAddress"    column="store_address"    />
+        <result property="state"    column="state"    />
+    </resultMap>
+
+  <sql id="selectWarehouseVo">
+    select id, store_name, store_address, state from store
+  </sql>
+
+  <select id="selectWarehouseList" parameterType="Warehouse" resultMap="WarehouseResult">
+    <include refid="selectWarehouseVo"/>
+    <where>
+                  <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+                  <if test="storeAddress != null  and storeAddress != ''"> and store_address = #{storeAddress}</if>
+    </where>
+  </select>
+</mapper>

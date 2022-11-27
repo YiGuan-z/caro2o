@@ -1,24 +1,13 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="关键字" prop="goodsId">
+      <el-form-item label="关键字" prop="goodsName">
         <el-input
-          v-model="queryParams.goodsId"
-          placeholder="请输入查找关键字"
+          v-model="queryParams.keyword"
+          placeholder="请输入关键字"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="仓库" prop="storeId">
-<!--        TODO 这里需要仓库API查出所有仓库-->
-        <el-select v-model="queryParams.storeId" clearable>
-          <el-option value="" label=""></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="分类" prop="classify">
-        <el-select v-model="queryParams.classify" clearable>
-          <el-option value="" label=""></el-option>
-        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -34,7 +23,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['store:store:add']"
+          v-hasPermi="['system:goods:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -45,7 +34,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['store:store:edit']"
+          v-hasPermi="['system:goods:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -56,7 +45,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['store:store:remove']"
+          v-hasPermi="['system:goods:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -66,20 +55,21 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['store:store:export']"
+          v-hasPermi="['system:goods:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="storeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="物品" align="center" prop="goodsId" />
-      <el-table-column label="名称" align="center" prop="goodsId" />
-      <el-table-column label="品牌" align="center" prop="goodsId" />
-      <el-table-column label="分类" align="center" prop="amounts" />
-      <el-table-column label="数量" align="center" prop="amounts" />
+      <el-table-column label="物品名称" align="center" prop="goodsName" />
+      <el-table-column label="封面" align="center" prop="goodsCover" />
+      <el-table-column label="分类" align="center" prop="categoryId" />
+      <el-table-column label="品牌" align="center" prop="brand" />
+      <el-table-column label="规格" align="center" prop="spec" />
+      <el-table-column label="描述" align="center" prop="goodsDesc" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -87,15 +77,15 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['store:store:edit']"
-          >编辑</el-button>
+            v-hasPermi="['system:goods:edit']"
+          >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['store:store:remove']"
-          >出入库明细</el-button>
+            v-hasPermi="['system:goods:remove']"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,17 +98,26 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改物品库存对话框 -->
+    <!-- 添加或修改物品信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="物品id" prop="goodsId">
-          <el-input v-model="form.goodsId" placeholder="请输入物品id" />
+        <el-form-item label="物品名称" prop="goodsName">
+          <el-input v-model="form.goodsName" placeholder="请输入物品名称" />
         </el-form-item>
-        <el-form-item label="仓库id" prop="storeId">
-          <el-input v-model="form.storeId" placeholder="请输入仓库id" />
+        <el-form-item label="封面" prop="goodsCover">
+          <el-input v-model="form.goodsCover" placeholder="请输入封面" />
         </el-form-item>
-        <el-form-item label="库存数量" prop="amounts">
-          <el-input v-model="form.amounts" placeholder="请输入库存数量" />
+        <el-form-item label="分类" prop="categoryId">
+          <el-input v-model="form.categoryId" placeholder="请输入分类" />
+        </el-form-item>
+        <el-form-item label="品牌" prop="brand">
+          <el-input v-model="form.brand" placeholder="请输入品牌" />
+        </el-form-item>
+        <el-form-item label="规格" prop="spec">
+          <el-input v-model="form.spec" placeholder="请输入规格" />
+        </el-form-item>
+        <el-form-item label="描述" prop="goodsDesc">
+          <el-input v-model="form.goodsDesc" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -130,10 +129,10 @@
 </template>
 
 <script>
-import { listStore, getStore, delStore, addStore, updateStore } from "@/api/store/goods_store";
+import { listGoods, getGoods, delGoods, addGoods, updateGoods } from "@/api/store/goods";
 
 export default {
-  name: "Store",
+  name: "Goods",
   data() {
     return {
       // 遮罩层
@@ -148,8 +147,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 物品库存表格数据
-      storeList: [],
+      // 物品信息表格数据
+      goodsList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -158,14 +157,24 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        goodsId: null,
-        storeId: null,
-        amounts: null
+        goodsName: null,
+        brand: null,
+        spec: null,
+        goodsDesc: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        goodsName: [
+          { required: true, message: "物品名称不能为空", trigger: "blur" }
+        ],
+        goodsCover: [
+          { required: true, message: "封面不能为空", trigger: "blur" }
+        ],
+        categoryId: [
+          { required: true, message: "分类不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -173,11 +182,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询物品库存列表 */
+    /** 查询物品信息列表 */
     getList() {
       this.loading = true;
-      listStore(this.queryParams).then(response => {
-        this.storeList = response.rows;
+      listGoods(this.queryParams).then(response => {
+        this.goodsList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -191,9 +200,12 @@ export default {
     reset() {
       this.form = {
         id: null,
-        goodsId: null,
-        storeId: null,
-        amounts: null
+        goodsName: null,
+        goodsCover: null,
+        categoryId: null,
+        brand: null,
+        spec: null,
+        goodsDesc: null
       };
       this.resetForm("form");
     },
@@ -217,16 +229,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加物品库存";
+      this.title = "添加物品信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getStore(id).then(response => {
+      getGoods(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改物品库存";
+        this.title = "修改物品信息";
       });
     },
     /** 提交按钮 */
@@ -234,13 +246,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateStore(this.form).then(response => {
+            updateGoods(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addStore(this.form).then(response => {
+            addGoods(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -252,8 +264,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除物品库存编号为"' + ids + '"的数据项？').then(function() {
-        return delStore(ids);
+      this.$modal.confirm('是否确认删除物品信息编号为"' + ids + '"的数据项？').then(function() {
+        return delGoods(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -261,9 +273,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('store/store/export', {
+      this.download('system/goods/export', {
         ...this.queryParams
-      }, `store_${new Date().getTime()}.xlsx`)
+      }, `goods_${new Date().getTime()}.xlsx`)
     }
   }
 };
