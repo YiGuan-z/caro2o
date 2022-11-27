@@ -20,12 +20,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属省份" prop="province">
-        <el-select v-model="queryParams.province" placeholder="请选择">
+        <el-select v-model="form.province" placeholder="请选择" clearable>
           <el-option
-            v-for="item in city"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="dict in dict.type.sys_city_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          >
           </el-option>
         </el-select>
       </el-form-item>
@@ -67,18 +68,18 @@
         >修改
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:customer:remove']"
-        >删除
-        </el-button>
-      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="danger"-->
+      <!--          plain-->
+      <!--          icon="el-icon-delete"-->
+      <!--          size="mini"-->
+      <!--          :disabled="multiple"-->
+      <!--          @click="handleDelete"-->
+      <!--          v-hasPermi="['system:customer:remove']"-->
+      <!--        >删除-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -109,13 +110,14 @@
         </template>
       </el-table-column>
       <el-table-column label="所属省份" align="center" prop="province">
-
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_city_status" :value="scope.row.province"/>
+        </template>
       </el-table-column>
       <el-table-column label="注册资本,(万元)" align="center" prop="regCapital"/>
       <el-table-column label="所属行业" align="center" prop="industry"/>
       <el-table-column label="经营范围" align="center" prop="scope"/>
       <el-table-column label="注册地址" align="center" prop="regAddr"/>
-
       <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="营销人" align="center" prop="userMarket"/>
       <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
@@ -151,7 +153,7 @@
     />
 
     <el-dialog :title="title" :visible.sync="opens" width="700px" append-to-body>
-      <el-form ref="form" :model="selectInfo"  label-width="100px">
+      <el-form ref="form" :model="selectInfo" label-width="100px">
         <el-descriptions title="客户信息">
           <el-descriptions-item label="企业名称">
             {{selectInfo.customerName}}
@@ -163,17 +165,16 @@
             {{selectInfo.registerDate}}
           </el-descriptions-item>
           <el-descriptions-item label="经营状态">
-              <dict-tag :options="dict.type.sys_customer_status" :value="selectInfo.openState"/>
+            <dict-tag :options="dict.type.sys_customer_status" :value="selectInfo.openState"/>
           </el-descriptions-item>
           <el-descriptions-item label="所属省份">
-            <tag :options="city" :value="selectInfo.province"/>
-<!--            {{selectInfo.province}}-->
+            <dict-tag :options="dict.type.sys_city_status" :value="selectInfo.openState"/>
           </el-descriptions-item>
           <el-descriptions-item label="注册资本">
             {{selectInfo.regCapital}}
           </el-descriptions-item>
           <el-descriptions-item label="所属行业">
-            {{selectInfo.openState}}
+            {{selectInfo.industry}}
           </el-descriptions-item>
           <el-descriptions-item label="经营范围">
             {{selectInfo.scope}}
@@ -189,19 +190,19 @@
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="企业名称" prop="customerName">
               <el-input v-model="form.customerName" placeholder="请输入企业名称"/>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="法定代表人" prop="legalLeader">
               <el-input v-model="form.legalLeader" placeholder="请输入法定代表人"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="成立时间" prop="registerDate">
               <el-date-picker clearable
                               v-model="form.registerDate"
@@ -211,9 +212,9 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="经营状态" prop="openState">
-              <el-select v-model="form.openState" placeholder="请选择经营状态">
+              <el-select v-model="form.openState" placeholder="请选择经营状态" clearable>
                 <el-option
                   v-for="dict in dict.type.sys_customer_status"
                   :key="dict.value"
@@ -226,19 +227,20 @@
         </el-row>
 
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="所属省份" prop="province">
-              <el-select v-model="form.province" placeholder="请选择">
+              <el-select v-model="form.province" placeholder="请选择" clearable>
                 <el-option
-                  v-for="item in city"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="dict in dict.type.sys_city_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
               <el-input v-model="form.industry" placeholder="请输入所属行业"/>
             </el-form-item>
@@ -270,22 +272,10 @@
 
   export default {
     name: "Customer",
-    dicts: ['sys_customer_status'],
+    dicts: ['sys_customer_status', 'sys_city_status'],
     data() {
       return {
-        //所属城市
-        city: [{
-          value: '1',
-          label: '成都'
-        }, {
-          value: '2',
-          label: '上海'
-        }, {
-          value: '3',
-          label: '南京'
-        }],
-
-        selectInfo:{},
+        selectInfo: {},
         // 遮罩层
         loading: true,
         // 选中数组
@@ -304,7 +294,7 @@
         title: "",
         // 是否显示弹出层
         open: false,
-        opens:false,
+        opens: false,
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -316,7 +306,7 @@
         },
         // 表单参数
         form: {},
-        particulars:{},
+        particulars: {},
         // 表单校验
         rules: {
           customerName: [
@@ -337,19 +327,17 @@
           industry: [
             {required: true, message: "所属行业不能为空", trigger: "blur"}
           ],
+          regCapital: [
+            {required: true, message: "注册资金不能为空", trigger: "blur"}
+          ],
         }
       };
     },
     created() {
       this.getList();
-      this.getCity();
     },
     methods: {
 
-      getCity(){
-
-        console.log(this.city)
-      },
 
       /** 查询客户信息列表 */
       getList() {
@@ -436,8 +424,7 @@
           }
         });
       },
-
-      //
+      //详情按钮查看数据
       handleSelect(row) {
         this.opens = true;
         this.selectInfo = {...row}

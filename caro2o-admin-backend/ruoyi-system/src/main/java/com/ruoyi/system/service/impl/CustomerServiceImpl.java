@@ -49,7 +49,6 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         entity.setUserMarket(loginUser);
         entity.setInputTime(new Date());
         int insert = getBaseMapper().insert(entity);
-
         return insert > 0;
     }
 
@@ -57,7 +56,6 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
     public boolean updateById(Customer entity) {
         String loginUser = SecurityUtils.getUsername();
         entity.setInputUserName(loginUser);
-
         int i = getBaseMapper().updateById(entity);
 
         return i > 0;
