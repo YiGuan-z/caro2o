@@ -8,7 +8,30 @@ export function listCategory(query) {
     params: query
   })
 }
+//获取物品分类信息的树结构
 export const listCategoryTree=()=>request({url:'/workflow/category/listData',method:'get'})
+const categoryOptionData=(node)=>{
+  const newObj={
+    id:parseInt(node.id),
+    label:node.label,
+    children:node.children
+  }
+  if (node.children.length !== 0) {
+    for (const node of node.children){
+      newObj.children = categoryOptionData(node);
+    }
+  }
+  return newObj
+}
+
+export const getCateGoryOptionData=(nodes)=>{
+  const ret=[]
+  nodes.forEach(node=>{
+    const data = categoryOptionData(node);
+    ret.push(data)
+  })
+  return ret;
+}
 
 // 查询物品分类信息详细
 export function getCategory(id) {
