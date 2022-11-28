@@ -86,7 +86,7 @@
     <el-table v-loading="loading" :data="linkmaneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
-      <el-table-column label="客户" align="center" prop="customer.legalLeader"/>
+      <el-table-column label="客户" align="center" prop="legalLeader"/>
       <el-table-column label="联系人名字" align="center" prop="linkman"/>
       <el-table-column label="性别" align="center" prop="gender">
         <template v-slot="scope">
@@ -142,9 +142,9 @@
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-          <el-col span="12">
-            <el-form-item label="所属客户" prop="customer">
-              <el-select v-model="form.customer" placeholder="请选择">
+          <el-col :span="12">
+            <el-form-item label="所属客户" prop="customerName">
+              <el-select v-model="form.customerName" placeholder="请选择">
                 <el-option
                   v-for="item in customers"
                   :key="item.id"
@@ -154,14 +154,14 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="联系人名字" prop="linkman">
               <el-input v-model="form.linkman" placeholder="请输入联系人名字"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="性别" prop="gender">
               <template>
                 <el-radio v-model="form.gender" :label="1">男</el-radio>
@@ -169,26 +169,26 @@
               </template>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="年龄" prop="age">
               <el-input type="number" v-model="form.age" placeholder="请输入年龄"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="联系人电话" prop="phone">
               <el-input v-model="form.phone" placeholder="请输入联系人电话"/>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="职位" prop="position">
               <el-input v-model="form.position" placeholder="请输入职位"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="任职状态" prop="positionState">
               <el-select v-model="form.positionState" placeholder="请选择任职状态">
                 <el-option
@@ -200,7 +200,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <el-form-item label="部门" prop="department">
               <el-input v-model="form.department" placeholder="请输入部门"/>
             </el-form-item>

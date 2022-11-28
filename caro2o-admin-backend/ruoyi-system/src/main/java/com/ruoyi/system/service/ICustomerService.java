@@ -20,4 +20,6 @@ public interface ICustomerService extends IService<Customer> {
      */
     public List<Customer> selectCustomerList(Customer customer);
 
+    public Customer selectUserById(String name);
+
 }

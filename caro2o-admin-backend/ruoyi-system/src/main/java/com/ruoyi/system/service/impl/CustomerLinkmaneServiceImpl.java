@@ -3,9 +3,11 @@ package com.ruoyi.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.Customer;
 import com.ruoyi.system.domain.CustomerLinkmane;
 import com.ruoyi.system.mapper.CustomerLinkmaneMapper;
 import com.ruoyi.system.service.ICustomerLinkmaneService;
+import com.ruoyi.system.service.ICustomerService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class CustomerLinkmaneServiceImpl extends ServiceImpl<CustomerLinkmaneMap
 
     @Autowired
     private ISysUserService sysUserService;
+    @Autowired
+    private ICustomerService customerService;
 
 
     /**

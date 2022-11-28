@@ -5,7 +5,7 @@
 <mapper namespace="com.ruoyi.system.mapper.CustomerLinkmaneMapper">
     <resultMap type="com.ruoyi.system.domain.CustomerLinkmane" id="CustomerLinkmaneResult">
         <result property="id" column="id"/>
-<!--        <result property="customer" column="customer_id"/>-->
+        <result property="customerName" column="customer_id"/>
         <result property="linkman" column="linkman"/>
         <result property="gender" column="gender"/>
         <result property="age" column="age"/>
@@ -15,10 +15,27 @@
         <result property="department" column="department"/>
         <result property="inputUser" column="input_user"/>
         <result property="inputTime" column="input_time"/>
-        <association property="customer" columnPrefix="c_" javaType="com.ruoyi.system.domain.Customer"
-                     resultMap="com.ruoyi.system.mapper.CustomerMapper.CustomerResult"/>
+        <result property="legalLeader" column="legal_leader"/>
 
     </resultMap>
+
+<!--    <sql id="selectCustomerLinkmaneVo">-->
+<!--            select-->
+<!--             cl.id,-->
+<!--             cl.customer_id,-->
+<!--             cl.linkman,-->
+<!--             cl.gender,-->
+<!--             cl.age,-->
+<!--             cl.phone,-->
+<!--             cl.position,-->
+<!--             cl.position_state,-->
+<!--             cl.department,-->
+<!--             cl.input_user,-->
+<!--             cl.input_time,-->
+<!--             c.id c_id,c.legal_leader c_legal_leader-->
+<!--             from customer_linkmane cl join customer c on cl.customer_id = c.id-->
+
+<!--    </sql>-->
 
     <sql id="selectCustomerLinkmaneVo">
             select
@@ -32,17 +49,16 @@
              cl.position_state,
              cl.department,
              cl.input_user,
+             cl.input_username,
              cl.input_time,
-             c.id c_id,c.legal_leader c_legal_leader
-             from customer_linkmane cl join customer c on cl.customer_id = c.id
-
+             c.legal_leader
+             from customer_linkmane cl left join customer c on  cl.customer_id = c.id
     </sql>
-
     <select id="selectCustomerLinkmaneList" parameterType="CustomerLinkmane" resultMap="CustomerLinkmaneResult">
         <include refid="selectCustomerLinkmaneVo"/>
         <where>
-            <if test="customer != null  and customer != ''">
-                and cl.customer_id = #{customer}
+            <if test="customerName != null  and customerName != ''">
+                and cl.customer_id = #{customerName}
             </if>
             <if test="linkman != null  and linkman != ''">
                 and cl.linkman like concat('%', #{linkman}, '%')

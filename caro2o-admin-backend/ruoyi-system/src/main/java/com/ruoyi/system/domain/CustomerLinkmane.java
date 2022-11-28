@@ -33,7 +33,10 @@ public class CustomerLinkmane extends BaseEntity
     /** 客户 */
     @Excel(name = "客户")
     @TableField("customer_id")
-    private Customer customer;
+    private String customerName;
+
+    @TableField(exist = false)
+    private String legalLeader;
 
     /** 联系人名字 */
     @Excel(name = "联系人名字")
