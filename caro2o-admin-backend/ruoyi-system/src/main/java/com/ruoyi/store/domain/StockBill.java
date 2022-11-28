@@ -2,6 +2,8 @@ package com.ruoyi.store.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -82,4 +84,7 @@ public class StockBill extends BaseEntity
     @Excel(name = "备注")
     @TableField("remark")
     private String remark;
+
+    @TableField(exist = false)
+    private List<StockBillItem> itemFrom;
 }

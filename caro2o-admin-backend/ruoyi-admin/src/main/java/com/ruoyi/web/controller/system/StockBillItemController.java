@@ -83,6 +83,7 @@ public class StockBillItemController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
-        return toAjax(stockBillItemService.removeBatchByIds(Arrays.asList(ids)));
+        stockBillItemService.removeBatchByIds(Arrays.asList(ids));
+        return AjaxResult.success(ids[0]);
     }
 }

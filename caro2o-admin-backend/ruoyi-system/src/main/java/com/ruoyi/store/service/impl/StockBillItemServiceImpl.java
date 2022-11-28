@@ -30,4 +30,14 @@ public class StockBillItemServiceImpl extends ServiceImpl<StockBillItemMapper, S
         return stockBillItems;
     }
 
+    @Override
+    public void updateList(List<StockBillItem> itemFrom) {
+        baseMapper.updateList(itemFrom);
+    }
+
+    @Override
+    public void deleteBillId(String id) {
+        baseMapper.deleteBillId(id);
+    }
+
 }
