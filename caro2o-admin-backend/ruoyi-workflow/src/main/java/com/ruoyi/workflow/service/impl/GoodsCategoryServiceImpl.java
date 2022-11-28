@@ -5,13 +5,19 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.Assert;
+import com.ruoyi.store.service.IGoodsService;
+import com.ruoyi.store.service.impl.GoodsServiceImpl;
 import io.swagger.models.auth.In;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.workflow.mapper.GoodsCategoryMapper;
 import com.ruoyi.workflow.domain.GoodsCategory;
 import com.ruoyi.workflow.service.IGoodsCategoryService;
+
+import javax.sql.rowset.serial.SerialException;
 
 /**
  * 物品分类信息Service业务层处理
@@ -21,7 +27,8 @@ import com.ruoyi.workflow.service.IGoodsCategoryService;
  */
 @Service
 public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, GoodsCategory> implements IGoodsCategoryService {
-	
+	@Autowired
+	private IGoodsService iGoodsService;
 	/**
 	 * 查询物品分类信息列表
 	 *
@@ -78,8 +85,14 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	//删除分类时如当前分类连同子分类下的商品还有库存则不可以删除
 	@Override
 	public boolean removeBatchByIds(Collection<?> list) {
-		list.forEach(id -> {
-		
+		boolean ok=!iGoodsService.selectCategoryGoods(list);
+		if (ok) throw new ServiceException("该商品还有库存");
+		boolean ret=false;
+		list.forEach((key)->{
+			final GoodsCategory category = getById((String) key);
+			for (GoodsCategory temp=category;category.getChildren().size()!=0;temp=category.getChildren().remove(0)){
+				baseMapper.deleteById(temp.getId());
+			}
 		});
 		return true;
 	}

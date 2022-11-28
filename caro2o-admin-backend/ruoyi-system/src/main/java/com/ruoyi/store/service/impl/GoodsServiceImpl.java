@@ -8,6 +8,7 @@ import com.ruoyi.store.mapper.GoodsMapper;
 import com.ruoyi.store.service.IGoodsService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,8 +35,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public Goods selectById(String id) {
         return baseMapper.selectByGoodsId(id);
     }
-    
-    @Override
+	@Override
+	public boolean selectCategoryGoods(Collection<?> list) {
+		return baseMapper.selectCategoryGoods(list)==0;
+	}
+	
+	@Override
     public boolean save(Goods entity) {
         Assert.assertTrue(entity,(e)-> e.
                 getCategoryId()!=null &&
