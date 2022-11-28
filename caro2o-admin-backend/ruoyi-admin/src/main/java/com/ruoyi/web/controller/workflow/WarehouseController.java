@@ -41,6 +41,14 @@ public class WarehouseController extends BaseController
         return getDataTable(list);
     }
 
+    @PreAuthorize("@ss.hasPermi('workflow:warehouse:list')")
+    @GetMapping("/listAll")
+    public TableDataInfo list()
+    {
+        List<Warehouse> list = warehouseService.list();
+        return getDataTable(list);
+    }
+
     /**
      * 导出仓库信息列表
      */

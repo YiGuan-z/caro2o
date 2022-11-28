@@ -1,9 +1,11 @@
 package com.ruoyi.store.service.impl;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -40,5 +42,19 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
         wrapper.in(StockBill::getId,list);
         int update = baseMapper.update(null, wrapper);
         return update>0;
+    }
+
+    @Override
+    public boolean save(StockBill entity) {
+        entity.setType(0);
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(StockBill entity) {
+        entity.setType(1);
+        entity.setOperatorId(SecurityUtils.getUserId());
+        entity.setOperateDate(new Date());
+        return super.updateById(entity);
     }
 }

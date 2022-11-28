@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.Customer;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/system/linkmane")
-public class CustomerLinkmaneController extends BaseController
-{
+public class CustomerLinkmaneController extends BaseController {
     @Autowired
     private ICustomerLinkmaneService customerLinkmaneService;
 
@@ -40,12 +41,19 @@ public class CustomerLinkmaneController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:linkmane:list')")
     @GetMapping("/list")
-    public TableDataInfo list(CustomerLinkmane customerLinkmane)
-    {
+    public TableDataInfo list(CustomerLinkmane customerLinkmane) {
         startPage();
         List<CustomerLinkmane> list = customerLinkmaneService.selectCustomerLinkmaneList(customerLinkmane);
         return getDataTable(list);
     }
+
+
+    @GetMapping("/listAll")
+    public AjaxResult listAll(CustomerLinkmane customerLinkmane) {
+        List<CustomerLinkmane> customerLinkmanes = customerLinkmaneService.selectCustomerLinkmaneList(customerLinkmane);
+        return AjaxResult.success(customerLinkmanes);
+    }
+
 
     /**
      * 导出客户联系人列表
@@ -53,8 +61,7 @@ public class CustomerLinkmaneController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:linkmane:export')")
     @Log(title = "客户联系人", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, CustomerLinkmane customerLinkmane)
-    {
+    public void export(HttpServletResponse response, CustomerLinkmane customerLinkmane) {
         List<CustomerLinkmane> list = customerLinkmaneService.selectCustomerLinkmaneList(customerLinkmane);
         ExcelUtil<CustomerLinkmane> util = new ExcelUtil<CustomerLinkmane>(CustomerLinkmane.class);
         util.exportExcel(response, list, "客户联系人数据");
@@ -65,8 +72,7 @@ public class CustomerLinkmaneController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:linkmane:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") String id) {
         return AjaxResult.success(customerLinkmaneService.getById(id));
     }
 
@@ -76,8 +82,7 @@ public class CustomerLinkmaneController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:linkmane:add')")
     @Log(title = "客户联系人", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody CustomerLinkmane customerLinkmane)
-    {
+    public AjaxResult add(@RequestBody CustomerLinkmane customerLinkmane) {
         return toAjax(customerLinkmaneService.save(customerLinkmane));
     }
 
@@ -87,8 +92,7 @@ public class CustomerLinkmaneController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:linkmane:edit')")
     @Log(title = "客户联系人", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody CustomerLinkmane customerLinkmane)
-    {
+    public AjaxResult edit(@RequestBody CustomerLinkmane customerLinkmane) {
         return toAjax(customerLinkmaneService.updateById(customerLinkmane));
     }
 
@@ -97,9 +101,8 @@ public class CustomerLinkmaneController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:linkmane:remove')")
     @Log(title = "客户联系人", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable String[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(customerLinkmaneService.removeBatchByIds(Arrays.asList(ids)));
     }
 }
