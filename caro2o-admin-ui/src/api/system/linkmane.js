@@ -9,6 +9,14 @@ export function listLinkmane(query) {
   })
 }
 
+export function listAll() {
+  return request({
+    url: '/system/linkmane/listAll',
+    method: 'get',
+  })
+}
+
+
 // 查询客户联系人详细
 export function getLinkmane(id) {
   return request({
