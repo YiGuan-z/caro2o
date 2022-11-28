@@ -8,6 +8,7 @@ export function listCategory(query) {
     params: query
   })
 }
+export const listCategoryTree=()=>request({url:'/workflow/category/listData',method:'get'})
 
 // 查询物品分类信息详细
 export function getCategory(id) {

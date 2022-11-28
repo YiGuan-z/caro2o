@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, GoodsCategory> implements IGoodsCategoryService {
 	@Autowired
 	private IGoodsService iGoodsService;
+	
 	/**
 	 * 查询物品分类信息列表
 	 *
@@ -45,14 +46,18 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	}
 	
 	public List<GoodsCategory> buildTreeData(List<GoodsCategory> data) {
-		List<GoodsCategory> ret=new ArrayList<>(10);
-		final Map<String,GoodsCategory> map = data.stream()
+		List<GoodsCategory> ret = new ArrayList<>(10);
+		final Map<String, GoodsCategory> map = data.stream()
+				.filter(node -> {
+					node.setLabel(node.getCategoryName());
+					return true;
+				})
 				.collect(Collectors.toMap(GoodsCategory::getBusiPath, goods -> goods));
-		map.forEach((key,node)->{
+		map.forEach((key, node) -> {
 			final int nodeLenght = key.split(":").length;
-			if (nodeLenght==1){
+			if (nodeLenght == 1) {
 				ret.add(node);
-			}else {
+			} else {
 				final String parentKey = key.substring(0, key.length() - 2);
 				final GoodsCategory goodsCategory = map.get(parentKey);
 				goodsCategory.getChildren().add(node);
@@ -71,8 +76,8 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 		final GoodsCategory rootNode = categories.get(0);
 		final Map<String, GoodsCategory> map = categories.stream().collect(Collectors.toMap(GoodsCategory::getBusiPath, goods -> goods));
 		
-		categories.stream().skip(1).forEach(node-> {
-			String key=node.getBusiPath().substring(0,node.getBusiPath().length()-2);
+		categories.stream().skip(1).forEach(node -> {
+			String key = node.getBusiPath().substring(0, node.getBusiPath().length() - 2);
 			map.get(key).getChildren().add(node);
 		});
 		return rootNode;
@@ -83,12 +88,12 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	//删除分类时如当前分类连同子分类下的商品还有库存则不可以删除
 	@Override
 	public boolean removeBatchByIds(Collection<?> list) {
-		boolean ok=!iGoodsService.selectCategoryGoods(list);
+		boolean ok = !iGoodsService.selectCategoryGoods(list);
 		if (ok) throw new ServiceException("该商品还有库存");
-		boolean ret=false;
-		list.forEach((key)->{
+		boolean ret = false;
+		list.forEach((key) -> {
 			final GoodsCategory category = getById((String) key);
-			for (GoodsCategory temp=category;category.getChildren().size()!=0;temp=category.getChildren().remove(0)){
+			for (GoodsCategory temp = category; category.getChildren().size() != 0; temp = category.getChildren().remove(0)) {
 				baseMapper.deleteById(temp.getId());
 			}
 		});

@@ -3,22 +3,26 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="分类名称" prop="categoryName">
         <el-input
-            v-model="queryParams.categoryName"
-            placeholder="请输入分类名称"
-            clearable
-            @keyup.enter.native="handleQuery"
+          v-model="queryParams.categoryName"
+          placeholder="请输入分类名称"
+          clearable
+          @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="上级分类" prop="parentId">
-        <el-cascader :options="options" clearable>
+        <el-cascader :options="options"
+                     clearable
+                     :props="props"
+                     collapse-tags
+        >
           <template slot-scope="{ node, data }">
             <span>{{ data.label }}</span>
             <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
           </template>
         </el-cascader>
-        <!--        <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
-                  @keyup.enter.native="handleQuery"
-                </el-select>-->
+        <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
+          @keyup.enter.native="handleQuery"
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -29,22 +33,22 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            @click="handleAdd"
-            v-hasPermi="['workflow:category:add']"
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['workflow:category:add']"
         >新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-            type="info"
-            plain
-            icon="el-icon-sort"
-            size="mini"
-            @click="toggleExpandAll"
+          type="info"
+          plain
+          icon="el-icon-sort"
+          size="mini"
+          @click="toggleExpandAll"
         >展开/折叠
         </el-button>
       </el-col>
@@ -52,12 +56,12 @@
     </el-row>
 
     <el-table
-        v-if="refreshTable"
-        v-loading="loading"
-        :data="categoryList"
-        row-key="id"
-        :default-expand-all="isExpandAll"
-        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      v-if="refreshTable"
+      v-loading="loading"
+      :data="categoryList"
+      row-key="id"
+      :default-expand-all="isExpandAll"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="序号" prop="id"/>
       <el-table-column label="上级分类" prop="parentId"/>
@@ -66,19 +70,19 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['workflow:category:edit']"
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['workflow:category:edit']"
           >修改
           </el-button>
           <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              v-hasPermi="['workflow:category:remove']"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['workflow:category:remove']"
           >删除
           </el-button>
         </template>
@@ -116,11 +120,42 @@
 </template>
 
 <script>
-import {listCategory, getCategory, delCategory, addCategory, updateCategory} from "@/api/workflow/category";
+import {
+  addCategory,
+  delCategory,
+  getCategory,
+  listCategory,
+  listCategoryTree,
+  updateCategory
+} from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {listMenu} from "@/api/system/menu";
 
+class Option {
+  constructor(node) {
+    this._id=parseInt(node.id)
+    this._label=node.label
+    this._children=node.children
+    console.log(this)
+    const length = this.children.length;
+    if (length!==0){
+      for (const node of this._children)
+      this._children=new Option(node)
+    }
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get label() {
+    return this._label;
+  }
+
+  get children() {
+    return this._children;
+  }
+}
 export default {
   name: "Category",
   components: {
@@ -128,7 +163,8 @@ export default {
   },
   data() {
     return {
-      options: [{}],
+      props: { multiple: true },
+      options: null,
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -160,8 +196,32 @@ export default {
   },
   created() {
     this.getList();
+    this.getTreeData()
   },
   methods: {
+    //BUG
+    async getTreeData() {
+      const {data} = await listCategoryTree();
+      // const option = new Option(data[0]);
+      const option=this.option(data[0]);
+      this.options = [option]
+      console.log(this.options)
+    },
+    option(node){
+      const newObj={
+        id:parseInt(node.id),
+        label:node.label,
+        children:node.children
+      }
+      if (node.children.length !== 0) {
+        for (const node of node.children){
+         newObj.children = this.option(node);
+        }
+      }
+      return newObj
+    },
+    //BUG
+
     /** 查询物品分类信息列表 */
     getList() {
       this.loading = true;

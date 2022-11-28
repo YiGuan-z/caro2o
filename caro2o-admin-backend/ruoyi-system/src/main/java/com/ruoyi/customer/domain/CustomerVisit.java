@@ -75,6 +75,10 @@ public class CustomerVisit extends BaseEntity
     @TableField("input_user")
     private Long inputUser;
 
+    /** 录入人名字 */
+    @TableField(exist = false)
+    private String inputUserName;
+
     /** 录入时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "录入时间", width = 30, dateFormat = "yyyy-MM-dd")

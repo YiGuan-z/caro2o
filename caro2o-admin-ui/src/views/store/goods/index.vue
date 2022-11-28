@@ -20,6 +20,7 @@
       <el-form-item label="分类" prop="classify">
         <el-select v-model="queryParams.params['classify']" clearable>
           <el-option v-for="item in classify"
+                     :key="item.id"
                      :value="item.id"
                      :label="item.categoryName"/>
         </el-select>
@@ -91,7 +92,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="分类" align="center" prop="categoryId"/>
+      <el-table-column label="分类" align="center" prop="categoryId">
+        <template v-slot="scope">
+          {{scope.row.category.categoryName}}
+        </template>
+      </el-table-column>
       <el-table-column label="品牌" align="center" prop="brand"/>
       <el-table-column label="规格" align="center" prop="spec"/>
       <el-table-column label="描述" align="center" prop="goodsDesc"/>
@@ -134,6 +139,7 @@
         <el-form-item label="分类" prop="categoryId">
           <el-select v-model="form.categoryId" clearable>
             <el-option v-for="item in classify"
+                       :key="item.id"
                        :value="item.id"
                        :label="item.categoryName"/>
           </el-select>
