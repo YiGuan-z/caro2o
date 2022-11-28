@@ -50,6 +50,7 @@ export function auditPass(id) {
     method: 'patch'
   })
 }
+
 // 审核拒绝合同项信息
 export function auditReject(id) {
   return request({
@@ -57,6 +58,7 @@ export function auditReject(id) {
     method: 'patch'
   })
 }
+
 // 确认盖章
 export function auditConfirm(id) {
   return request({
@@ -64,10 +66,22 @@ export function auditConfirm(id) {
     method: 'patch'
   })
 }
+
 // 作废合同
 export function failure(id) {
   return request({
     url: '/contract/itemInfo/failure/' + id,
     method: 'patch'
+  })
+}
+
+// 文件下载
+export function myDownload(fileName) {
+  return request({
+    url: '/contract/itemInfo/myDownload/ ' + fileName,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
   })
 }

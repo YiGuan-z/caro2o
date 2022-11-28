@@ -1,10 +1,13 @@
 package com.ruoyi.web.controller.contract;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.web.controller.common.CommonController;
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public class ContractItemInfoController extends BaseController
 
     @Autowired
     @Lazy
-    private CommonController commonController;
+    private CommonController commonControllerService;
 
     /**
      * 查询合同项信息列表
@@ -104,12 +107,7 @@ public class ContractItemInfoController extends BaseController
         return toAjax(contractItemInfoService.removeBatchByIds(Arrays.asList(ids)));
     }
 
-    @PostMapping("upload1")
-    public AjaxResult upload(MultipartFile file) throws Exception {
 
-        return AjaxResult.success(commonController.uploadFile1(file));
-
-    }
     @PatchMapping("/pass/{id}")
     public AjaxResult auditPass(@PathVariable Long id) {
         contractItemInfoService.auditPass(id);
@@ -132,6 +130,5 @@ public class ContractItemInfoController extends BaseController
         contractItemInfoService.failure(id);
         return AjaxResult.success("success");
     }
-
 
 }

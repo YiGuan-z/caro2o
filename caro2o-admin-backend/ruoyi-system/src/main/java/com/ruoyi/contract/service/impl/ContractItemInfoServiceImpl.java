@@ -3,6 +3,8 @@ package com.ruoyi.contract.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -38,8 +40,10 @@ public class ContractItemInfoServiceImpl extends ServiceImpl<ContractItemInfoMap
         if(ContractItemInfo.DEFAULTED_USE_REJECT.equals(contract.getNullifyState())) {
             throw new ServiceException("非法操作");
         }
-        contract.setAuditState(ContractItemInfo.DEFAULTED_AUDIT_PASSED);
-        getBaseMapper().update(contract, null);
+
+        getBaseMapper().update(contract,
+                Wrappers.<ContractItemInfo>lambdaUpdate().set(ContractItemInfo::getAuditState, ContractItemInfo.DEFAULTED_AUDIT_PASSED)
+                        .eq(ContractItemInfo::getId, id));
 
     }
 
@@ -50,8 +54,10 @@ public class ContractItemInfoServiceImpl extends ServiceImpl<ContractItemInfoMap
         if(ContractItemInfo.DEFAULTED_USE_REJECT.equals(contract.getNullifyState())) {
             throw new ServiceException("非法操作");
         }
-        contract.setAuditState(ContractItemInfo.DEFAULTED_AUDIT_REJECT);
-        getBaseMapper().update(contract, null);
+        LambdaUpdateWrapper<ContractItemInfo> wrapper = Wrappers.lambdaUpdate();
+        wrapper.set(ContractItemInfo::getAuditState, ContractItemInfo.DEFAULTED_AUDIT_REJECT)
+                .eq(ContractItemInfo::getId, id);
+        getBaseMapper().update(contract, wrapper);
     }
 
     @Override
@@ -62,7 +68,10 @@ public class ContractItemInfoServiceImpl extends ServiceImpl<ContractItemInfoMap
             throw new ServiceException("非法操作");
         }
         contract.setAffixSealState(ContractItemInfo.DEFAULTED_CONFIRM_FAILED);
-        getBaseMapper().update(contract, null);
+        LambdaUpdateWrapper<ContractItemInfo> wrapper = Wrappers.lambdaUpdate();
+        wrapper.set(ContractItemInfo::getAffixSealState, ContractItemInfo.DEFAULTED_CONFIRM_FAILED)
+                        .eq(ContractItemInfo::getId, id);
+        getBaseMapper().update(contract,wrapper);
     }
 
     @Override
@@ -72,8 +81,8 @@ public class ContractItemInfoServiceImpl extends ServiceImpl<ContractItemInfoMap
         if(ContractItemInfo.DEFAULTED_USE_REJECT.equals(contract.getNullifyState())) {
             throw new ServiceException("非法操作");
         }
-        contract.setNullifyState(ContractItemInfo.DEFAULTED_USE_REJECT);
-        getBaseMapper().update(contract, null);
+        getBaseMapper().update(contract, Wrappers.<ContractItemInfo>lambdaUpdate().set(ContractItemInfo::getNullifyState, ContractItemInfo.DEFAULTED_USE_REJECT)
+                .eq(ContractItemInfo::getId, id));
     }
 
     @Override
@@ -84,6 +93,7 @@ public class ContractItemInfoServiceImpl extends ServiceImpl<ContractItemInfoMap
         entity.setAuditState(ContractItemInfo.DEFAULTED_AUDIT_INIT);
         entity.setNullifyState(ContractItemInfo.DEFAULTED_USE_ING);
         return super.save(entity);
+
     }
 
 

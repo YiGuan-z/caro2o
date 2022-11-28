@@ -3,6 +3,8 @@ package com.ruoyi.contract.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -18,6 +20,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author xiaochen
  * @date 2022-11-27
  */
+@Getter
+@Setter
 @TableName("contract")
 public class ContractItemInfo extends BaseEntity
 {
@@ -49,6 +53,11 @@ public class ContractItemInfo extends BaseEntity
     @Excel(name = "客户id")
     @TableField("customer_id")
     private String customerId;
+
+    /** 客户名字 */
+    @TableField(exist = false)
+    private String customerName;
+
 
     /** 合同名称 */
     @Excel(name = "合同名称")
@@ -102,129 +111,15 @@ public class ContractItemInfo extends BaseEntity
     @TableField("input_user")
     private Long inputUser;
 
+    @TableField(exist = false)
+    private String inputUserName;
+
     /** 录入时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "录入时间", width = 30, dateFormat = "yyyy-MM-dd")
     @TableField("input_time")
     private Date inputTime;
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
-    public String getId()
-    {
-        return id;
-    }
-    public void setCustomerId(String customerId)
-    {
-        this.customerId = customerId;
-    }
-
-    public String getCustomerId()
-    {
-        return customerId;
-    }
-    public void setContractName(String contractName)
-    {
-        this.contractName = contractName;
-    }
-
-    public String getContractName()
-    {
-        return contractName;
-    }
-    public void setContractCode(String contractCode)
-    {
-        this.contractCode = contractCode;
-    }
-
-    public String getContractCode()
-    {
-        return contractCode;
-    }
-    public void setAmounts(BigDecimal amounts)
-    {
-        this.amounts = amounts;
-    }
-
-    public BigDecimal getAmounts()
-    {
-        return amounts;
-    }
-    public void setStartDate(Date startDate)
-    {
-        this.startDate = startDate;
-    }
-
-    public Date getStartDate()
-    {
-        return startDate;
-    }
-    public void setEndDate(Date endDate)
-    {
-        this.endDate = endDate;
-    }
-
-    public Date getEndDate()
-    {
-        return endDate;
-    }
-    public void setAppendix(String appendix)
-    {
-        this.appendix = appendix;
-    }
-
-    public String getAppendix()
-    {
-        return appendix;
-    }
-    public void setAffixSealState(Integer affixSealState)
-    {
-        this.affixSealState = affixSealState;
-    }
-
-    public Integer getAffixSealState()
-    {
-        return affixSealState;
-    }
-    public void setAuditState(Integer auditState)
-    {
-        this.auditState = auditState;
-    }
-
-    public Integer getAuditState()
-    {
-        return auditState;
-    }
-    public void setNullifyState(Integer nullifyState)
-    {
-        this.nullifyState = nullifyState;
-    }
-
-    public Integer getNullifyState()
-    {
-        return nullifyState;
-    }
-    public void setInputUser(Long inputUser)
-    {
-        this.inputUser = inputUser;
-    }
-
-    public Long getInputUser()
-    {
-        return inputUser;
-    }
-    public void setInputTime(Date inputTime)
-    {
-        this.inputTime = inputTime;
-    }
-
-    public Date getInputTime()
-    {
-        return inputTime;
-    }
 
     @Override
     public String toString() {

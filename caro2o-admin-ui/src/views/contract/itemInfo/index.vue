@@ -24,7 +24,6 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -37,52 +36,17 @@
         >新增
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['contract:itemInfo:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['contract:itemInfo:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['contract:itemInfo:export']"
-        >导出
-        </el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="itemInfoList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading"  :data="itemInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="id"/>
-      <el-table-column label="客户id" align="center" prop="customerId"/>
+      <el-table-column label="id" show-overflow-tooltip align="center" prop="id"/>
+      <el-table-column label="客户" align="center" prop="customerName"/>
       <el-table-column label="合同名称" align="center" prop="contractName"/>
       <el-table-column label="合同编号" align="center" prop="contractCode"/>
       <el-table-column label="合同金额" align="center" prop="amounts"/>
-      <el-table-column label="合同生效开始时间" align="center" prop="startDate" width="180">
+      <el-table-column label="合同生效时间" align="center" prop="startDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -92,7 +56,11 @@
           <span>{{ parseTime(scope.row.endDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="附件" align="center" prop="appendix"/>
+      <el-table-column label="附件" align="center" prop="appendix">
+        <template v-slot="scope">
+          <el-button size="mini" @click="handleDownload(scope.row.appendix)">附件下载</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="是否盖章确认" align="center" prop="affixSealState">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.item_confirm_status" :value="scope.row.affixSealState"/>
@@ -108,7 +76,7 @@
           <dict-tag :options="dict.type.item_use_status" :value="scope.row.nullifyState"/>
         </template>
       </el-table-column>
-      <el-table-column label="录入人" align="center" prop="inputUser"/>
+      <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
@@ -120,6 +88,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            v-if="scope.row.nullifyState !== -1 "
             @click="handleUpdate(scope.row)"
             v-hasPermi="['contract:itemInfo:edit']"
           >编辑
@@ -128,7 +97,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            v-if="scope.row.nullifyState !== -1 "
+            v-if="scope.row.nullifyState !== -1 && scope.row.auditState === 0"
             @click="handlePass(scope.row)"
             v-hasPermi="['contract:itemInfo:edit']"
           >审核通过
@@ -137,7 +106,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            v-if="scope.row.nullifyState !== -1 || scope.row.affixSealState === 0"
+            v-if="scope.row.nullifyState !== -1 && scope.row.affixSealState === 0"
             @click="auditConfirm(scope.row)"
             v-hasPermi="['contract:itemInfo:edit']"
           >确认盖章
@@ -146,7 +115,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            v-if="scope.row.nullifyState !== -1"
+            v-if="scope.row.nullifyState !== -1 && (scope.row.auditState === 0 || scope.row.auditState ===1)"
             @click="auditReject(scope.row)"
             v-hasPermi="['contract:itemInfo:edit']"
           >审核不通过
@@ -171,15 +140,14 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
     <!-- 添加或修改合同项信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="客户名称" prop="customerId">
-                <el-select v-model="form.customerId" placeholder="请选择客户">
+              <el-form-item  label="客户名称"  prop="customerId">
+                <el-select v-model="form.customerId" placeholder="请选择客户" >
                   <el-option
                     v-for="item in customerList"
                     :key="item.value"
@@ -193,7 +161,7 @@
           <el-col :span="12">
             <div class="grid-content bg-purple-light">
               <el-form-item label="合同名称" prop="contractName">
-                <el-input v-model="form.contractName" placeholder="请输入合同名称"/>
+                <el-input style="width: 221px" v-model="form.contractName" placeholder="请输入合同名称"/>
               </el-form-item>
             </div>
           </el-col>
@@ -202,14 +170,14 @@
           <el-col :span="12">
             <div class="grid-content bg-purple">
               <el-form-item label="合同编号" prop="contractCode">
-                <el-input v-model="form.contractCode" placeholder="请输入合同编号"/>
+                <el-input style="width: 221px" type="number" v-model="form.contractCode" placeholder="请输入合同编号"/>
               </el-form-item>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="grid-content bg-purple-light">
-              <el-form-item label="合同金额" prop="amounts">
-                <el-input v-model="form.amounts" placeholder="请输入合同金额"/>
+              <el-form-item  label="合同金额" prop="amounts">
+                <el-input style="width: 221px" type="number" v-model="form.amounts" placeholder="请输入合同金额"/>
               </el-form-item>
             </div>
           </el-col>
@@ -248,9 +216,13 @@
             </div>
           </el-col>
         </el-row>
-        <el-form-item label="附件">
-          <file-upload v-model="form.appendix"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="24"><div class="grid-content bg-purple-dark">
+            <el-form-item label="附件">
+              <file-upload v-model="form.appendix" :file-type="['zip', 'txt', 'sql']"/>
+            </el-form-item>
+          </div></el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -264,16 +236,16 @@
 import {
   listItemInfo,
   getItemInfo,
-  delItemInfo,
   addItemInfo,
   updateItemInfo,
   auditPass,
   auditConfirm,
   auditReject,
-  failure
+  failure,
 } from "@/api/contract/itemInfo";
 import {listAll} from "@/api/system/customer";
 import log from "@/views/monitor/job/log";
+import {download} from "@/utils/request";
 
 export default {
   name: "ItemInfo",
@@ -317,11 +289,17 @@ export default {
     listAll().then(resp => {
       let temp = resp.data.map(u => ({value:u.id, label:u.legalLeader}))
       this.customerList = temp;
-      console.log(this.customerList);
     })
     this.getList();
   },
   methods: {
+    /** 测试文件下载 */
+    testDownload() {
+      let url = 'http://xue.cnkdl.cn:23900/car/166962499925343009f95acd141a69eca9846f3175edc.zip'
+      let filename = url.substring(url.lastIndexOf('/') + 1)
+      download('/common/minio/download',
+        { fileName: url }, filename)
+    },
     /** 查询合同项信息列表 */
     getList() {
       this.loading = true;
@@ -407,19 +385,9 @@ export default {
         }
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认废除合同项信息编号为"' + ids + '"的数据项？').then(function () {
-        return delItemInfo(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("作废成功");
-      }).catch(() => {
-      });
-    },
     /** 审核通过按钮操作 */
     handlePass(row) {
+      const ids = row.id || this.ids;
       this.$modal.confirm('是否确认通过合同项信息编号为"' + ids + '"的数据项？').then(function () {
         return auditPass(row.id);
       }).then(() => {
@@ -432,7 +400,7 @@ export default {
     auditReject(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认拒绝合同项信息编号为"' + ids + '"的数据项？').then(function () {
-        return auditReject(ids);
+        return auditReject(row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("审核拒绝");
@@ -461,12 +429,10 @@ export default {
       }).catch(() => {
       });
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('contract/itemInfo/export', {
-        ...this.queryParams
-      }, `itemInfo_${new Date().getTime()}.xlsx`)
-    }
+    /** 附件下载 */
+    handleDownload(url) {
+      window.open(url)
+    },
   }
 };
 </script>
