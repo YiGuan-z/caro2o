@@ -136,9 +136,7 @@
 
     <!-- 添加或修改出入库单据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1200px" append-to-body>
-
-
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="id" prop="id" hidden/>
         <el-form-item label="仓库" prop="storeId">
           <el-select v-model="form.storeId" placeholder="请选择类型" :disabled="disabled">
@@ -292,7 +290,20 @@ export default {
         storeId: null
       },
       // 表单校验
-      rules: {}
+      rules: {
+        busiDate: [
+          {required: true, message: "时间不能超过当天日期", trigger: "blur"}
+        ],
+        storeId: [
+          {required: true, message: "仓库不能为空", trigger: "blur"}
+        ],
+        // storeId: [
+        //   {required: true, message: "仓库不能为空", trigger: "blur"}
+        // ],
+        // storeId: [
+        //   {required: true, message: "仓库不能为空", trigger: "blur"}
+        // ],
+      }
     };
   },
   created() {
