@@ -24,4 +24,18 @@
             <if test="params.beginParentId != null and params.beginParentId != '' and params.endParentId != null and params.endParentId != ''"> and parent_id between #{params.beginParentId} and #{params.endParentId}</if>
         </where>
     </select>
+    <select id="selectByIdFormTree" resultMap="GoodsCategoryResult">
+        <include refid="selectGoodsCategoryVo"/>
+        where id in (select id
+                     from goods_category
+                     where busi_path like concat('%',#{id},'%'))
+    </select>
+    <select id="selectByBusiPath" resultType="com.ruoyi.workflow.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where busi_path = #{busiPath}
+    </select>
+    <select id="selectByParentId" resultType="com.ruoyi.workflow.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where id = #{parentId}
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.ruoyi.workflow.mapper;
 
+import java.io.Serializable;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.workflow.domain.GoodsCategory;
@@ -19,4 +20,10 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
    * @return 物品分类信息集合
    */
   public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
+	
+	List<GoodsCategory> selectByIdFormTree(Long id);
+	
+	GoodsCategory selectByBusiPath(String busiPath);
+	
+	GoodsCategory selectByParentId(Long parentId);
 }
