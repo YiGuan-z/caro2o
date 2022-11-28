@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.CustomerLinkmaneMapper">
+    <resultMap type="com.ruoyi.system.domain.CustomerLinkmane" id="CustomerLinkmaneResult">
+        <result property="id" column="id"/>
+<!--        <result property="customer" column="customer_id"/>-->
+        <result property="linkman" column="linkman"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="phone" column="phone"/>
+        <result property="position" column="position"/>
+        <result property="positionState" column="position_state"/>
+        <result property="department" column="department"/>
+        <result property="inputUser" column="input_user"/>
+        <result property="inputTime" column="input_time"/>
+        <association property="customer" columnPrefix="c_" javaType="com.ruoyi.system.domain.Customer"
+                     resultMap="com.ruoyi.system.mapper.CustomerMapper.CustomerResult"/>
 
-    <resultMap type="CustomerLinkmane" id="CustomerLinkmaneResult">
-        <result property="id"    column="id"    />
-        <result property="customerId"    column="customer_id"    />
-        <result property="linkman"    column="linkman"    />
-        <result property="gender"    column="gender"    />
-        <result property="age"    column="age"    />
-        <result property="phone"    column="phone"    />
-        <result property="position"    column="position"    />
-        <result property="positionState"    column="position_state"    />
-        <result property="department"    column="department"    />
-        <result property="inputUser"    column="input_user"    />
-        <result property="inputTime"    column="input_time"    />
     </resultMap>
 
-  <sql id="selectCustomerLinkmaneVo">
-    select id, customer_id, linkman, gender, age, phone, position, position_state, department, input_user, input_time from customer_linkmane
-  </sql>
+    <sql id="selectCustomerLinkmaneVo">
+            select
+             cl.id,
+             cl.customer_id,
+             cl.linkman,
+             cl.gender,
+             cl.age,
+             cl.phone,
+             cl.position,
+             cl.position_state,
+             cl.department,
+             cl.input_user,
+             cl.input_time,
+             c.id c_id,c.legal_leader c_legal_leader
+             from customer_linkmane cl join customer c on cl.customer_id = c.id
 
-  <select id="selectCustomerLinkmaneList" parameterType="CustomerLinkmane" resultMap="CustomerLinkmaneResult">
-    <include refid="selectCustomerLinkmaneVo"/>
-    <where>
-                  <if test="customerId != null  and customerId != ''"> and customer_id = #{customerId}</if>
-                  <if test="linkman != null  and linkman != ''"> and linkman like concat('%', #{linkman}, '%')</if>
-                  <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
-                  <if test="positionState != null "> and position_state = #{positionState}</if>
-    </where>
-  </select>
+    </sql>
+
+    <select id="selectCustomerLinkmaneList" parameterType="CustomerLinkmane" resultMap="CustomerLinkmaneResult">
+        <include refid="selectCustomerLinkmaneVo"/>
+        <where>
+            <if test="customer != null  and customer != ''">
+                and cl.customer_id = #{customer}
+            </if>
+            <if test="linkman != null  and linkman != ''">
+                and cl.linkman like concat('%', #{linkman}, '%')
+            </if>
+            <if test="phone != null  and phone != ''">
+                and cl.phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="positionState != null ">
+                and cl.position_state = #{positionState}
+            </if>
+        </where>
+    </select>
 </mapper>

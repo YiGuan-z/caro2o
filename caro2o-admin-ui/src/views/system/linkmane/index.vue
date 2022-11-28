@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="联系人名字" prop="linkman">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="联系人" prop="linkman">
         <el-input
           v-model="queryParams.linkman"
           placeholder="请输入联系人名字"
@@ -86,9 +86,13 @@
     <el-table v-loading="loading" :data="linkmaneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
-      <el-table-column label="客户" align="center" prop="customerId"/>
+      <el-table-column label="客户" align="center" prop="customer.legalLeader"/>
       <el-table-column label="联系人名字" align="center" prop="linkman"/>
-      <el-table-column label="性别" align="center" prop="gender"/>
+      <el-table-column label="性别" align="center" prop="gender">
+        <template v-slot="scope">
+            {{scope.row.gender == 1 ? '男' : '女'}}
+        </template>
+      </el-table-column>
       <el-table-column label="年龄" align="center" prop="age"/>
       <el-table-column label="联系人电话" align="center" prop="phone"/>
       <el-table-column label="职位" align="center" prop="position"/>
@@ -98,7 +102,7 @@
         </template>
       </el-table-column>
       <el-table-column label="部门" align="center" prop="department"/>
-      <el-table-column label="录入人" align="center" prop="inputUser"/>
+      <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
@@ -139,8 +143,15 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col span="12">
-            <el-form-item label="所属客户" prop="customerId">
-              <el-input v-model="form.customerId" placeholder="请输入客户"/>
+            <el-form-item label="所属客户" prop="customer">
+              <el-select v-model="form.customer" placeholder="请选择">
+                <el-option
+                  v-for="item in customers"
+                  :key="item.id"
+                  :label="item.legalLeader"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col span="12">
@@ -160,7 +171,7 @@
           </el-col>
           <el-col span="12">
             <el-form-item label="年龄" prop="age">
-              <el-input v-model="form.age" placeholder="请输入年龄"/>
+              <el-input type="number" v-model="form.age" placeholder="请输入年龄"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -206,6 +217,7 @@
 
 <script>
   import {listLinkmane, getLinkmane, delLinkmane, addLinkmane, updateLinkmane} from "@/api/system/linkmane";
+  import {listAll} from "../../../api/system/customer";
 
   export default {
     name: "Linkmane",
@@ -228,13 +240,15 @@
         linkmaneList: [],
         // 弹出层标题
         title: "",
+
+        customers:[],
         // 是否显示弹出层
         open: false,
         // 查询参数
         queryParams: {
           pageNum: 1,
           pageSize: 10,
-          customerId: null,
+          customer: null,
           linkman: null,
           phone: null,
           positionState: null,
@@ -243,7 +257,7 @@
         form: {},
         // 表单校验
         rules: {
-          customerId: [
+          customer: [
             {required: true, message: "客户不能为空", trigger: "blur"}
           ],
           linkman: [
@@ -263,8 +277,17 @@
     },
     created() {
       this.getList();
+      this.getCustomer();
     },
     methods: {
+
+      //查询客户
+      getCustomer(){
+        listAll().then(res =>{
+          this.customers = res.data
+        })
+      },
+
       /** 查询客户联系人列表 */
       getList() {
         this.loading = true;
@@ -283,7 +306,7 @@
       reset() {
         this.form = {
           id: null,
-          customerId: null,
+          customer: null,
           linkman: null,
           gender: null,
           age: null,
