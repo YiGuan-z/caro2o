@@ -3,6 +3,9 @@ package com.ruoyi.workflow.controller;
 import java.util.List;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.store.domain.GoodsCategory;
+import com.ruoyi.store.service.IGoodsCategoryService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +20,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.workflow.domain.GoodsCategory;
-import com.ruoyi.workflow.service.IGoodsCategoryService;
+
 import com.ruoyi.common.utils.poi.ExcelUtil;
 
 /**

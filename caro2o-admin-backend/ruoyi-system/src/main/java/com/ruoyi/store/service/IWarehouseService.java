@@ -1,7 +1,9 @@
-package com.ruoyi.workflow.service;
+package com.ruoyi.store.service;
+
+
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.workflow.domain.Warehouse;
+import com.ruoyi.store.domain.Warehouse;
 
 import java.util.List;
 

@@ -1,9 +1,10 @@
-package com.ruoyi.workflow.service.impl;
+package com.ruoyi.store.service.impl;
+
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.workflow.domain.Warehouse;
-import com.ruoyi.workflow.mapper.WarehouseMapper;
-import com.ruoyi.workflow.service.IWarehouseService;
+import com.ruoyi.store.domain.Warehouse;
+import com.ruoyi.store.mapper.WarehouseMapper;
+import com.ruoyi.store.service.IWarehouseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

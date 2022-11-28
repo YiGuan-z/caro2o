@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CustomerLinkmaneMapper">
+    <resultMap type="com.ruoyi.system.domain.CustomerLinkmane" id="CustomerLinkmaneResult">
+        <result property="id" column="id"/>
+        <result property="customerName" column="customer_id"/>
+        <result property="linkman" column="linkman"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="phone" column="phone"/>
+        <result property="position" column="position"/>
+        <result property="positionState" column="position_state"/>
+        <result property="department" column="department"/>
+        <result property="inputUser" column="input_user"/>
+        <result property="inputTime" column="input_time"/>
+        <result property="legalLeader" column="legal_leader"/>
+
+    </resultMap>
+
+<!--    <sql id="selectCustomerLinkmaneVo">-->
+<!--            select-->
+<!--             cl.id,-->
+<!--             cl.customer_id,-->
+<!--             cl.linkman,-->
+<!--             cl.gender,-->
+<!--             cl.age,-->
+<!--             cl.phone,-->
+<!--             cl.position,-->
+<!--             cl.position_state,-->
+<!--             cl.department,-->
+<!--             cl.input_user,-->
+<!--             cl.input_time,-->
+<!--             c.id c_id,c.legal_leader c_legal_leader-->
+<!--             from customer_linkmane cl join customer c on cl.customer_id = c.id-->
+
+<!--    </sql>-->
+
+    <sql id="selectCustomerLinkmaneVo">
+            select
+             cl.id,
+             cl.customer_id,
+             cl.linkman,
+             cl.gender,
+             cl.age,
+             cl.phone,
+             cl.position,
+             cl.position_state,
+             cl.department,
+             cl.input_user,
+             cl.input_username,
+             cl.input_time,
+             c.legal_leader
+             from customer_linkmane cl left join customer c on  cl.customer_id = c.id
+    </sql>
+    <select id="selectCustomerLinkmaneList" parameterType="CustomerLinkmane" resultMap="CustomerLinkmaneResult">
+        <include refid="selectCustomerLinkmaneVo"/>
+        <where>
+            <if test="customerName != null  and customerName != ''">
+                and cl.customer_id = #{customerName}
+            </if>
+            <if test="linkman != null  and linkman != ''">
+                and cl.linkman like concat('%', #{linkman}, '%')
+            </if>
+            <if test="phone != null  and phone != ''">
+                and cl.phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="positionState != null ">
+                and cl.position_state = #{positionState}
+            </if>
+        </where>
+    </select>
+</mapper>
