@@ -4,10 +4,10 @@
       <el-form-item label="审核状态" prop="auditState">
         <el-select v-model="queryParams.auditState" placeholder="请选择审核状态" clearable>
           <el-option
-            v-for="dict in dict.type.item_audit_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+              v-for="dict in dict.type.item_audit_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
           />
         </el-select>
       </el-form-item>
@@ -28,47 +28,47 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['contract:itemInfo:add']"
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['contract:itemInfo:add']"
         >新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['contract:itemInfo:edit']"
+            type="success"
+            plain
+            icon="el-icon-edit"
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['contract:itemInfo:edit']"
         >修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['contract:itemInfo:remove']"
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['contract:itemInfo:remove']"
         >删除
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['contract:itemInfo:export']"
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            @click="handleExport"
+            v-hasPermi="['contract:itemInfo:export']"
         >导出
         </el-button>
       </el-col>
@@ -117,19 +117,19 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['contract:itemInfo:edit']"
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['contract:itemInfo:edit']"
           >修改
           </el-button>
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['contract:itemInfo:remove']"
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['contract:itemInfo:remove']"
           >删除
           </el-button>
         </template>
@@ -137,70 +137,88 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
     />
 
     <!-- 添加或修改合同项信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-select v-model="form.customerId" placeholder="请选择客户">
-              <el-option
-                v-for="item in customerList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同名称" prop="contractName">
-              <el-input v-model="form.contractName" placeholder="请输入合同名称"/>
+          <el-col :span="20">
+            <el-form-item label="客户">
+              <div class="grid-content bg-purple">
+                <el-select v-model="form.customerId" placeholder="请选择客户">
+                  <el-option
+                      v-for="item in customerList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+                </el-select>
+              </div>
             </el-form-item>
-          </div></el-col>
+          </el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="合同名称" prop="contractName">
+                <el-input v-model="form.contractName" placeholder="请输入合同名称"/>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-form-item label="合同编号" prop="contractCode">
-              <el-input v-model="form.contractCode" placeholder="请输入合同编号"/>
-            </el-form-item>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同金额" prop="amounts">
-              <el-input v-model="form.amounts" placeholder="请输入合同金额"/>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple">
+              <el-form-item label="合同编号" prop="contractCode">
+                <el-input v-model="form.contractCode" placeholder="请输入合同编号"/>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="合同金额" prop="amounts">
+                <el-input v-model="form.amounts" placeholder="请输入合同金额"/>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple"></div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light"></div></el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple"></div>
+          </el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple-light"></div>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12"><div class="grid-content bg-purple">
-            <el-form-item label="合同生效开始时间" prop="startDate">
-              <el-date-picker clearable
-                              v-model="form.startDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择合同生效开始时间">
-              </el-date-picker>
-            </el-form-item>
-          </div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light">
-            <el-form-item label="合同失效时间" prop="endDate">
-              <el-date-picker clearable
-                              v-model="form.endDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择合同失效时间">
-              </el-date-picker>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple">
+              <el-form-item label="合同生效开始时间" prop="startDate">
+                <el-date-picker clearable
+                                v-model="form.startDate"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="请选择合同生效开始时间">
+                </el-date-picker>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="20">
+            <div class="grid-content bg-purple-light">
+              <el-form-item label="合同失效时间" prop="endDate">
+                <el-date-picker clearable
+                                v-model="form.endDate"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="请选择合同失效时间">
+                </el-date-picker>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
         <el-form-item label="附件">
           <file-upload v-model="form.appendix"/>
@@ -208,30 +226,30 @@
         <el-form-item label="是否确认盖章" prop="affixSealState">
           <el-select v-model="form.affixSealState" placeholder="请选择是否盖章">
             <el-option
-              v-for="dict in dict.type.item_confirm_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
+                v-for="dict in dict.type.item_confirm_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="审核状态" prop="auditState">
           <el-select v-model="form.auditState" placeholder="请选择审核状态">
             <el-option
-              v-for="dict in dict.type.item_audit_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
+                v-for="dict in dict.type.item_audit_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否作废" prop="nullifyState">
           <el-select v-model="form.nullifyState" placeholder="请选择是否作废">
             <el-option
-              v-for="dict in dict.type.item_use_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
+                v-for="dict in dict.type.item_use_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -271,7 +289,7 @@ export default {
       // 是否显示弹出层
       open: false,
       // 客户列表
-      customerList:[],
+      customerList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -394,3 +412,7 @@ export default {
   }
 };
 </script>
+
+<style>
+
+</style>
