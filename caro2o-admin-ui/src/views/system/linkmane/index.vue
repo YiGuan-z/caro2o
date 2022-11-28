@@ -273,7 +273,6 @@
           gender: [
             {required: true, message: "性别必填", trigger: "blur"}
           ],
-
           phone: [
             {required: true,
               pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
