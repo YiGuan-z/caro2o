@@ -23,6 +23,9 @@ import com.ruoyi.system.service.ICustomerService;
 public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> implements ICustomerService {
 
     @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
     private ISysUserService sysUserService;
     /**
      * 查询客户信息列表
@@ -39,8 +42,12 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
             customerObj.setInputUserName(sysUser.getNickName());
             customerObj.setUserMarket(sysUser.getNickName());
         }
-
         return customers;
+    }
+
+    @Override
+    public Customer selectUserById(String name) {
+        return customerMapper.selectUserById(name);
     }
 
     @Override
@@ -60,4 +67,6 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
 
         return i > 0;
     }
+
+
 }

@@ -1,7 +1,9 @@
-package com.ruoyi.workflow.mapper;
+package com.ruoyi.store.mapper;
+
+
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ruoyi.workflow.domain.Warehouse;
+import com.ruoyi.store.domain.Warehouse;
 
 import java.util.List;
 

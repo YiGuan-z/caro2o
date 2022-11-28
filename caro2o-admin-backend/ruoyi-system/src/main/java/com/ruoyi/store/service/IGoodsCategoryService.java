@@ -1,8 +1,10 @@
-package com.ruoyi.workflow.service;
+package com.ruoyi.store.service;
+
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.store.domain.GoodsCategory;
 
 import java.util.List;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.workflow.domain.GoodsCategory;
 
 /**
  * 物品分类信息Service接口
@@ -19,5 +21,6 @@ public interface IGoodsCategoryService extends IService<GoodsCategory> {
      * @return 物品分类信息集合
      */
     public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
-
+	
+	List<GoodsCategory> getTreeData();
 }

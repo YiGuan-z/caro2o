@@ -4,10 +4,10 @@
       <el-form-item label="审核状态" prop="auditState">
         <el-select v-model="queryParams.auditState" placeholder="请选择审核状态" clearable>
           <el-option
-            v-for="dict in dict.type.item_audit_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+              v-for="dict in dict.type.item_audit_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
           />
         </el-select>
       </el-form-item>
@@ -28,12 +28,12 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['contract:itemInfo:add']"
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['contract:itemInfo:add']"
         >新增
         </el-button>
       </el-col>
@@ -299,7 +299,7 @@ export default {
       // 是否显示弹出层
       open: false,
       // 客户列表
-      customerList: [],
+      customerList:[],
       // 查询参数
       queryParams: {
         pageNum: 1,

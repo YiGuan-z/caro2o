@@ -19,4 +19,6 @@ public interface CustomerMapper extends BaseMapper<Customer> {
    * @return 客户信息集合
    */
   public List<Customer> selectCustomerList(Customer customer);
+
+  public Customer selectUserById(String name);
 }

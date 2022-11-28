@@ -34,7 +34,6 @@ public class StockBillItem extends BaseEntity
     /** 物品id */
     @Excel(name = "id")
     @TableId(type = IdType.ASSIGN_ID)
-    @TableField("id")
     private String id;
 
     /** 数量 */

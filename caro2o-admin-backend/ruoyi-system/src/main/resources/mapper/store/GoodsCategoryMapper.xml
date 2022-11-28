@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.workflow.mapper.GoodsCategoryMapper">
+<mapper namespace="com.ruoyi.store.mapper.GoodsCategoryMapper">
 
     <resultMap type="GoodsCategory" id="GoodsCategoryResult">
         <result property="id"    column="id"    />
@@ -23,5 +23,25 @@
             <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc like concat('%', #{categoryDesc}, '%')</if>
             <if test="params.beginParentId != null and params.beginParentId != '' and params.endParentId != null and params.endParentId != ''"> and parent_id between #{params.beginParentId} and #{params.endParentId}</if>
         </where>
+    </select>
+    <select id="selectByIdFormTree" resultMap="GoodsCategoryResult">
+        <include refid="selectGoodsCategoryVo"/>
+        where id in (select id
+                     from goods_category
+                     where busi_path like concat('%',#{id},'%'))
+    </select>
+    <select id="selectByBusiPath" resultType="com.ruoyi.store.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where busi_path = #{busiPath}
+    </select>
+    <select id="selectByParentId" resultType="com.ruoyi.store.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where id = #{parentId}
+    </select>
+    <select id="selectParentByPath" resultType="com.ruoyi.store.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where id in (select id
+        from goods_category
+        where busi_path like concat('%',#{path},'%'))
     </select>
 </mapper>

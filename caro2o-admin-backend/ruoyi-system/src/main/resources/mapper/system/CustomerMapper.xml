@@ -37,4 +37,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                   <if test="industry != null  and industry != ''"> and industry like concat('%', #{industry}, '%')</if>
     </where>
   </select>
+
+    <select id="selectUserById" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        where legalLeader = #{name}
+    </select>
 </mapper>

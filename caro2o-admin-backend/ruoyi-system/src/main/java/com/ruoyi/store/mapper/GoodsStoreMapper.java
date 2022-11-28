@@ -19,6 +19,5 @@ public interface GoodsStoreMapper extends BaseMapper<GoodsStore> {
    * @return 物品库存集合
    */
   public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
-	
-	List<GoodsStore> selectAllStore();
+  
 }
