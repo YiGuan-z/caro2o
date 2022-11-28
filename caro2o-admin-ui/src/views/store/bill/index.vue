@@ -260,9 +260,7 @@ export default {
         busiDate: null,
         status: null,
       },
-      itemFrom:{
-      }
-      ,
+      itemFrom:[],
       // 表单参数
       form: {},
       // 表单校验
@@ -274,7 +272,7 @@ export default {
     itemFrom:{
       deep:true,
       handler(val, oldVal) {
-        this.itemFrom
+        // this.itemFrom
       }
     }
   },
@@ -314,7 +312,9 @@ export default {
         operatorId: null,
         remark: null
       };
+      this.itemFrom=null
       this.resetForm("form");
+
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -354,7 +354,6 @@ export default {
         let {data}=res
 
        data= data.map(s=>{
-         console.log(s)
          return{
            ...s,
            sum:s.price*s.amounts

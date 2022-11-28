@@ -3,7 +3,9 @@ package com.ruoyi.store.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.store.domain.Goods;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,5 +24,12 @@ public interface IGoodsService extends IService<Goods> {
      */
     public List<Goods> selectGoodsList(Goods goods);
     Goods selectById(String id);
-
+	
+	/**
+	 * 通过分类id查询库存
+	 * 等于true的时候表示可以删除
+	 * @param list
+	 * @return
+	 */
+	boolean selectCategoryGoods(@Param("list") Collection<?> list);
 }

@@ -12,9 +12,9 @@
         <result property="brand" column="brand"/>
         <result property="spec" column="spec"/>
         <result property="goodsDesc" column="goods_desc"/>
-<!--        <association property="son" -->
-<!--                     select="com.ruoyi.store.mapper.GoodsMapper.selectById"-->
-<!--                     resultMap="com.ruoyi.store.mapper.GoodsStoreMapper.GoodsStoreResult"/>-->
+        <!--        <association property="son" -->
+        <!--                     select="com.ruoyi.store.mapper.GoodsMapper.selectById"-->
+        <!--                     resultMap="com.ruoyi.store.mapper.GoodsStoreMapper.GoodsStoreResult"/>-->
     </resultMap>
 
     <sql id="selectGoodsVo">
@@ -31,15 +31,24 @@
             <if test="goodsDesc != null  and goodsDesc != ''">and goods_desc = #{goodsDesc}</if>
             <if test="params.keyword !=null">
                 and (goodsName like concat('%',#{params.keyword},'%')
-            or brand like concat('%',#{params.keyword},'%')
-            or spec like concat('%',#{params.keyword},'%')
-             or goodsDesc like concat('%',#{params.keyword},'%')
-             )
+                or brand like concat('%',#{params.keyword},'%')
+                or spec like concat('%',#{params.keyword},'%')
+                or goodsDesc like concat('%',#{params.keyword},'%')
+                )
             </if>
         </where>
     </select>
     <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
         <include refid="selectGoodsVo"/>
         where id=#{id}
+    </select>
+    <select id="selectCategoryGoods" resultMap="GoodsResult">
+        select gs.amounts from goods_category cate
+        join goods good on cate.id=good.category_id
+        join goods_store gs on gs.goods_id=good.id
+        where cate.id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </select>
 </mapper>

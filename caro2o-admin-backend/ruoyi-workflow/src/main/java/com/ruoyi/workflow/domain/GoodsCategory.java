@@ -1,15 +1,14 @@
 package com.ruoyi.workflow.domain;
 
 
-import com.ruoyi.common.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.TreeEntity;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 /**
  * 物品分类信息对象 goods_category
  *
@@ -19,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @TableName("goods_category")
-public class GoodsCategory extends TreeEntity
+public class GoodsCategory extends TreeEntity<GoodsCategory>
 {
     private static final long serialVersionUID = 1L;
 
