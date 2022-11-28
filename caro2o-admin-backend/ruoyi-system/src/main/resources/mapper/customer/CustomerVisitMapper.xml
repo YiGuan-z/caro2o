@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.customer.mapper.CustomerVisitMapper">
-
     <resultMap type="CustomerVisit" id="CustomerVisitResult">
         <result property="id" column="id"/>
         <result property="customerId" column="customer_id"/>
@@ -15,10 +14,11 @@
         <result property="linkmanName" column="linkman_name"/>
         <result property="visitDate" column="visit_date"/>
         <result property="inputUser" column="input_user"/>
+        <result property="inputUserName" column="user_name"/>
         <result property="inputTime" column="input_time"/>
     </resultMap>
     <sql id="selectCustomerVisitVo">
-        select id,
+        select cv.id,
                cv.customer_id,
                cv.linkman_id,
                cv.visit_type,
@@ -28,10 +28,12 @@
                cv.input_user,
                cv.input_time,
                sc.customer_name,
-               cl.likman as linkman_name
+               cl.linkman as linkman_name,
+               su.user_name
         from customer_visit cv
                  join customer sc on cv.customer_id = sc.id
                  join customer_linkmane cl on cv.linkman_id = cl.id
+                 join sys_user su on cv.input_user = su.user_id
     </sql>
 
     <select id="selectCustomerVisitList" parameterType="CustomerVisit" resultMap="CustomerVisitResult">

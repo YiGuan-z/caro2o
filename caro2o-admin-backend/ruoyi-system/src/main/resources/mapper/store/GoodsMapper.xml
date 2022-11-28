@@ -12,14 +12,18 @@
         <result property="brand" column="brand"/>
         <result property="spec" column="spec"/>
         <result property="goodsDesc" column="goods_desc"/>
+        <association property="category"
+                     column="category_id"
+                     select="com.ruoyi.store.mapper.GoodsCategoryMapper.selectByParentId"/>
         <!--        <association property="son" -->
         <!--                     select="com.ruoyi.store.mapper.GoodsMapper.selectById"-->
         <!--                     resultMap="com.ruoyi.store.mapper.GoodsStoreMapper.GoodsStoreResult"/>-->
     </resultMap>
 
     <sql id="selectGoodsVo">
-        select id, goods_name, goods_cover, category_id, brand, spec, goods_desc
-        from goods
+        select good.id, goods_name, goods_cover, category_id, brand, spec, goods_desc
+        from goods good
+        join goods_store gs on good.id=gs.goods_id
     </sql>
 
     <select id="selectGoodsList" parameterType="Goods" resultMap="GoodsResult">
@@ -30,17 +34,23 @@
             <if test="spec != null  and spec != ''">and spec = #{spec}</if>
             <if test="goodsDesc != null  and goodsDesc != ''">and goods_desc = #{goodsDesc}</if>
             <if test="params.keyword !=null">
-                and (goodsName like concat('%',#{params.keyword},'%')
+                and (goods_name like concat('%',#{params.keyword},'%')
                 or brand like concat('%',#{params.keyword},'%')
                 or spec like concat('%',#{params.keyword},'%')
-                or goodsDesc like concat('%',#{params.keyword},'%')
+                or goods_desc like concat('%',#{params.keyword},'%')
                 )
+            </if>
+            <if test="params.classify !=null">
+                and category_id=#{params.classify}
+            </if>
+            <if test="params.storeId !=null">
+                and store_id=#{params.storeId}
             </if>
         </where>
     </select>
     <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
         <include refid="selectGoodsVo"/>
-        where id=#{id}
+        where good.id=#{id}
     </select>
     <select id="selectCategoryGoods" resultMap="GoodsResult">
         select gs.amounts from goods_category cate

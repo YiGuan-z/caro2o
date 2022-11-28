@@ -9,16 +9,18 @@
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="上级分类" prop="parentId">
-        <el-cascader :options="options" clearable>
-          <template slot-scope="{ node, data }">
-            <span>{{ data.label }}</span>
-            <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-          </template>
-        </el-cascader>
-        <!--        <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
-                  @keyup.enter.native="handleQuery"
-                </el-select>-->
+      <el-form-item label="上级分类">
+        <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
+          <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
+                     hidden/>
+          <el-tree :data="treeList"
+                   :props="defaultProps"
+                   node-key="id"
+                   :default-expand-all="true"
+                   :expand-on-click-node="false"
+                   clearable
+                   @node-click="insertNodeClick"/>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -60,7 +62,7 @@
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="序号" prop="id"/>
-      <el-table-column label="上级分类" prop="parentId"/>
+      <el-table-column label="上级分类" prop="parent.id"/>
       <el-table-column label="分类" align="center" prop="busiPath"/>
       <el-table-column label="概述" align="center" prop="categoryDesc"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -94,17 +96,18 @@
         <el-form-item label="描述" prop="categoryDesc">
           <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
         </el-form-item>
-
-        <el-form-item label="上级分类" prop="parentId">
-          <el-cascader :options="options" clearable>
-            <template slot-scope="{ node, data }">
-              <span>{{ data.label }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-          <!--          <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
-                      @keyup.enter.native="handleQuery"
-                    </el-select>-->
+        <el-form-item label="上级分类">
+          <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
+            <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
+                       hidden/>
+            <el-tree :data="treeList"
+                     :props="defaultProps"
+                     node-key="id"
+                     :default-expand-all="true"
+                     :expand-on-click-node="false"
+                     clearable
+                     @node-click="insertNodeClick"/>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -116,7 +119,7 @@
 </template>
 
 <script>
-import {listCategory, getCategory, delCategory, addCategory, updateCategory} from "@/api/workflow/category";
+import {addCategory, delCategory, getCategory, listCategory, updateCategory,getTreeDate} from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {listMenu} from "@/api/system/menu";
@@ -128,7 +131,15 @@ export default {
   },
   data() {
     return {
-      options: [{}],
+      // 树结构分类
+      treeList: [],
+      form: {
+        parent: {}
+      },
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -150,7 +161,11 @@ export default {
         categoryName: null,
         categoryDesc: null,
         busiPath: null,
-        parentId: null
+        parentId: null,
+        parent: {
+          id: null,
+          categoryName: null
+        }
       },
       // 表单参数
       form: {},
@@ -160,8 +175,24 @@ export default {
   },
   created() {
     this.getList();
+    getTreeDate().then(res => {
+      this.treeList = res.data
+    })
+  },
+  watch: {
+    // 根据名称筛选仓库树
+    filterName(val) {
+      this.$refs.tree.filter(val);
+    }
   },
   methods: {
+    insertNodeClick(data) {
+      this.queryParams.parent.id = data.id
+      this.queryParams.parent.categoryName = data.label
+      console.log(this.queryParams.parent.categoryName)
+      // 使 input 失去焦点，并隐藏下拉框
+      this.$refs.insertTree.blur()
+    },
     /** 查询物品分类信息列表 */
     getList() {
       this.loading = true;

@@ -16,4 +16,8 @@ import java.util.List;
 public interface IStockBillItemService extends IService<StockBillItem> {
 
     List<StockBillItem> getByBillId(String id);
+
+    void updateList(List<StockBillItem> itemFrom);
+
+    void deleteBillId(String id);
 }

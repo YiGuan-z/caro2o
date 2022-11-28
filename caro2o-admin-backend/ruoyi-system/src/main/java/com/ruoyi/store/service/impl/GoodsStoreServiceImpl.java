@@ -24,6 +24,7 @@ public class GoodsStoreServiceImpl extends ServiceImpl<GoodsStoreMapper, GoodsSt
 	private IGoodsService goodsService;
 	@Autowired
 	private IGoodsCategoryService iGoodsCategoryService;
+	
 	/**
 	 * 查询物品库存列表
 	 *
@@ -33,14 +34,6 @@ public class GoodsStoreServiceImpl extends ServiceImpl<GoodsStoreMapper, GoodsSt
 	@Override
 	public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore) {
 		return getBaseMapper().selectGoodsStoreList(goodsStore);
-	}
-	//在这里查询出物品库存并返回 TODO
-	@Override
-	public List<Map<String, Object>> selectList(GoodsStore goodsStore) {
-	
-	
-	return null;
-	
 	}
 	
 	

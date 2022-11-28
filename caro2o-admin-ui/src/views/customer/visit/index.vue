@@ -58,8 +58,8 @@
     <el-table v-loading="loading" :data="visitList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="主键id" align="center" prop="id"/>
-      <el-table-column label="客户id" align="center" prop="customerId"/>
-      <el-table-column label="联系人id" align="center" prop="linkmanId"/>
+      <el-table-column label="客户" align="center" prop="customerName"/>
+      <el-table-column label="联系人" align="center" prop="linkmanName"/>
       <el-table-column label="拜访方式" align="center" prop="visitType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.bus_customer_type" :value="scope.row.visitType"/>
@@ -72,7 +72,7 @@
           <span>{{ parseTime(scope.row.visitDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="录入人" align="center" prop="inputUser"/>
+      <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.inputTime, '{y}-{m}-{d}') }}</span>
@@ -175,6 +175,9 @@
 
 <script>
 import {listVisit, addVisit, updateVisit} from "@/api/customer/visit";
+import {listAll as customerAllList} from "@/api/system/customer";
+import {listAll as linkmanAll} from "@/api/system/linkmane";
+
 
 export default {
   name: "Visit",
@@ -200,9 +203,9 @@ export default {
       // 是否显示弹出层
       open: false,
       // 客户列表
-      customerList: [{value:1, label:"老黑"}],
+      customerList: [],
       // 联系人列表
-      concatList: [{value:1, label:"小黑"}],
+      concatList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -236,6 +239,12 @@ export default {
     };
   },
   created() {
+    customerAllList().then(resp => {
+      this.customerList = resp.data.map(u=> ({value:u.id, label:u.legalLeader}))
+    })
+    linkmanAll().then(resp => {
+      this.concatList = resp.data.map(l => ({value:l.id, label:l.linkman}))
+    })
     this.getList();
   },
   methods: {

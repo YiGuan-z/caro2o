@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
@@ -27,6 +28,8 @@ import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
+import java.util.Optional;
+
 /**
  * 登录校验方法
  * 
@@ -35,6 +38,9 @@ import com.ruoyi.system.service.ISysUserService;
 @Component
 public class SysLoginService
 {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
     @Autowired
     private TokenService tokenService;
 

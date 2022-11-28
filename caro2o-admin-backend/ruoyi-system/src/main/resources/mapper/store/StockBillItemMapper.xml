@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.store.mapper.StockBillItemMapper">
 
+    <insert id="updateList">
+            insert into stock_bill_item (id,goods_id,amounts,price,bill_id,state)
+            values
+        <foreach collection="itemFrom" open="" separator="," close="" item="billItem">
+                (#{billItem.id},#{billItem.goodsId},#{billItem.amounts},#{billItem.price},#{billItem.billId},#{billItem.state})
+        </foreach>
+    </insert>
+    <delete id="deleteBillId">
+        delete
+        from stock_bill_item
+        where bill_id = #{id}
+    </delete>
 </mapper>

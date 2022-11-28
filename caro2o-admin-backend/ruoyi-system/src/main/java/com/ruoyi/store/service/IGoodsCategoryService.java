@@ -2,7 +2,9 @@ package com.ruoyi.store.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.store.domain.GoodsCategory;
+import com.ruoyi.store.domain.TreeData;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public interface IGoodsCategoryService extends IService<GoodsCategory> {
      * @return 物品分类信息集合
      */
     public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
-	
-	List<GoodsCategory> getTreeData();
+
+    List<TreeData> queryTreeList();
+    /*List<GoodsCategory> getTreeData();*/
 }

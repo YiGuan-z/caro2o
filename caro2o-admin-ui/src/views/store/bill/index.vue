@@ -67,7 +67,7 @@
           plain
           icon="el-icon-edit"
           size="mini"
-          :disabled="single"
+          :disabled="!form.id"
           @click="handleUpdate"
           v-hasPermi="['store:bill:edit']"
         >出库
@@ -135,7 +135,7 @@
     />
 
     <!-- 添加或修改出入库单据对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1200px" append-to-body>
 
 
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -178,7 +178,7 @@
         <el-table
           :data="form.itemFrom"
           border
-          style="width: 100%">
+          style="width: 1000px">
           <el-table-column
             fixed
             prop="id"
@@ -222,7 +222,7 @@
             fixed="right"
             label="操作"
             v-if="onoff"
-            width="100">
+          >
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -253,7 +253,7 @@ export default {
   dicts: ['sb_type', 'sb_status'],
   data() {
     return {
-      disabled:false,
+      disabled: false,
       storeList: [],
       onoff: true,
       itemData: [],
@@ -334,7 +334,14 @@ export default {
         this.loading = false;
       });
     },
+    //删除明细
+    async itemDelete(row) {
+     const {msg} =await delBillItem(row.id);
+     const itemForm = this.form.itemFrom.filter(v=>v.id!==msg);
+     this.form.itemFrom=itemForm;
 
+      console.log(data)
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -369,13 +376,16 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length
+      if (selection.length == 1 && selection[0].status == 0 && selection[0].type == 0) {
+        this.form = {...selection[0]}
+      } else {
+        this.form = {}
+      }
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.disabled=false
+      this.disabled = false
       this.open = true;
       this.onoff = true
       this.title = "添加出入库单据";
@@ -399,7 +409,8 @@ export default {
         this.form.busiDate = response.data.busiDate;
         this.form.remark = response.data.remark;
         this.form.storeId = response.data.storeId
-        this.disabled=true
+        this.form.id = response.data.id
+        this.disabled = true
         this.onoff = true
         this.open = true;
         this.title = "修改出入库单据";
@@ -423,9 +434,10 @@ export default {
         this.form.busiDate = response.data.busiDate;
         this.form.remark = response.data.remark;
         this.form.storeId = response.data.storeId
+        this.form.id = response.data.id
         this.onoff = false
         this.open = true
-        this.disabled=true
+        this.disabled = true
         this.title = "修改出入库单据";
       });
     }

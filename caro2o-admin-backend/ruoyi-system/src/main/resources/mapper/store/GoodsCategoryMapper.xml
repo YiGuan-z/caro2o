@@ -6,24 +6,25 @@
 
     <resultMap type="GoodsCategory" id="GoodsCategoryResult">
         <result property="id"    column="id"    />
-        <result property="categoryName"    column="category_name"    />
+        <result property="label"    column="category_name"    />
         <result property="categoryDesc"    column="category_desc"    />
         <result property="busiPath"    column="busi_path"    />
-        <result property="parentId"    column="parent_id"    />
+        <association property="parent" column="parent_id"
+                     select="selectByParentId"/>
     </resultMap>
 
     <sql id="selectGoodsCategoryVo">
         select id, category_name, category_desc, busi_path, parent_id from goods_category
     </sql>
 
-    <select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">
-        <include refid="selectGoodsCategoryVo"/>
-        <where>
-            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
-            <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc like concat('%', #{categoryDesc}, '%')</if>
-            <if test="params.beginParentId != null and params.beginParentId != '' and params.endParentId != null and params.endParentId != ''"> and parent_id between #{params.beginParentId} and #{params.endParentId}</if>
-        </where>
-    </select>
+    <!--<select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">-->
+    <!--    <include refid="selectGoodsCategoryVo"/>-->
+    <!--    <where>-->
+    <!--        <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>-->
+    <!--        <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc like concat('%', #{categoryDesc}, '%')</if>-->
+    <!--        <if test="params.beginParentId != null and params.beginParentId != '' and params.endParentId != null and params.endParentId != ''"> and parent_id between #{params.beginParentId} and #{params.endParentId}</if>-->
+    <!--    </where>-->
+    <!--</select>-->
     <select id="selectByIdFormTree" resultMap="GoodsCategoryResult">
         <include refid="selectGoodsCategoryVo"/>
         where id in (select id
@@ -34,14 +35,86 @@
         <include refid="selectGoodsCategoryVo"/>
         where busi_path = #{busiPath}
     </select>
-    <select id="selectByParentId" resultType="com.ruoyi.store.domain.GoodsCategory">
-        <include refid="selectGoodsCategoryVo"/>
-        where id = #{parentId}
-    </select>
+    <!--<select id="selectByParentId" resultType="com.ruoyi.store.domain.GoodsCategory">-->
+    <!--    <include refid="selectGoodsCategoryVo"/>-->
+    <!--    where id = #{parentId}-->
+    <!--</select>-->
     <select id="selectParentByPath" resultType="com.ruoyi.store.domain.GoodsCategory">
         <include refid="selectGoodsCategoryVo"/>
         where id in (select id
         from goods_category
         where busi_path like concat('%',#{path},'%'))
+    </select>
+
+
+    <select id="selectByParentId" resultMap="GoodsCategoryResult">
+        select *
+        from goods_category
+        where id = #{parent.id}
+    </select>
+
+    <select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">
+        <include refid="selectGoodsCategoryVo"/>
+        <where>
+            <if test="categoryName != null  and categoryName != ''">
+                and (category_name like concat('%', #{categoryName}, '%') or category_desc like concat('%',
+                #{categoryName}, '%'))
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectChildrenByParentId" resultType="com.ruoyi.store.domain.GoodsCategory">
+        select *
+        from goods_category
+        <where>
+            <if test="id == null">
+                parent_id is null
+            </if>
+            <if test="id != null">
+                parent_id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="GoodsCategoryResult">
+        <include refid="selectGoodsCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="save">
+        insert into goods_category (category_name, category_desc, busi_path, parent_id)
+        values (#{categoryName}, #{categoryDesc}, #{busiPath}, #{parent.id})
+    </insert>
+
+    <update id="updateForId">
+        update goods_category
+        <set>
+            <if test="categoryName != null and categoryName != ''">
+                category_name = #{categoryName},
+            </if>
+            <if test="categoryDesc != null and categoryDesc != ''">
+                category_desc = #{categoryDesc},
+            </if>
+            <if test="busiPath != null and busiPath != ''">
+                busi_path = #{busiPath},
+            </if>
+            <if test="parent.id != null">
+                parent_id = #{parent.id}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteForId">
+        delete from goods_category where id = #{id}
+    </delete>
+
+    <select id="selectChild" resultMap="GoodsCategoryResult">
+        select *
+        from goods_category
+        where parent_id = #{id}
     </select>
 </mapper>

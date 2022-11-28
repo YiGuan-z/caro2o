@@ -51,7 +51,7 @@ public class StockBillItem extends BaseEntity
      * 单据id
      */
     @Excel(name = "单价")
-    private Long price;
+    private BigDecimal price;
 
     /** 状态 */
     @Excel(name = "单据id")
