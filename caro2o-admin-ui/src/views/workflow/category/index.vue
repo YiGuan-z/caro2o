@@ -62,7 +62,7 @@
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="序号" prop="id"/>
-      <el-table-column label="上级分类" prop="parent.id"/>
+      <el-table-column label="上级分类" prop="parentId"/>
       <el-table-column label="分类" align="center" prop="busiPath"/>
       <el-table-column label="概述" align="center" prop="categoryDesc"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -96,18 +96,17 @@
         <el-form-item label="描述" prop="categoryDesc">
           <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
         </el-form-item>
-        <el-form-item label="上级分类">
-          <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
-            <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
-                       hidden/>
-            <el-tree :data="treeList"
-                     :props="defaultProps"
-                     node-key="id"
-                     :default-expand-all="true"
-                     :expand-on-click-node="false"
-                     clearable
-                     @node-click="insertNodeClick"/>
-          </el-select>
+
+        <el-form-item label="上级分类" prop="parentId">
+          <el-cascader :options="options" clearable>
+            <template slot-scope="{ node, data }">
+              <span>{{ data.label }}</span>
+              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+            </template>
+          </el-cascader>
+          <!--          <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
+                      @keyup.enter.native="handleQuery"
+                    </el-select>-->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -122,10 +121,13 @@
 import {addCategory, delCategory, getCategory, listCategory, updateCategory,getTreeDate} from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listMenu} from "@/api/system/menu";
 
 export default {
   name: "Category",
-  components: {Treeselect},
+  components: {
+    Treeselect
+  },
   data() {
     return {
       // 树结构分类
@@ -164,6 +166,8 @@ export default {
           categoryName: null
         }
       },
+      // 表单参数
+      form: {},
       // 表单校验
       rules: {}
     };
@@ -207,7 +211,15 @@ export default {
         children: node.children
       };
     },
-
+    /** 查询物品分类信息下拉树结构 */
+    getTreeselect() {
+      listCategory().then(response => {
+        this.categoryOptions = [];
+        const data = {id: 0, categoryName: '顶级节点', children: []};
+        data.children = this.handleTree(response.data, "id", "busiPath");
+        this.categoryOptions.push(data);
+      });
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -236,6 +248,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset();
+      this.getTreeselect();
       if (row != null && row.id) {
         this.form.busiPath = row.id;
       } else {
@@ -255,6 +268,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      this.getTreeselect();
       if (row != null) {
         this.form.busiPath = row.id;
       }
@@ -297,30 +311,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.el-select-dropdown__item {
-  height: 200px !important;
-  min-width: 260px;
-  overflow-y: scroll !important;
-}
-
-.el-select-dropdown__item {
-  background: #fff !important;
-}
-
-.el-select-dropdown__item::-webkit-scrollbar {
-  width: 6px;
-  background-color: #f5f5f5;
-}
-
-.el-select-dropdown__item::-webkit-scrollbar-thumb {
-  background-color: #c1c1c1;
-  border-radius: 6px;
-}
-
-.filterStyle {
-  padding: 5px 20px;
-  width: 260px;
-}
-</style>

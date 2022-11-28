@@ -6,7 +6,7 @@
 
     <resultMap type="GoodsCategory" id="GoodsCategoryResult">
         <result property="id"    column="id"    />
-        <result property="categoryName"    column="category_name"    />
+        <result property="label"    column="category_name"    />
         <result property="categoryDesc"    column="category_desc"    />
         <result property="busiPath"    column="busi_path"    />
         <association property="parent" column="parent_id"

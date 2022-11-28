@@ -34,6 +34,9 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>
     @Excel(name = "分类名称")
     @TableField("category_name")
     private String categoryName;
+    
+    @TableField(exist = false)
+    private String label;
 
     /** 描述 */
     @Excel(name = "描述")

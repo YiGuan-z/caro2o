@@ -3,6 +3,7 @@ package com.ruoyi.store.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.store.domain.StockBill;
 import com.ruoyi.store.domain.StockBillItem;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,4 +16,7 @@ import java.util.List;
 public interface StockBillItemMapper extends BaseMapper<StockBillItem> {
 
 
+    void updateList(@Param("itemFrom") List<StockBillItem> itemFrom);
+
+    void deleteBillId(String id);
 }

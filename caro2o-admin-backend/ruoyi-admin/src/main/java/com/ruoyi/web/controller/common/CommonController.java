@@ -3,15 +3,15 @@ package com.ruoyi.web.controller.common;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.framework.config.ServerConfig;
 import com.ruoyi.common.config.MiniIoConfig;
-import io.minio.BucketExistsArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,6 +173,50 @@ public class CommonController {
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             FileUtils.setAttachmentResponseHeader(response, downloadName);
             FileUtils.writeBytes(downloadPath, response.getOutputStream());
+        } catch (Exception e) {
+            log.error("下载文件失败", e);
+        }
+    }
+
+    /**
+     * Minio 下载
+     *
+     * @param fileName 文件名称
+     */
+    @PostMapping("/minio/download")
+    public void minioDownload(String fileName, HttpServletResponse response) {
+        try {
+            if (fileName.startsWith("http") || fileName.startsWith("https")) {
+                fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+            }
+
+            // 检查下载文件是否合法
+            if (!FileUtils.checkAllowDownload(fileName)) {
+                throw new ServiceException(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+
+            // 1：创建minio客户端连接对象
+            // 2: 检查捅是否存在, 桶不存在上传不了
+            boolean ok = minioClient.bucketExists(BucketExistsArgs.builder().bucket(MiniIoConfig.getBucket()).build());
+            if (!ok) {
+                throw new ServiceException("文件服务配置异常，联系管理员");
+            }
+            // 3:下载文件
+            try (InputStream in = minioClient.getObject(GetObjectArgs
+                    .builder()
+                    .bucket(MiniIoConfig.getBucket())
+                    .object(fileName)
+                    .build())) {
+
+                // 4. 设置文件下载响应类型
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                // 5. 设置响应请求头
+                FileUtils.setAttachmentResponseHeader(response, fileName);
+                // 6. 将从 miniio 获取到的文件对象输出到响应流对象
+                IOUtils.copy(in, response.getOutputStream());
+            } catch (Exception e) {
+                log.error("下载文件失败", e);
+            }
         } catch (Exception e) {
             log.error("下载文件失败", e);
         }
