@@ -1,6 +1,7 @@
 package com.ruoyi.workflow.mapper;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.workflow.domain.GoodsCategory;
@@ -28,4 +29,5 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
 	GoodsCategory selectByParentId(Long parentId);
 	
 	List<GoodsCategory> selectParentByPath(String path);
+	
 }
