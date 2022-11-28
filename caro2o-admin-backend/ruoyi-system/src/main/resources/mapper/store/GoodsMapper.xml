@@ -12,6 +12,9 @@
         <result property="brand" column="brand"/>
         <result property="spec" column="spec"/>
         <result property="goodsDesc" column="goods_desc"/>
+        <association property="category"
+                     column="category_id"
+                     select="com.ruoyi.store.mapper.GoodsCategoryMapper.selectByParentId"/>
         <!--        <association property="son" -->
         <!--                     select="com.ruoyi.store.mapper.GoodsMapper.selectById"-->
         <!--                     resultMap="com.ruoyi.store.mapper.GoodsStoreMapper.GoodsStoreResult"/>-->
@@ -47,7 +50,7 @@
     </select>
     <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
         <include refid="selectGoodsVo"/>
-        where id=#{id}
+        where good.id=#{id}
     </select>
     <select id="selectCategoryGoods" resultMap="GoodsResult">
         select gs.amounts from goods_category cate

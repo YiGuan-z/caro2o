@@ -20,6 +20,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <where>
                   <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
                   <if test="storeAddress != null  and storeAddress != ''"> and store_address = #{storeAddress}</if>
+        <if test="params.keyword!=null">
+            and
+            store_name like concat('%',#{params.keyword},'%')
+            or store_address like concat('%',#{params.keyword},'%')
+        </if>
     </where>
   </select>
 </mapper>

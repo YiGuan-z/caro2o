@@ -42,6 +42,9 @@ public class Goods extends BaseEntity
     @Excel(name = "分类")
     @TableField("category_id")
     private String categoryId;
+    /** 分类对象*/
+    @TableField(exist = false)
+    private GoodsCategory category;
 
     /** 品牌 */
     @Excel(name = "品牌")
@@ -57,7 +60,4 @@ public class Goods extends BaseEntity
     @Excel(name = "描述")
     @TableField("goods_desc")
     private String goodsDesc;
-    
-    @TableField(exist = false)
-    private Goods son;
 }

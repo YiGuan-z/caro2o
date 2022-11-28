@@ -20,6 +20,7 @@
       <el-form-item label="分类" prop="classify">
         <el-select v-model="queryParams.params['classify']" clearable>
           <el-option v-for="item in classify"
+                     :key="item.id"
                      :value="item.id"
                      :label="item.categoryName"/>
         </el-select>
