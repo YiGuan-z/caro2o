@@ -33,7 +33,14 @@ public class GoodsCategoryController extends BaseController
 {
     @Autowired
     private IGoodsCategoryService goodsCategoryService;
-
+    
+    @PreAuthorize("@ss.hasPermi('workflow:category:list')")
+    @GetMapping("/listData")
+    public AjaxResult listTreeData()
+    {
+        List<GoodsCategory> list = goodsCategoryService.getTreeData();
+        return AjaxResult.success(list);
+    }
     /**
      * 查询物品分类信息列表
      */

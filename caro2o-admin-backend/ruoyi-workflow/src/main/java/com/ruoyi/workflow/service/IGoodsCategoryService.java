@@ -19,5 +19,6 @@ public interface IGoodsCategoryService extends IService<GoodsCategory> {
      * @return 物品分类信息集合
      */
     public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
-
+	
+	List<GoodsCategory> getTreeData();
 }
