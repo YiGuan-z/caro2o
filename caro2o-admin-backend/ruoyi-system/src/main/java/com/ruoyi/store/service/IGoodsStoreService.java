@@ -21,7 +21,4 @@ public interface IGoodsStoreService extends IService<GoodsStore> {
      * @return 物品库存集合
      */
     public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
-    
-    
-    List<Map<String, Object>> selectList(GoodsStore goodsStore);
 }
