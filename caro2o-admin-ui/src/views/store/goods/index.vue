@@ -152,11 +152,13 @@
 <script>
 import { listGoods, getGoods, delGoods, addGoods, updateGoods } from "@/api/store/goods";
 import {getToken} from "@/utils/auth";
+import {listCategory} from "@/api/workflow/category";
 
 export default {
   name: "Goods",
   data() {
     return {
+      classify:[],
       headler:{
         Authorization: `Bearer ${getToken()}`
       },
@@ -207,8 +209,34 @@ export default {
   },
   created() {
     this.getList();
+    this.getAllCateGory()
   },
   methods: {
+    async getAllCateGory() {
+      const {data} = await listCategory(null)
+      // console.log(rows)
+      const rootNodes = []
+      const cache = new Map()
+      data.forEach(node => {
+        cache.set(node.busiPath, node)
+      })
+      cache.forEach(node => {
+        //判断是否为顶级节点
+        //顶级节点长度为1
+        const nodeData = node.busiPath.split(':');
+        const nodeLength = nodeData.length;
+        if (nodeLength === 1) {
+          rootNodes.push(node)
+        } else {
+          //如果不是顶级节点
+          //通过减少子节点字符就可以拿到父节点的key
+          const parentKey = node.busiPath.substring(0,node.busiPath.length-2);
+          const parentNode = cache.get(parentKey);
+          parentNode.children.push(node)
+        }
+      })
+      this.classify=rootNodes
+    },
     handleViewImage({row}){
       const {goodsCover}=row
       this.viewImage=goodsCover

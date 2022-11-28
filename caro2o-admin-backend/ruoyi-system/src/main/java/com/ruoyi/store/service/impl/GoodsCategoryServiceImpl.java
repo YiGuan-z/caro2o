@@ -1,23 +1,21 @@
-package com.ruoyi.workflow.service.impl;
+package com.ruoyi.store.service.impl;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.Assert;
+import com.ruoyi.store.domain.GoodsCategory;
+import com.ruoyi.store.mapper.GoodsCategoryMapper;
+import com.ruoyi.store.service.IGoodsCategoryService;
 import com.ruoyi.store.service.IGoodsService;
-import com.ruoyi.store.service.impl.GoodsServiceImpl;
-import io.swagger.models.auth.In;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.workflow.mapper.GoodsCategoryMapper;
-import com.ruoyi.workflow.domain.GoodsCategory;
-import com.ruoyi.workflow.service.IGoodsCategoryService;
 
-import javax.sql.rowset.serial.SerialException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 物品分类信息Service业务层处理

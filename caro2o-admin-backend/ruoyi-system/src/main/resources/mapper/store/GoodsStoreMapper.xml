@@ -12,15 +12,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
   <sql id="selectGoodsStoreVo">
-    select id, goods_id, store_id, amounts from goods_store
+    select gs.* from goods_category cate
+                      join goods good on cate.id=good.category_id
+                      join goods_store gs on gs.goods_id=good.id
   </sql>
 
   <select id="selectGoodsStoreList" parameterType="GoodsStore" resultMap="GoodsStoreResult">
     <include refid="selectGoodsStoreVo"/>
     <where>
-                  <if test="goodsId != null  and goodsId != ''"> and goods_id = #{goodsId}</if>
-                  <if test="storeId != null  and storeId != ''"> and store_id = #{storeId}</if>
-                  <if test="amounts != null "> and amounts = #{amounts}</if>
+                  <if test="goodsId != null  and goodsId != ''"> and gs.goods_id = #{goodsId}</if>
+                  <if test="storeId != null  and storeId != ''"> and gs.store_id = #{storeId}</if>
+                  <if test="amounts != null "> and gs.amounts = #{amounts}</if>
+        <if test="params.classify !=null">
+            and cate.id=${params.classify}
+        </if>
     </where>
   </select>
 </mapper>

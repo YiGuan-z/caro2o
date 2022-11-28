@@ -1,10 +1,11 @@
-package com.ruoyi.workflow.mapper;
+package com.ruoyi.store.mapper;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
+
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ruoyi.workflow.domain.GoodsCategory;
+import com.ruoyi.store.domain.GoodsCategory;
+
+import java.util.List;
 
 /**
  * 物品分类信息Mapper接口

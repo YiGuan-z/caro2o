@@ -29,7 +29,6 @@ public class Customer extends BaseEntity
 
     /** $column.columnComment */
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private String id;
 
     /** 企业名称 */

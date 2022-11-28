@@ -29,7 +29,6 @@ public class CustomerVisit extends BaseEntity
     /** 唯一id */
     @Excel(name = "唯一id")
     @TableId(type = IdType.ASSIGN_ID)
-    @TableField("id")
     private String id;
 
     /** 客户id */
