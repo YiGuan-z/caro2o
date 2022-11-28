@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+
+
       <el-form-item label="法定代表人" prop="legalLeader">
         <el-input
           v-model="queryParams.legalLeader"
@@ -20,15 +23,17 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属省份" prop="province">
-        <el-select v-model="form.province" placeholder="请选择" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_city_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          >
-          </el-option>
-        </el-select>
+<!--        <el-select v-model="form.province" placeholder="请选择" clearable>-->
+<!--          <el-option-->
+<!--            v-for="dict in dict.type.sys_city_status"-->
+<!--            :key="dict.value"-->
+<!--            :label="dict.label"-->
+<!--            :value="dict.value"-->
+<!--          >-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+        <v-distpicker @selected="onSelected" only-province v-model="queryParams.province" aria-placeholder="选择">
+        </v-distpicker>
       </el-form-item>
       <el-form-item label="所属行业" prop="industry">
         <el-input
@@ -68,18 +73,7 @@
         >修改
         </el-button>
       </el-col>
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="danger"-->
-      <!--          plain-->
-      <!--          icon="el-icon-delete"-->
-      <!--          size="mini"-->
-      <!--          :disabled="multiple"-->
-      <!--          @click="handleDelete"-->
-      <!--          v-hasPermi="['system:customer:remove']"-->
-      <!--        >删除-->
-      <!--        </el-button>-->
-      <!--      </el-col>-->
+
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -110,9 +104,9 @@
         </template>
       </el-table-column>
       <el-table-column label="所属省份" align="center" prop="province">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_city_status" :value="scope.row.province"/>
-        </template>
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.sys_city_status" :value="scope.row.province"/>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="注册资本,(万元)" align="center" prop="regCapital"/>
       <el-table-column label="所属行业" align="center" prop="industry"/>
@@ -229,15 +223,21 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属省份" prop="province">
-              <el-select v-model="form.province" placeholder="请选择" clearable>
-                <el-option
-                  v-for="dict in dict.type.sys_city_status"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                >
-                </el-option>
-              </el-select>
+<!--              <el-select v-model="form.province" placeholder="请选择" clearable>-->
+<!--                <el-option-->
+<!--                  v-for="dict in dict.type.sys_city_status"-->
+<!--                  :key="dict.value"-->
+<!--                  :label="dict.label"-->
+<!--                  :value="dict.value"-->
+<!--                >-->
+<!--                </el-option>-->
+<!--              </el-select>-->
+
+                <v-distpicker @selected="onSelected" only-province v-model="form.province">
+                  <template>
+                    {{form.province}}
+                  </template>
+                </v-distpicker>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -257,7 +257,6 @@
         <el-form-item label="注册地址" prop="regAddr">
           <el-input v-model="form.regAddr" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -265,16 +264,23 @@
       </div>
     </el-dialog>
   </div>
+
+
 </template>
 
 <script>
   import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/system/customer";
-
+  import VDistpicker from 'v-distpicker'
+  // Vue.component('v-distpicker',VDistpicker);
   export default {
+    components:{VDistpicker},
     name: "Customer",
     dicts: ['sys_customer_status', 'sys_city_status'],
     data() {
       return {
+
+        show:false,
+
         selectInfo: {},
         // 遮罩层
         loading: true,
@@ -282,6 +288,7 @@
         ids: [],
         // 非单个禁用
         single: true,
+
         // 非多个禁用
         multiple: true,
         // 显示搜索条件
@@ -305,7 +312,9 @@
           industry: null,
         },
         // 表单参数
-        form: {},
+        form: {
+          // city:[],
+        },
         particulars: {},
         // 表单校验
         rules: {
@@ -338,6 +347,12 @@
     },
     methods: {
 
+      onSelected(data){
+        this.form.province = data.province.value
+
+        console.log(this.form.province);
+      },
+
 
       /** 查询客户信息列表 */
       getList() {
@@ -368,7 +383,8 @@
           scope: null,
           regAddr: null,
           inputTime: null,
-          inputUser: null
+          inputUser: null,
+          // city: []
         };
         this.resetForm("form");
       },
@@ -438,3 +454,37 @@
     }
   };
 </script>
+
+
+<style scoped>
+  .divwrap{
+    height: 400px;
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  .divwrap>>>.distpicker-address-wrapper{
+    color: #999;
+  }
+  .divwrap>>>.address-header{
+    position: fixed;
+    bottom: 400px;
+    width: 100%;
+    background: #000;
+    color:#fff;
+  }
+  .divwrap>>>.address-header ul li{
+    flex-grow: 1;
+    text-align: center;
+  }
+  .divwrap>>>.address-header .active{
+    color: #fff;
+    border-bottom:#666 solid 8px
+  }
+  .divwrap>>>.address-container .active{
+    color: #000;
+  }
+
+</style>
