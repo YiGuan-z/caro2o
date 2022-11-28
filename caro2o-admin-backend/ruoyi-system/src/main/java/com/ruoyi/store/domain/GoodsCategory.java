@@ -9,6 +9,10 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.TreeEntity;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 物品分类信息对象 goods_category
  *
@@ -24,7 +28,7 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>
 
     /** 序号 */
     @TableId(type = IdType.AUTO)
-    private String id;
+    private Long id;
 
     /** 分类名称 */
     @Excel(name = "分类名称")
@@ -40,4 +44,9 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>
     @Excel(name = "id层级结构")
     @TableField("busi_path")
     private String busiPath;
+
+    /** 上级分类 */
+    @Excel(name = "上级分类")
+    @TableField("parent_id")
+    private GoodsCategory parent;
 }

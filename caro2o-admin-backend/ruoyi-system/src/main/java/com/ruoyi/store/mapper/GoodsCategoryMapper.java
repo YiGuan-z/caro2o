@@ -30,5 +30,14 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
 	GoodsCategory selectByParentId(Long parentId);
 	
 	List<GoodsCategory> selectParentByPath(String path);
-	
+
+	boolean save(GoodsCategory entity);
+
+	List<GoodsCategory> selectChildrenByParentId(Object o);
+
+	List<GoodsCategory> selectChild(Long id);
+
+	void deleteForId(Long id);
+
+	boolean updateForId(GoodsCategory entity);
 }

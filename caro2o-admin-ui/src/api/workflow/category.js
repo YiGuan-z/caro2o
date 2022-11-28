@@ -42,3 +42,11 @@ export function delCategory(id) {
     method: 'delete'
   })
 }
+
+// 查询部门下拉树结构
+export function getTreeDate() {
+  return request({
+    url: '/workflow/category/treeList',
+    method: 'get'
+  })
+}

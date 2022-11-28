@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.TreeSelect;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.store.domain.GoodsCategory;
+import com.ruoyi.store.domain.TreeData;
 import com.ruoyi.store.service.IGoodsCategoryService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +34,17 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  */
 @RestController
 @RequestMapping("/workflow/category")
-public class GoodsCategoryController extends BaseController
-{
+public class GoodsCategoryController extends BaseController {
     @Autowired
     private IGoodsCategoryService goodsCategoryService;
-    
-    @PreAuthorize("@ss.hasPermi('workflow:category:list')")
+
+    /*@PreAuthorize("@ss.hasPermi('workflow:category:list')")
     @GetMapping("/listData")
     public AjaxResult listTreeData()
     {
         List<GoodsCategory> list = goodsCategoryService.getTreeData();
         return AjaxResult.success(list);
-    }
+    }*/
     /**
      * 查询物品分类信息列表
      */
@@ -108,5 +110,14 @@ public class GoodsCategoryController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(goodsCategoryService.removeBatchByIds(Arrays.asList(ids)));
+    }
+
+    /**
+     * 获取部门下拉树列表
+     */
+    @GetMapping("/treeList")
+    public AjaxResult treeList() {
+        List<TreeData> treeList = goodsCategoryService.queryTreeList();
+        return AjaxResult.success(treeList);
     }
 }
