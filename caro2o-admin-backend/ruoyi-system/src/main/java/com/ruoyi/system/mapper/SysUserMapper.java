@@ -126,4 +126,10 @@ public interface SysUserMapper
     public SysUser checkEmailUnique(String email);
 
     List<SysUser> selectByRoleKey(String rkey);
+
+    /**
+     * 用户添加角色
+     * @param userID
+     */
+    void insertRole(Long userID);
 }

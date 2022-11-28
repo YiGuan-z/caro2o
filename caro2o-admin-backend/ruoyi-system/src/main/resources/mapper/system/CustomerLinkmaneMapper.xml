@@ -19,23 +19,6 @@
 
     </resultMap>
 
-<!--    <sql id="selectCustomerLinkmaneVo">-->
-<!--            select-->
-<!--             cl.id,-->
-<!--             cl.customer_id,-->
-<!--             cl.linkman,-->
-<!--             cl.gender,-->
-<!--             cl.age,-->
-<!--             cl.phone,-->
-<!--             cl.position,-->
-<!--             cl.position_state,-->
-<!--             cl.department,-->
-<!--             cl.input_user,-->
-<!--             cl.input_time,-->
-<!--             c.id c_id,c.legal_leader c_legal_leader-->
-<!--             from customer_linkmane cl join customer c on cl.customer_id = c.id-->
-
-<!--    </sql>-->
 
     <sql id="selectCustomerLinkmaneVo">
             select
