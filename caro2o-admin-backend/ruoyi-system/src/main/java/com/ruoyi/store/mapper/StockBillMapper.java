@@ -19,4 +19,8 @@ public interface StockBillMapper extends BaseMapper<StockBill> {
    * @return 出入库单据集合
    */
   public List<StockBill> selectStockBillList(StockBill stockBill);
+
+  List<StockBill> selectForList(StockBill stockBill);
+
+  Long selectForCount(StockBill stockBill);
 }

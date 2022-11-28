@@ -67,7 +67,6 @@
           plain
           icon="el-icon-edit"
           size="mini"
-          :disabled="!form.id"
           @click="handleUpdate"
           v-hasPermi="['store:bill:edit']"
         >出库
@@ -392,31 +391,10 @@ export default {
     },
 
     /** 修改按钮操作 */
-    async handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      await getBillItem(id).then(res => {
-        let {data} = res
-        data = data.map(s => {
-          return {
-            ...s,
-            sum: s.price * s.amounts
-          }
-        })
-        this.form.itemFrom = data
-      })
-      await getBill(id).then(response => {
-        this.form.busiDate = response.data.busiDate;
-        this.form.remark = response.data.remark;
-        this.form.storeId = response.data.storeId
-        this.form.id = response.data.id
-        this.disabled = true
+     handleUpdate() {
         this.onoff = true
         this.open = true;
         this.title = "修改出入库单据";
-        console.log(this.form.storeId);
-      });
-
     },
     async itemQuery(id) {
       this.reset();
