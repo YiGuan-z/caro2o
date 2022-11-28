@@ -40,25 +40,19 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	}
 	
 	public List<GoodsCategory> buildTreeData(List<GoodsCategory> data) {
-		List<GoodsCategory> ret = new ArrayList<>(10);
-		final Map<String, GoodsCategory> map = data.stream()
+		List<GoodsCategory> ret=new ArrayList<>(10);
+		final Map<String,GoodsCategory> map = data.stream()
 				.collect(Collectors.toMap(GoodsCategory::getBusiPath, goods -> goods));
-		final AtomicInteger length = new AtomicInteger(Integer.MAX_VALUE);
-		//查找最小值
-		final Optional<GoodsCategory> root = map.values().stream().min(Comparator.comparingInt(prev -> prev.getBusiPath().length()));
-		final GoodsCategory category = root.orElse(null);
-		map.forEach((key, node) -> {
-			length.set(key.split(":").length);
-			if (!Objects.equals(category.getId(), node.getId())){
-				if (length.get() != 1) {
-					final String parentKey = key.substring(0, key.length() - 2);
-					final GoodsCategory goodsCategory = map.get(parentKey);
-					goodsCategory.getChildren().add(node);
-				}
+		map.forEach((key,node)->{
+			final int nodeLenght = key.split(":").length;
+			if (nodeLenght==1){
+				ret.add(node);
+			}else {
+				final String parentKey = key.substring(0, key.length() - 2);
+				final GoodsCategory goodsCategory = map.get(parentKey);
+				goodsCategory.getChildren().add(node);
 			}
-			
 		});
-		ret.add(root.orElse(null));
 		return ret;
 	}
 	
