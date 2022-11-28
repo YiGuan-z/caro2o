@@ -46,13 +46,17 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 		final AtomicInteger length = new AtomicInteger(Integer.MAX_VALUE);
 		//查找最小值
 		final Optional<GoodsCategory> root = map.values().stream().min(Comparator.comparingInt(prev -> prev.getBusiPath().length()));
+		final GoodsCategory category = root.orElse(null);
 		map.forEach((key, node) -> {
 			length.set(key.split(":").length);
-			if (length.get() != 1) {
-				final String parentKey = key.substring(0, key.length() - 2);
-				final GoodsCategory goodsCategory = map.get(parentKey);
-				goodsCategory.getChildren().add(node);
+			if (!Objects.equals(category.getId(), node.getId())){
+				if (length.get() != 1) {
+					final String parentKey = key.substring(0, key.length() - 2);
+					final GoodsCategory goodsCategory = map.get(parentKey);
+					goodsCategory.getChildren().add(node);
+				}
 			}
+			
 		});
 		ret.add(root.orElse(null));
 		return ret;
@@ -64,13 +68,15 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 		//获取它与它的子集，直接从数据库中查询，再经过树结构处理
 		final List<GoodsCategory> categories = baseMapper.selectByIdFormTree((Long) id);
 		//如果没有子集，就直接返回
-		if (categories.size()==1)return categories.get(0);
-		//有子集就找出父
-		final GoodsCategory busiPath = baseMapper.selectByParentId(categories.get(0).getParentId());
-		categories.add(busiPath);
-		final List<GoodsCategory> list = buildTreeData(categories);
-		Assert.assertTrue(list, (item) -> item.size() != 0, "id不正确，请检查id");
-		return list.get(0).getChildren().get(0);
+		if (categories.size() == 1) return categories.get(0);
+		final GoodsCategory rootNode = categories.get(0);
+		final Map<String, GoodsCategory> map = categories.stream().collect(Collectors.toMap(GoodsCategory::getBusiPath, goods -> goods));
+		
+		categories.stream().skip(1).forEach(node-> {
+			String key=node.getBusiPath().substring(0,node.getBusiPath().length()-2);
+			map.get(key).getChildren().add(node);
+		});
+		return rootNode;
 	}
 	
 	

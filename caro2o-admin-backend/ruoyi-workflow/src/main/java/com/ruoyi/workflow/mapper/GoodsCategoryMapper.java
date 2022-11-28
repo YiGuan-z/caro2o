@@ -26,4 +26,6 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
 	GoodsCategory selectByBusiPath(String busiPath);
 	
 	GoodsCategory selectByParentId(Long parentId);
+	
+	List<GoodsCategory> selectParentByPath(String path);
 }

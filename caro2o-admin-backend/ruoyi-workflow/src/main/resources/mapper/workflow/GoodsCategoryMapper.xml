@@ -38,4 +38,10 @@
         <include refid="selectGoodsCategoryVo"/>
         where id = #{parentId}
     </select>
+    <select id="selectParentByPath" resultType="com.ruoyi.workflow.domain.GoodsCategory">
+        <include refid="selectGoodsCategoryVo"/>
+        where id in (select id
+        from goods_category
+        where busi_path like concat('%',#{path},'%'))
+    </select>
 </mapper>
