@@ -79,7 +79,7 @@
     <el-table v-loading="loading" :data="billList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
-      <el-table-column label="类型" align="center" prop="type">
+      <el-table-column label="仓库" align="center" prop="storeId">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sb_type" :value="scope.row.type"/>
         </template>
@@ -140,13 +140,13 @@
 
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="id" prop="id" hidden/>
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择类型">
+        <el-form-item label="仓库" prop="storeId">
+          <el-select v-model="form.storeId" placeholder="请选择类型" :disabled="disabled">
             <el-option
-              v-for="dict in dict.type.sb_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
+              v-for="dict in storeList"
+              :key="dict.id"
+              :label="dict.storeName"
+              :value="dict.id"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -246,12 +246,15 @@
 <script>
 import {listBill, getBill, delBill, addBill, updateBill} from "@/api/store/bill";
 import {listBillItem, getBillItem, delBillItem, addBillItem, updateBillItem} from "@/api/store/billItem";
+import {listAllStore} from "@/api/workflow/warehouse"
 
 export default {
   name: "Bill",
   dicts: ['sb_type', 'sb_status'],
   data() {
     return {
+      disabled:false,
+      storeList: [],
       onoff: true,
       itemData: [],
       // 遮罩层
@@ -285,7 +288,8 @@ export default {
       },
       // 表单参数
       form: {
-        itemFrom: []
+        itemFrom: [],
+        storeId: null
       },
       // 表单校验
       rules: {}
@@ -293,19 +297,23 @@ export default {
   },
   created() {
     this.getList();
+    listAllStore().then(res => {
+      console.log("ww", res);
+      this.storeList = res.rows
+    })
   },
   methods: {
     validateField(form, index) {
       let result = true;
       for (let item of this.$refs[form].fields) {
-        if(item.prop.split(".")[1] == index){
+        if (item.prop.split(".")[1] == index) {
           this.$refs[form].validateField(item.prop, err => {
-            if(err !="") {
+            if (err != "") {
               result = false;
             }
           });
         }
-        if(!result) break;
+        if (!result) break;
       }
       return result;
     },
@@ -367,6 +375,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.disabled=false
       this.open = true;
       this.onoff = true
       this.title = "添加出入库单据";
@@ -389,9 +398,12 @@ export default {
       await getBill(id).then(response => {
         this.form.busiDate = response.data.busiDate;
         this.form.remark = response.data.remark;
+        this.form.storeId = response.data.storeId
+        this.disabled=true
         this.onoff = true
         this.open = true;
         this.title = "修改出入库单据";
+        console.log(this.form.storeId);
       });
 
     },
@@ -410,8 +422,10 @@ export default {
       await getBill(id).then(response => {
         this.form.busiDate = response.data.busiDate;
         this.form.remark = response.data.remark;
+        this.form.storeId = response.data.storeId
         this.onoff = false
         this.open = true
+        this.disabled=true
         this.title = "修改出入库单据";
       });
     }
