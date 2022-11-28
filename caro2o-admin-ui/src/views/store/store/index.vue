@@ -17,7 +17,6 @@
                      :label="`${item['storeName']} ${item['storeAddress']}`"/>
         </el-select>
       </el-form-item>
-      <!--      TODO 这里需要一个分类的api-->
       <el-form-item label="分类" prop="classify">
         <el-select v-model="queryParams.params['classify']" clearable>
           <el-option v-for="item in classify"
