@@ -334,7 +334,9 @@
             {required: true, message: "所属行业不能为空", trigger: "blur"}
           ],
           regCapital: [
-            {required: true, message: "注册资金不能为空", trigger: "blur"}
+            { required:true, message:'请输入注册金额', trigger:'blur'},
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+              message: '请输入正确格式,可保留两位小数'}
           ],
         }
       };
@@ -403,6 +405,7 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
+        //设置初始状态为开业
         this.form.openState = 0
         this.open = true;
         this.title = "添加客户信息";

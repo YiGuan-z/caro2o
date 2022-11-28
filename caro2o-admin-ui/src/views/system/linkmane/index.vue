@@ -90,7 +90,7 @@
       <el-table-column label="联系人名字" align="center" prop="linkman"/>
       <el-table-column label="性别" align="center" prop="gender">
         <template v-slot="scope">
-            {{scope.row.gender == 1 ? '男' : '女'}}
+          {{scope.row.gender == 1 ? '男' : '女'}}
         </template>
       </el-table-column>
       <el-table-column label="年龄" align="center" prop="age"/>
@@ -204,7 +204,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item  prop="department">
+            <el-form-item prop="department">
               <el-input v-model="form.department" label="部门" maxlength="20"
                         show-word-limit placeholder="请输入部门"/>
             </el-form-item>
@@ -220,7 +220,7 @@
 </template>
 
 <script>
-  import {listLinkmane, getLinkmane, delLinkmane, addLinkmane, updateLinkmane} from "@/api/system/linkmane";
+  import {listLinkmane, getLinkmane, delLinkmane, addLinkmane, updateLinkmane,intRangeValidator} from "@/api/system/linkmane";
   import {listAll} from "../../../api/system/customer";
 
   export default {
@@ -245,7 +245,7 @@
         // 弹出层标题
         title: "",
 
-        customers:[],
+        customers: [],
         // 是否显示弹出层
         open: false,
         // 查询参数
@@ -267,11 +267,18 @@
           linkman: [
             {required: true, message: "联系人不能为空", trigger: "blur"}
           ],
+          age: [
+            { validator: intRangeValidator(1,100), trigger: 'blur'}
+          ],
           gender: [
             {required: true, message: "性别必填", trigger: "blur"}
           ],
+
           phone: [
-            {required: true, message: "电话只能为纯数字", trigger: "blur"}
+            {required: true,
+              pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+              message: "请输入正确的手机号码",
+              trigger: "blur"}
           ],
           positionState: [
             {required: true, message: "任职状态不能为空", trigger: "blur"}
@@ -286,8 +293,8 @@
     methods: {
 
       //查询客户
-      getCustomer(){
-        listAll().then(res =>{
+      getCustomer() {
+        listAll().then(res => {
           this.customers = res.data
         })
       },
@@ -342,6 +349,8 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
+        //设置默认任职状态
+        this.form.positionState = 0
         this.open = true;
         this.title = "添加客户联系人";
       },
