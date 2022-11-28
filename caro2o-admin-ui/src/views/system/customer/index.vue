@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
 
 
 
@@ -23,17 +23,17 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属省份" prop="province">
-<!--        <el-select v-model="form.province" placeholder="请选择" clearable>-->
-<!--          <el-option-->
-<!--            v-for="dict in dict.type.sys_city_status"-->
-<!--            :key="dict.value"-->
-<!--            :label="dict.label"-->
-<!--            :value="dict.value"-->
-<!--          >-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-        <v-distpicker @selected="onSelected" only-province v-model="queryParams.province" aria-placeholder="选择">
-        </v-distpicker>
+        <el-select v-model="queryParams.province" placeholder="请选择" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_city_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          >
+          </el-option>
+        </el-select>
+<!--        <v-distpicker @selected="onSelected" only-province v-model="queryParams.province">-->
+<!--        </v-distpicker>-->
       </el-form-item>
       <el-form-item label="所属行业" prop="industry">
         <el-input
@@ -88,7 +88,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="customerList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" border :data="customerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
       <el-table-column label="企业名称" align="center" prop="customerName"/>
@@ -104,9 +104,9 @@
         </template>
       </el-table-column>
       <el-table-column label="所属省份" align="center" prop="province">
-<!--        <template slot-scope="scope">-->
-<!--          <dict-tag :options="dict.type.sys_city_status" :value="scope.row.province"/>-->
-<!--        </template>-->
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_city_status" :value="scope.row.province"/>
+        </template>
       </el-table-column>
       <el-table-column label="注册资本,(万元)" align="center" prop="regCapital"/>
       <el-table-column label="所属行业" align="center" prop="industry"/>
@@ -114,7 +114,7 @@
       <el-table-column label="注册地址" align="center" prop="regAddr"/>
       <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="营销人" align="center" prop="userMarket"/>
-      <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
+      <el-table-column label="录入时间" align="center" prop="inputTime" width="180" value-format="yyyy-MM-dd HH:mm:ss">
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -186,23 +186,21 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="企业名称" prop="customerName">
-              <el-input v-model="form.customerName" placeholder="请输入企业名称"/>
+              <el-input v-model="form.customerName" maxlength="100"
+                        show-word-limit placeholder="请输入企业名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="法定代表人" prop="legalLeader">
-              <el-input v-model="form.legalLeader" placeholder="请输入法定代表人"/>
+              <el-input v-model="form.legalLeader" maxlength="30"
+                        show-word-limit placeholder="请输入法定代表人"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="成立时间" prop="registerDate">
-              <el-date-picker clearable
-                              v-model="form.registerDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择成立时间">
+              <el-date-picker clearable v-model="form.registerDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择成立时间">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -223,26 +221,26 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属省份" prop="province">
-<!--              <el-select v-model="form.province" placeholder="请选择" clearable>-->
-<!--                <el-option-->
-<!--                  v-for="dict in dict.type.sys_city_status"-->
-<!--                  :key="dict.value"-->
-<!--                  :label="dict.label"-->
-<!--                  :value="dict.value"-->
-<!--                >-->
-<!--                </el-option>-->
-<!--              </el-select>-->
+              <el-select v-model="form.province" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in dict.type.sys_city_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
 
-                <v-distpicker @selected="onSelected" only-province v-model="form.province">
-                  <template>
-                    {{form.province}}
-                  </template>
-                </v-distpicker>
+                >
+                </el-option>
+              </el-select>
+
+<!--                <v-distpicker @selected="onSelected" only-province v-model="form.province">-->
+
+<!--                </v-distpicker>-->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="form.industry" placeholder="请输入所属行业"/>
+              <el-input v-model="form.industry" maxlength="30"
+                        show-word-limit placeholder="请输入所属行业"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -252,10 +250,10 @@
         </el-form-item>
 
         <el-form-item label="经营范围" prop="scope">
-          <el-input v-model="form.scope" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.scope" type="textarea" maxlength="500" show-word-limit placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="注册地址" prop="regAddr">
-          <el-input v-model="form.regAddr" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.regAddr" type="textarea" maxlength="500" show-word-limit placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -313,7 +311,6 @@
         },
         // 表单参数
         form: {
-          // city:[],
         },
         particulars: {},
         // 表单校验
@@ -347,11 +344,10 @@
     },
     methods: {
 
-      onSelected(data){
-        this.form.province = data.province.value
-
-        console.log(this.form.province);
-      },
+      // onSelected(data){
+      //   this.form.province = data.province.value
+      //   console.log(this.form.province);
+      // },
 
 
       /** 查询客户信息列表 */
@@ -407,6 +403,7 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
+        this.form.openState = 0
         this.open = true;
         this.title = "添加客户信息";
       },
@@ -442,6 +439,7 @@
       },
       //详情按钮查看数据
       handleSelect(row) {
+        this.title = "查看客户信息";
         this.opens = true;
         this.selectInfo = {...row}
       },

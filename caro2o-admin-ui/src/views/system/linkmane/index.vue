@@ -83,7 +83,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="linkmaneList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" border :data="linkmaneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
       <el-table-column label="客户" align="center" prop="legalLeader"/>
@@ -156,7 +156,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人名字" prop="linkman">
-              <el-input v-model="form.linkman" placeholder="请输入联系人名字"/>
+              <el-input v-model="form.linkman" maxlength="30"
+                        show-word-limit placeholder="请输入联系人名字"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -178,12 +179,14 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="联系人电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系人电话"/>
+              <el-input v-model="form.phone" maxlength="20"
+                        show-word-limit placeholder="请输入联系人电话"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="职位" prop="position">
-              <el-input v-model="form.position" placeholder="请输入职位"/>
+              <el-input v-model="form.position" maxlength="20"
+                        show-word-limit placeholder="请输入职位"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -201,8 +204,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门" prop="department">
-              <el-input v-model="form.department" placeholder="请输入部门"/>
+            <el-form-item  prop="department">
+              <el-input v-model="form.department" label="部门" maxlength="20"
+                        show-word-limit placeholder="请输入部门"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -267,7 +271,7 @@
             {required: true, message: "性别必填", trigger: "blur"}
           ],
           phone: [
-            {required: true, message: "电话不能为空", trigger: "blur"}
+            {required: true, message: "电话只能为纯数字", trigger: "blur"}
           ],
           positionState: [
             {required: true, message: "任职状态不能为空", trigger: "blur"}
