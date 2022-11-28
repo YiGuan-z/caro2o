@@ -62,7 +62,7 @@
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="序号" prop="id"/>
-      <el-table-column label="上级分类" prop="parentId"/>
+      <el-table-column label="上级分类" prop="parent.id"/>
       <el-table-column label="分类" align="center" prop="busiPath"/>
       <el-table-column label="概述" align="center" prop="categoryDesc"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -96,17 +96,18 @@
         <el-form-item label="描述" prop="categoryDesc">
           <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
         </el-form-item>
-
-        <el-form-item label="上级分类" prop="parentId">
-          <el-cascader :options="options" clearable>
-            <template slot-scope="{ node, data }">
-              <span>{{ data.label }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-          <!--          <el-select v-model="queryParams.parentId" placeholder="请选择上级分类" clearable>
-                      @keyup.enter.native="handleQuery"
-                    </el-select>-->
+        <el-form-item label="上级分类">
+          <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
+            <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
+                       hidden/>
+            <el-tree :data="treeList"
+                     :props="defaultProps"
+                     node-key="id"
+                     :default-expand-all="true"
+                     :expand-on-click-node="false"
+                     clearable
+                     @node-click="insertNodeClick"/>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
