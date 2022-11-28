@@ -42,3 +42,11 @@ export function delWarehouse(id) {
     method: 'delete'
   })
 }
+
+//查询所有
+export function listAllStore() {
+  return request({
+    url: '/workflow/warehouse/listAll',
+    method: 'get'
+  })
+}

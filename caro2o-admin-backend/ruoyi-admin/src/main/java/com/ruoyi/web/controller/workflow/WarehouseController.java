@@ -6,8 +6,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.workflow.domain.Warehouse;
-import com.ruoyi.workflow.service.IWarehouseService;
+import com.ruoyi.store.domain.Warehouse;
+import com.ruoyi.store.service.IWarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +38,14 @@ public class WarehouseController extends BaseController
     {
         startPage();
         List<Warehouse> list = warehouseService.selectWarehouseList(warehouse);
+        return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('workflow:warehouse:list')")
+    @GetMapping("/listAll")
+    public TableDataInfo list()
+    {
+        List<Warehouse> list = warehouseService.list();
         return getDataTable(list);
     }
 

@@ -45,6 +45,7 @@ public class GoodsStoreController extends BaseController {
 	public TableDataInfo list(GoodsStore goodsStore) {
 		startPage();
 		List<GoodsStore> list = goodsStoreService.selectGoodsStoreList(goodsStore);
+		List<Map<String, Object>> ret = goodsStoreService.selectList(goodsStore);
 		return getDataTable(list);
 	}
 	

@@ -3,6 +3,9 @@ package com.ruoyi.store.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.store.service.IGoodsCategoryService;
+import com.ruoyi.store.service.IGoodsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.store.mapper.GoodsStoreMapper;
@@ -17,7 +20,10 @@ import com.ruoyi.store.service.IGoodsStoreService;
  */
 @Service
 public class GoodsStoreServiceImpl extends ServiceImpl<GoodsStoreMapper, GoodsStore> implements IGoodsStoreService {
-	
+	@Autowired
+	private IGoodsService goodsService;
+	@Autowired
+	private IGoodsCategoryService iGoodsCategoryService;
 	/**
 	 * 查询物品库存列表
 	 *
@@ -28,15 +34,14 @@ public class GoodsStoreServiceImpl extends ServiceImpl<GoodsStoreMapper, GoodsSt
 	public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore) {
 		return getBaseMapper().selectGoodsStoreList(goodsStore);
 	}
-	
-	/**
-	 * 查询所有分类
-	 *
-	 * @return
-	 */
+	//在这里查询出物品库存并返回 TODO
 	@Override
-	public Map<String, Map<String, Object>> selectAllStore() {
-		List<GoodsStore> ret = baseMapper.selectAllStore();
-		return null;
+	public List<Map<String, Object>> selectList(GoodsStore goodsStore) {
+	
+	
+	return null;
+	
 	}
+	
+	
 }

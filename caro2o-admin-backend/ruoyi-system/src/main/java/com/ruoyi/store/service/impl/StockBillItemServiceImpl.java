@@ -29,4 +29,5 @@ public class StockBillItemServiceImpl extends ServiceImpl<StockBillItemMapper, S
         List<StockBillItem> stockBillItems = baseMapper.selectList(wrapper);
         return stockBillItems;
     }
+
 }
