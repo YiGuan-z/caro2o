@@ -4,10 +4,10 @@
       <el-form-item label="审核状态" prop="auditState">
         <el-select v-model="queryParams.auditState" placeholder="请选择审核状态" clearable>
           <el-option
-              v-for="dict in dict.type.item_audit_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+            v-for="dict in dict.type.item_audit_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
           />
         </el-select>
       </el-form-item>
@@ -27,19 +27,19 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            @click="handleAdd"
-            v-hasPermi="['contract:itemInfo:add']"
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['contract:itemInfo:add']"
         >新增
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading"  :data="itemInfoList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="itemInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="id" show-overflow-tooltip align="center" prop="id"/>
       <el-table-column label="客户" align="center" prop="customerName"/>
@@ -146,8 +146,8 @@
         <el-row>
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item  label="客户名称"  prop="customerId">
-                <el-select v-model="form.customerId" placeholder="请选择客户" >
+              <el-form-item label="客户名称" prop="customerId">
+                <el-select v-model="form.customerId" placeholder="请选择客户">
                   <el-option
                     v-for="item in customerList"
                     :key="item.value"
@@ -176,8 +176,8 @@
           </el-col>
           <el-col :span="12">
             <div class="grid-content bg-purple-light">
-              <el-form-item  label="合同金额" prop="amounts">
-                <el-input style="width: 221px" type="number" v-model="form.amounts" placeholder="请输入合同金额"/>
+              <el-form-item label="合同金额" prop="amounts">
+                <el-input style="width: 221px"  v-model="form.amounts" placeholder="请输入合同金额"/>
               </el-form-item>
             </div>
           </el-col>
@@ -217,11 +217,13 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24"><div class="grid-content bg-purple-dark">
-            <el-form-item label="附件">
-              <file-upload v-model="form.appendix" :file-type="['zip', 'txt', 'sql']"/>
-            </el-form-item>
-          </div></el-col>
+          <el-col :span="24">
+            <div class="grid-content bg-purple-dark">
+              <el-form-item label="附件">
+                <file-upload v-model="form.appendix" :file-type="['zip', 'txt', 'sql']"/>
+              </el-form-item>
+            </div>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -251,6 +253,20 @@ export default {
   name: "ItemInfo",
   dicts: ['item_confirm_status', 'item_use_status', 'item_audit_status'],
   data() {
+    let moneyReg = (rule, value, callback) => {
+      if (value.length > 10) {
+        callback(new Error('长度在 0 到 10 个字符'));
+      } else {
+        setTimeout(() => {
+          if (!/^\d+[.]?\d{0,2}$/.test(value) && value) {
+            callback(new Error('请输入正整数或小数保留两位小数'));
+          } else {
+            callback()
+          }
+        }, 500);
+      }
+
+    };
     return {
       // 遮罩层
       loading: true,
@@ -271,7 +287,7 @@ export default {
       // 是否显示弹出层
       open: false,
       // 客户列表
-      customerList:[],
+      customerList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -282,12 +298,36 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {}
+      rules: {
+        customerId: [
+          {required: true, message: '客户不能为空', trigger: 'blur'}
+        ],
+        contractName: [{required: true,  message: "请输入合同名称", trigger: 'blur'}, {
+          min: 1,
+          max:100,
+          message: '内容在 100 个字符内',
+          trigger: 'blur'
+        }],
+        contractCode: [{required: true, type:'number',  message: "请输入合同编号", trigger: 'blur'}, {
+          min: 1,
+          max:100,
+          message: '内容在 50 个字符内',
+          trigger: 'blur'
+        }],
+        amounts: [{validator: moneyReg,required: true, type:'number', trigger: 'blur'}],
+        startDate: [
+          {required: true, message: '合同开始失效时间不能为空', trigger: 'blur'}
+        ],
+        endDate: [
+          {required: true, message: '合同结束时间不能为空', trigger: 'blur'}
+        ],
+
+      }
     };
   },
   created() {
     listAll().then(resp => {
-      let temp = resp.data.map(u => ({value:u.id, label:u.legalLeader}))
+      let temp = resp.data.map(u => ({value: u.id, label: u.legalLeader}))
       this.customerList = temp;
     })
     this.getList();
@@ -298,7 +338,7 @@ export default {
       let url = 'http://xue.cnkdl.cn:23900/car/166962499925343009f95acd141a69eca9846f3175edc.zip'
       let filename = url.substring(url.lastIndexOf('/') + 1)
       download('/common/minio/download',
-        { fileName: url }, filename)
+        {fileName: url}, filename)
     },
     /** 查询合同项信息列表 */
     getList() {
