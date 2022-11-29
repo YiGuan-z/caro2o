@@ -67,7 +67,6 @@
           plain
           icon="el-icon-edit"
           size="mini"
-          :disabled="!form.id"
           @click="handleUpdate"
           v-hasPermi="['store:bill:edit']"
         >出库
@@ -84,10 +83,10 @@
           <dict-tag :options="dict.type.sb_type" :value="scope.row.type"/>
         </template>
       </el-table-column>
-      <el-table-column label="仓库" align="center" prop="storeId"/>
-      <el-table-column label="总数量" align="center" prop="totalNum"/>
-      <el-table-column label="总金额" align="center" prop="totalMoney"/>
-      <el-table-column label="录入人" align="center" prop="operatorId"/>
+      <el-table-column label="仓库" align="center" prop="storeName"/>
+      <el-table-column label="总数量" align="center" prop="amounts"/>
+      <el-table-column label="总金额" align="center" prop="price"/>
+      <el-table-column label="录入人" align="center" prop="user.userName"/>
       <el-table-column label="出入库时间" align="center" prop="busiDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.busiDate, '{y}-{m}-{d}') }}</span>
@@ -136,9 +135,7 @@
 
     <!-- 添加或修改出入库单据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1200px" append-to-body>
-
-
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="id" prop="id" hidden/>
         <el-form-item label="仓库" prop="storeId">
           <el-select v-model="form.storeId" placeholder="请选择类型" :disabled="disabled">
@@ -155,6 +152,7 @@
                           v-model="form.busiDate"
                           type="date"
                           value-format="yyyy-MM-dd"
+                          :picker-options="expireTimeOption"
                           placeholder="请选择出入库时间">
           </el-date-picker>
         </el-form-item>
@@ -168,7 +166,7 @@
               plain
               icon="el-icon-plus"
               size="mini"
-              @click="handleAdd"
+              @click="handleAddGoods"
               v-hasPermi="['store:bill:add']"
             >添加明细
             </el-button>
@@ -240,6 +238,86 @@
         <el-button @click="cancel">关闭</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :title="title" :visible.sync="openTwo" width="1000px" append-to-body>
+        <el-row :gutter="10" class="mb8" v-if="onoff">
+          <el-col :span="1.5">
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAdd"
+              v-hasPermi="['store:bill:add']"
+            >添加物品
+            </el-button>
+          </el-col>
+        </el-row>
+
+        <el-table
+          :data="form.itemFrom"
+          border
+          style="width: 1000px">
+          <el-table-column
+            fixed
+            prop="id"
+            label="序号"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="goodsId"
+            label="物品"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="price"
+            label="价格"
+            width="120">
+            <template slot-scope="scope">
+              <el-form-item :prop="'itemFrom.'+scope.$index+'.price'" label-width="0px">
+                <el-input @change="numChange(scope.row)" v-model="scope.row.price" type="text"
+                />
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="amounts"
+            label="数量"
+            width="120">
+            <template slot-scope="scope">
+              <el-form-item :prop="'itemFrom.'+scope.$index+'.amounts'" label-width="0px" :rules="rules.price">
+                <el-input @change="numChange(scope.row)" v-model="scope.row.amounts" type="text"
+                />
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="sum"
+            label="小计"
+            width="300"
+          >
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            v-if="onoff"
+          >
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="itemDelete(scope.row)"
+              >删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelGoods">关闭</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -253,6 +331,7 @@ export default {
   dicts: ['sb_type', 'sb_status'],
   data() {
     return {
+      openTwo:false,
       disabled: false,
       storeList: [],
       onoff: true,
@@ -291,8 +370,21 @@ export default {
         itemFrom: [],
         storeId: null
       },
+      //时间校验(不超过当天的日期)
+      expireTimeOption:{
+        disabledDate(time){
+          return time.getTime() > Date.now() - 8.64e6;
+        }
+      },
       // 表单校验
-      rules: {}
+      rules: {
+        busiDate: [
+          {required: true, message: "时间不能超过当天日期", trigger: "blur"}
+        ],
+        storeId: [
+          {required: true, message: "仓库不能为空", trigger: "blur"}
+        ],
+      }
     };
   },
   created() {
@@ -316,6 +408,10 @@ export default {
         if (!result) break;
       }
       return result;
+    },
+    handleAddGoods(){
+      this.openTwo=true
+      this.title = "添加商品";
     },
     numChange(row) {
       row.sum = row.price * row.amounts
@@ -345,6 +441,10 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.reset();
+    },
+    cancelGoods(){
+      this.openTwo=false
       this.reset();
     },
     // 表单重置
@@ -392,31 +492,10 @@ export default {
     },
 
     /** 修改按钮操作 */
-    async handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      await getBillItem(id).then(res => {
-        let {data} = res
-        data = data.map(s => {
-          return {
-            ...s,
-            sum: s.price * s.amounts
-          }
-        })
-        this.form.itemFrom = data
-      })
-      await getBill(id).then(response => {
-        this.form.busiDate = response.data.busiDate;
-        this.form.remark = response.data.remark;
-        this.form.storeId = response.data.storeId
-        this.form.id = response.data.id
-        this.disabled = true
+     handleUpdate() {
         this.onoff = true
         this.open = true;
         this.title = "修改出入库单据";
-        console.log(this.form.storeId);
-      });
-
     },
     async itemQuery(id) {
       this.reset();

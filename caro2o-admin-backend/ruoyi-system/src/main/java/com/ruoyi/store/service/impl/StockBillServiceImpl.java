@@ -1,10 +1,7 @@
 package com.ruoyi.store.service.impl;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -39,10 +36,17 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
      */
     @Override
     public List<StockBill> selectStockBillList(StockBill stockBill) {
-
-
-        return getBaseMapper().selectStockBillList(stockBill);
+        Long count = getBaseMapper().selectForCount(stockBill);
+        if(count==0){
+            return Collections.emptyList();
+        }
+        List<StockBill> stockBills = getBaseMapper().selectForList(stockBill);
+        stockBills.stream().forEach(node -> {
+            node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
+        });
+        return stockBills;
     }
+
 
     @Override
     public boolean removeBatchByIds(Collection<?> list) {

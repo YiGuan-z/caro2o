@@ -84,22 +84,22 @@
     <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
-      <el-table-column label="物品名称" align="center" prop="goodsName"/>
-      <el-table-column label="封面" align="center" prop="goodsCover">
+      <el-table-column label="物品" align="center" prop="goodsCover">
         <template v-slot="scope">
           <div @click="handleViewImage(scope)">
             <el-avatar :src="scope.row.goodsCover"/>
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="名称" align="center" prop="goodsName"/>
+      <el-table-column label="品牌" align="center" prop="brand"/>
       <el-table-column label="分类" align="center" prop="categoryId">
         <template v-slot="scope">
-          {{scope.row.category.categoryName}}
+<!--          {{scope|handle}}-->
+          {{scope.row.category.label}}
         </template>
       </el-table-column>
-      <el-table-column label="品牌" align="center" prop="brand"/>
-      <el-table-column label="规格" align="center" prop="spec"/>
-      <el-table-column label="描述" align="center" prop="goodsDesc"/>
+      <el-table-column label="数量" align="center" prop="amounts"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -108,9 +108,10 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:goods:edit']"
-          >修改
+          >编辑
           </el-button>
           <el-button
+            v-if="scope.row.amount===0"
             size="mini"
             type="text"
             icon="el-icon-delete"
@@ -141,7 +142,7 @@
             <el-option v-for="item in classify"
                        :key="item.id"
                        :value="item.id"
-                       :label="item.categoryName"/>
+                       :label="item.label"/>
           </el-select>
         </el-form-item>
         <el-form-item label="品牌" prop="brand">
@@ -247,6 +248,10 @@ export default {
     this.getList();
     this.getAllStore()
     this.getAllCateGory()
+  },filters:{
+    handle({row}){
+      console.log(row)
+    }
   },
   methods: {
     async getAllStore() {

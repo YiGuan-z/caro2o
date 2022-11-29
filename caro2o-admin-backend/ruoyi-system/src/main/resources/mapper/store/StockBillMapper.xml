@@ -28,4 +28,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                   <if test="status != null "> and status = #{status}</if>
     </where>
   </select>
+
+    <select id="selectForList" resultType="StockBill">
+        select b.*,i.*,u.*,s.store_name
+        from stock_bill b join stock_bill_item i on b.id = i.bill_id
+        join sys_user u on b.operator_id = u.user_id
+        join store s on b.store_id = s.id
+        <where>
+            <if test="type != null ">and type = #{type}</if>
+            <if test="storeId != null">and b.store_id = #{storeId}</if>
+            <if test="params.beginBusiDate != null and params.beginBusiDate != '' and params.endBusiDate != null and params.endBusiDate != ''">
+                and busi_date between #{params.beginBusiDate} and #{params.endBusiDate}
+            </if>
+            <if test="status != null ">and b.status = #{status}</if>
+        </where>
+    </select>
+    <select id="selectForCount" resultType="java.lang.Long">
+        select count(*)
+        from stock_bill
+        <where>
+            <if test="type != null ">and type = #{type}</if>
+            <if test="storeId != null">and store_id = #{storeId}</if>
+            <if test="params.beginBusiDate != null and params.beginBusiDate != '' and params.endBusiDate != null and params.endBusiDate != ''">
+                and busi_date between #{params.beginBusiDate} and #{params.endBusiDate}
+            </if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
 </mapper>

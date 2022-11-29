@@ -3,10 +3,10 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="分类名称" prop="categoryName">
         <el-input
-            v-model="queryParams.categoryName"
-            placeholder="请输入分类名称"
-            clearable
-            @keyup.enter.native="handleQuery"
+          v-model="queryParams.categoryName"
+          placeholder="请输入分类名称"
+          clearable
+          @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="上级分类">
@@ -31,22 +31,22 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            @click="handleAdd"
-            v-hasPermi="['workflow:category:add']"
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['workflow:category:add']"
         >新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-            type="info"
-            plain
-            icon="el-icon-sort"
-            size="mini"
-            @click="toggleExpandAll"
+          type="info"
+          plain
+          icon="el-icon-sort"
+          size="mini"
+          @click="toggleExpandAll"
         >展开/折叠
         </el-button>
       </el-col>
@@ -54,12 +54,12 @@
     </el-row>
 
     <el-table
-        v-if="refreshTable"
-        v-loading="loading"
-        :data="categoryList"
-        row-key="id"
-        :default-expand-all="isExpandAll"
-        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      v-if="refreshTable"
+      v-loading="loading"
+      :data="categoryList"
+      row-key="id"
+      :default-expand-all="isExpandAll"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="序号" prop="id"/>
       <el-table-column label="上级分类" prop="parent.id"/>
@@ -68,19 +68,19 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['workflow:category:edit']"
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['workflow:category:edit']"
           >修改
           </el-button>
           <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              v-hasPermi="['workflow:category:remove']"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['workflow:category:remove']"
           >删除
           </el-button>
         </template>
@@ -91,14 +91,15 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="分类名称" prop="categoryName">
-          <el-input v-model="form.categoryName" placeholder="请输入分类名称"/>
+          <el-input v-model="form.label" placeholder="请输入分类名称"/>
         </el-form-item>
         <el-form-item label="描述" prop="categoryDesc">
           <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
         </el-form-item>
         <el-form-item label="上级分类">
           <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
-            <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
+            <el-option :key="queryParams.parent.id" :value="queryParams.parentId"
+                       :label="queryParams.parent.categoryName"
                        hidden/>
             <el-tree :data="treeList"
                      :props="defaultProps"
@@ -119,7 +120,16 @@
 </template>
 
 <script>
-import {addCategory, delCategory, getCategory, listCategory, updateCategory,getTreeDate} from "@/api/workflow/category";
+import {
+  addCategory,
+  delCategory,
+  getCategory,
+  listCategory,
+  updateCategory,
+  getTreeDate,
+  listCategoryTree,
+  getCategoryTreeById
+} from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {listMenu} from "@/api/system/menu";
@@ -134,7 +144,11 @@ export default {
       // 树结构分类
       treeList: [],
       form: {
-        parent: {}
+        parent: {
+          id: null,
+          categoryName: null
+        },
+        params: {}
       },
       defaultProps: {
         children: 'children',
@@ -161,23 +175,20 @@ export default {
         categoryName: null,
         categoryDesc: null,
         busiPath: null,
-        parentId: null,
+        parentid: null,
         parent: {
           id: null,
           categoryName: null
-        }
+        },
+        params: {}
       },
-      // 表单参数
-      form: {},
       // 表单校验
       rules: {}
     };
   },
   created() {
     this.getList();
-    getTreeDate().then(res => {
-      this.treeList = res.data
-    })
+    this.getTreeList();
   },
   watch: {
     // 根据名称筛选仓库树
@@ -186,6 +197,10 @@ export default {
     }
   },
   methods: {
+    async getTreeList() {
+      const {data} = await listCategoryTree();
+      this.treeList = data;
+    },
     insertNodeClick(data) {
       this.queryParams.parent.id = data.id
       this.queryParams.parent.categoryName = data.label
@@ -270,8 +285,10 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.getTreeselect();
+      console.log(row)
       if (row != null) {
         this.form.busiPath = row.id;
+        this.form.categoryName=row.label
       }
       getCategory(row.id).then(response => {
         this.form = response.data;
@@ -283,6 +300,11 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          Object.keys(this.form.parent).forEach(key=>this.form.parent[key]=null)
+          // this.form.parent.id=this.queryParams.parent.id;
+          this.form.params.parentId=this.queryParams.parent.id
+          this.form.categoryName=this.form.label
+          console.log(this.form)
           if (this.form.id != null) {
             updateCategory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

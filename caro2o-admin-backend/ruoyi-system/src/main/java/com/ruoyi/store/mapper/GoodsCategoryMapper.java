@@ -22,6 +22,7 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
    * @return 物品分类信息集合
    */
   public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
+  	List<GoodsCategory> selectAllData();
 	
 	List<GoodsCategory> selectByIdFormTree(Long id);
 	

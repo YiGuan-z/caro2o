@@ -15,15 +15,18 @@ import java.util.List;
  * @date 2022-11-27
  */
 public interface IGoodsCategoryService extends IService<GoodsCategory> {
-
-    /**
-     * 查询物品分类信息列表
-     *
-     * @param goodsCategory 物品分类信息
-     * @return 物品分类信息集合
-     */
-    public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
-
-    List<TreeData> queryTreeList();
-    /*List<GoodsCategory> getTreeData();*/
+	
+	/**
+	 * 查询物品分类信息列表
+	 *
+	 * @param goodsCategory 物品分类信息
+	 * @return 物品分类信息集合
+	 */
+	public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
+	
+	List<TreeData> queryTreeList();
+	
+	List<GoodsCategory> getTreeData();
+	
+	GoodsCategory getTreeById(Long id);
 }
