@@ -42,3 +42,11 @@ export function delBill(id) {
     method: 'delete'
   })
 }
+
+// 删除出入库单据
+export function cancellation(id) {
+  return request({
+    url: '/store/bill/cancellation/' + id,
+    method: 'delete'
+  })
+}

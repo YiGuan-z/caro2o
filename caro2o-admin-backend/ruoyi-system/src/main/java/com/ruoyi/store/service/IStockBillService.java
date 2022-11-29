@@ -20,4 +20,5 @@ public interface IStockBillService extends IService<StockBill> {
      */
     public List<StockBill> selectStockBillList(StockBill stockBill);
 
+    void updateStatusById(Long id);
 }

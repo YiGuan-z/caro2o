@@ -3,11 +3,18 @@ package com.ruoyi.store.service.impl;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.store.domain.GoodsStore;
 import com.ruoyi.store.domain.StockBillItem;
+import com.ruoyi.store.mapper.GoodsMapper;
+import com.ruoyi.store.mapper.GoodsStoreMapper;
+import com.ruoyi.store.service.IGoodsStoreService;
 import com.ruoyi.store.service.IStockBillItemService;
 import com.ruoyi.system.service.ISysUserService;
 import org.checkerframework.checker.units.qual.A;
@@ -29,6 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill> implements IStockBillService {
     @Autowired
     private IStockBillItemService stockBillItemService;
+
+    @Autowired
+    private GoodsStoreMapper goodsStoreMapper;
     /**
      * 查询出入库单据列表
      *
@@ -46,6 +56,39 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
             node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
         });
         return stockBills;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateStatusById(Long id) {
+        StockBill bill = super.getById(id);
+        Integer type = bill.getType();
+        if(0==type) {
+//            List<Integer> collect = stockBillItemService.getByBillId(bill.getId()).stream().map(StockBillItem::getAmounts).collect(Collectors.toList());
+            // 出入库详细表
+            List<StockBillItem> byBillList = stockBillItemService.getByBillId(bill.getId());
+            //所有物品id
+            List<String> goodIds = byBillList.stream().map(StockBillItem::getGoodsId).collect(Collectors.toList());
+
+
+            Map<String, StockBillItem> map = byBillList.stream().collect(Collectors.toMap(StockBillItem::getGoodsId, r -> r));
+            LambdaQueryWrapper<GoodsStore> wa = new LambdaQueryWrapper<>();
+            wa.eq(GoodsStore::getStoreId,bill.getStoreId());
+            List<GoodsStore> goodsStores = goodsStoreMapper.selectList(wa);
+            goodsStores.forEach(
+                   n->{
+                       StockBillItem stockBillItem = map.get(n.getStoreId());
+                       n.setAmounts(n.getAmounts()-stockBillItem.getAmounts());
+                   }
+            );
+            //删除goodsStore表
+            LambdaUpdateWrapper<GoodsStore> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.in(GoodsStore::getGoodsId,goodIds).eq(GoodsStore::getStoreId,bill.getStoreId());
+            goodsStoreMapper.delete(wrapper);
+            goodsStoreMapper.updateList(goodsStores);
+
+            bill.setStatus(-1);
+            baseMapper.updateById(bill);
+        }
     }
 
 
@@ -103,4 +146,6 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
         stockBillItemService.updateList(entity.getItemFrom());
         return super.updateById(entity);
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.ruoyi.store.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.store.domain.GoodsStore;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 物品库存Mapper接口
@@ -19,5 +20,6 @@ public interface GoodsStoreMapper extends BaseMapper<GoodsStore> {
    * @return 物品库存集合
    */
   public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
-  
+
+    void updateList(@Param("goodsStores") List<GoodsStore> goodsStores);
 }
