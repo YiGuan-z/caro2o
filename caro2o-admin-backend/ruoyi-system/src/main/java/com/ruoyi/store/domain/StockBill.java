@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -84,6 +85,19 @@ public class StockBill extends BaseEntity
     @Excel(name = "备注")
     @TableField("remark")
     private String remark;
+
+    @TableField(exist = false)
+    private Integer amounts;
+
+    @TableField(exist = false)
+    private BigDecimal price;
+
+    @TableField(exist = false)
+    private String storeName;
+
+    @Excel(name = "操作人")
+    @TableField(exist = false)
+    private SysUser user;
 
     @TableField(exist = false)
     private List<StockBillItem> itemFrom;

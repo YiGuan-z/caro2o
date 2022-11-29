@@ -1,4 +1,4 @@
-package com.ruoyi.workflow.controller;
+package com.ruoyi.web.controller.workflow;
 
 import java.util.List;
 import java.util.Arrays;
@@ -38,13 +38,13 @@ public class GoodsCategoryController extends BaseController {
     @Autowired
     private IGoodsCategoryService goodsCategoryService;
 
-    /*@PreAuthorize("@ss.hasPermi('workflow:category:list')")
+    @PreAuthorize("@ss.hasPermi('workflow:category:list')")
     @GetMapping("/listData")
     public AjaxResult listTreeData()
     {
         List<GoodsCategory> list = goodsCategoryService.getTreeData();
         return AjaxResult.success(list);
-    }*/
+    }
     /**
      * 查询物品分类信息列表
      */
@@ -112,12 +112,12 @@ public class GoodsCategoryController extends BaseController {
         return toAjax(goodsCategoryService.removeBatchByIds(Arrays.asList(ids)));
     }
 
-    /**
-     * 获取部门下拉树列表
-     */
-    @GetMapping("/treeList")
-    public AjaxResult treeList() {
-        List<TreeData> treeList = goodsCategoryService.queryTreeList();
-        return AjaxResult.success(treeList);
-    }
+//    /**
+//     * 获取部门下拉树列表
+//     */
+//    @GetMapping("/treeList")
+//    public AjaxResult treeList() {
+//        List<TreeData> treeList = goodsCategoryService.queryTreeList();
+//        return AjaxResult.success(treeList);
+//    }
 }

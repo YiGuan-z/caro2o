@@ -9,8 +9,16 @@
         <result property="label"    column="category_name"    />
         <result property="categoryDesc"    column="category_desc"    />
         <result property="busiPath"    column="busi_path"    />
+        <result property="parentId" column="parent_id"/>
         <association property="parent" column="parent_id"
                      select="selectByParentId"/>
+    </resultMap>
+    <resultMap id="node" type="GoodsCateGory">
+        <result property="id"    column="id"    />
+        <result property="label"    column="category_name"    />
+        <result property="categoryDesc"    column="category_desc"    />
+        <result property="busiPath"    column="busi_path"    />
+        <result property="parentId" column="parent_id"/>
     </resultMap>
 
     <sql id="selectGoodsCategoryVo">
@@ -116,5 +124,8 @@
         select *
         from goods_category
         where parent_id = #{id}
+    </select>
+    <select id="selectAllData" resultMap="node">
+        select * from goods_category
     </select>
 </mapper>
