@@ -455,37 +455,3 @@
     }
   };
 </script>
-
-
-<style scoped>
-  .divwrap{
-    height: 400px;
-    overflow-y: auto;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-  }
-  .divwrap>>>.distpicker-address-wrapper{
-    color: #999;
-  }
-  .divwrap>>>.address-header{
-    position: fixed;
-    bottom: 400px;
-    width: 100%;
-    background: #000;
-    color:#fff;
-  }
-  .divwrap>>>.address-header ul li{
-    flex-grow: 1;
-    text-align: center;
-  }
-  .divwrap>>>.address-header .active{
-    color: #fff;
-    border-bottom:#666 solid 8px
-  }
-  .divwrap>>>.address-container .active{
-    color: #000;
-  }
-
-</style>

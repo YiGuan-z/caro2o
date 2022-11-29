@@ -238,6 +238,7 @@
         <el-button @click="cancel">关闭</el-button>
       </div>
     </el-dialog>
+
     <el-dialog :title="title" :visible.sync="openTwo" width="1000px" append-to-body>
         <el-row :gutter="10" class="mb8" v-if="onoff">
           <el-col :span="1.5">
@@ -312,7 +313,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelGoods">关闭</el-button>
       </div>
