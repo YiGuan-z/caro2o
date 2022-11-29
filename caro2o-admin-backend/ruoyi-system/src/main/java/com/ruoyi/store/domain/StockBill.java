@@ -97,7 +97,7 @@ public class StockBill extends BaseEntity
 
     @Excel(name = "操作人")
     @TableField(exist = false)
-    private SysUser user;
+    private String userName;
 
     @TableField(exist = false)
     private List<StockBillItem> itemFrom;

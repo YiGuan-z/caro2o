@@ -86,7 +86,7 @@
       <el-table-column label="仓库" align="center" prop="storeName"/>
       <el-table-column label="总数量" align="center" prop="amounts"/>
       <el-table-column label="总金额" align="center" prop="price"/>
-      <el-table-column label="录入人" align="center" prop="createBy"/>
+      <el-table-column label="录入人" align="center" prop="userName"/>
       <el-table-column label="出入库时间" align="center" prop="busiDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.busiDate, '{y}-{m}-{d}') }}</span>
@@ -192,7 +192,7 @@
                         :src="scope.row.goodsCover"
                         class="avatar"/>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <el-tag type="message">{{scope.row.goodsName}}</el-tag>
+              <el-tag type="message">{{ scope.row.goodsName }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -247,80 +247,80 @@
     </el-dialog>
 
     <el-dialog :title="title" :visible.sync="openTwo" width="1000px" append-to-body>
-        <el-row :gutter="10" class="mb8" v-if="onoff">
-          <el-col :span="1.5">
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['store:bill:add']"
-            >添加物品
-            </el-button>
-          </el-col>
-        </el-row>
+      <el-row :gutter="10" class="mb8" v-if="onoff">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['store:bill:add']"
+          >添加物品
+          </el-button>
+        </el-col>
+      </el-row>
 
-        <el-table
-          :data="goodsList"
-          border
-          style="width: 1000px;">
-          <el-table-column
-            prop="id"
-            label="序号"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="goodsCover"
-            label="物品"
-            width="120">
-            <template v-slot="scope">
-              <el-image v-if="scope.row.goodsCover"
-                        :src="scope.row.goodsCover"
-                        class="avatar"/>
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <el-tag type="message">{{scope.row.goodsName}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="goodsName"
-            label="名称"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="brand"
-            label="品牌"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="category.label"
-            label="分类"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="amounts"
-            label="数量"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            v-if="onoff"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleItemPush(scope.row)"
-              >选择此物品
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-table
+        :data="goodsList"
+        border
+        style="width: 1000px;">
+        <el-table-column
+          prop="id"
+          label="序号"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="goodsCover"
+          label="物品"
+          width="120">
+          <template v-slot="scope">
+            <el-image v-if="scope.row.goodsCover"
+                      :src="scope.row.goodsCover"
+                      class="avatar"/>
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <el-tag type="message">{{ scope.row.goodsName }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="goodsName"
+          label="名称"
+          width="150"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="brand"
+          label="品牌"
+          width="150"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="category.label"
+          label="分类"
+          width="150"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="amounts"
+          label="数量"
+          width="150"
+        >
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          v-if="onoff"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleItemPush(scope.row)"
+            >选择此物品
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="openTwo=false">关闭</el-button>
       </div>
@@ -337,16 +337,18 @@ import {listGoods} from "@/api/store/goods";
 import {createObject} from "@/utils";
 import goods from "@/views/store/goods";
 import Goods from "@/views/store/goods";
+
 export default {
   name: "Bill",
   components: {Goods},
   dicts: ['sb_type', 'sb_status'],
-  comments:{
-    goods:goods
+  comments: {
+    goods: goods
   },
   data() {
     return {
-      goodsList:null,
+      type: 0,
+      goodsList: null,
       goodsParams: {
         pageNum: 1,
         pageSize: 10,
@@ -354,9 +356,9 @@ export default {
         brand: null,
         spec: null,
         goodsDesc: null,
-        params:{}
+        params: {}
       },
-      openTwo:false,
+      openTwo: false,
       disabled: false,
       storeList: [],
       onoff: true,
@@ -396,8 +398,8 @@ export default {
         storeId: null
       },
       //时间校验(不超过当天的日期)
-      expireTimeOption:{
-        disabledDate(time){
+      expireTimeOption: {
+        disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e6;
         }
       },
@@ -410,8 +412,8 @@ export default {
           {required: true, message: "仓库不能为空", trigger: "blur"}
         ],
       },
-      cache:{
-        node:new Map()
+      cache: {
+        node: new Map()
       }
     };
   },
@@ -425,33 +427,33 @@ export default {
     this.getAllGoods()
   },
   methods: {
-    handleItemPush(node){
-      if (node.amounts<=0){
+    handleItemPush(node) {
+      if (node.amounts <= 0) {
         this.$message.warning(`${node.goodsName}没有库存了，请添加物品库存`)
       }
-      const nodes = this.form.itemFrom.filter(item=>item.id===node.id);
-      if (nodes.length!==0){
+      const nodes = this.form.itemFrom.filter(item => item.id === node.id);
+      if (nodes.length !== 0) {
         this.$message.warning(`${node.goodsName}已存在，请勿重新添加`)
         return
       }
       //检查通过后准许进入
       const object = createObject(node);
-      object.sum=0;
-      object.amounts=0;
-      object.goodsId=object.id;
-      object.id=null;
+      object.sum = 0;
+      object.amounts = 0;
+      object.goodsId = object.id;
+      object.id = null;
       this.form.itemFrom.push(object)
 
     },
-    async getAllGoods(){
-      const {rows}=await listGoods(this.goodsParams);
-      rows.map(row=>{
+    async getAllGoods() {
+      const {rows} = await listGoods(this.goodsParams);
+      rows.map(row => {
         return {
           ...row,
-          flag:false
+          flag: false
         }
       })
-      this.goodsList=rows
+      this.goodsList = rows
     },
     validateField(form, index) {
       let result = true;
@@ -467,8 +469,8 @@ export default {
       }
       return result;
     },
-    handleAddGoods(){
-      this.openTwo=true
+    handleAddGoods() {
+      this.openTwo = true
       this.title = "添加商品";
     },
     numChange(row) {
@@ -490,9 +492,9 @@ export default {
     },
     //删除明细
     async itemDelete(row) {
-     const {msg} =await delBillItem(row.id);
-     const itemForm = this.form.itemFrom.filter(v=>v.id!==msg);
-     this.form.itemFrom=itemForm;
+      const {msg} = await delBillItem(row.id);
+      const itemForm = this.form.itemFrom.filter(v => v.id !== msg);
+      this.form.itemFrom = itemForm;
 
       console.log(data)
     },
@@ -501,8 +503,8 @@ export default {
       this.open = false;
       this.reset();
     },
-    cancelGoods(){
-      this.openTwo=false
+    cancelGoods() {
+      this.openTwo = false
       this.reset();
     },
     // 表单重置
@@ -546,14 +548,16 @@ export default {
       this.disabled = false
       this.open = true;
       this.onoff = true
+      this.type = 0
       this.title = "添加出入库单据";
     },
 
     /** 修改按钮操作 */
-     handleUpdate() {
-        this.onoff = true
-        this.open = true;
-        this.title = "修改出入库单据";
+    handleUpdate() {
+      this.onoff = true
+      this.open = true;
+      this.type = 1
+      this.title = "修改出入库单据";
     },
     async itemQuery(id) {
       this.reset();
@@ -584,7 +588,7 @@ export default {
       this.$refs["form"].validate(valid => {
         console.log(this.form)
         if (valid) {
-          if (this.form.id != null) {
+          if (this.type==1) {
             updateBill(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;

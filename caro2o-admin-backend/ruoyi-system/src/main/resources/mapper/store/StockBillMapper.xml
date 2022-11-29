@@ -30,8 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   </select>
 
     <select id="selectForList" resultType="StockBill">
-        select b.*,i.*,u.*,s.store_name
-        from stock_bill b join stock_bill_item i on b.id = i.bill_id
+        select b.*,sum(i.amounts) amounts,sum(i.price*i.amounts) price,u.user_name userName,s.store_name
+        from stock_bill b join stock_bill_item as i on b.id = i.bill_id
         join sys_user u on b.operator_id = u.user_id
         join store s on b.store_id = s.id
         <where>
@@ -42,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="status != null ">and b.status = #{status}</if>
         </where>
+        GROUP BY b.id
     </select>
     <select id="selectForCount" resultType="java.lang.Long">
         select count(*)

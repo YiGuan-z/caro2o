@@ -59,11 +59,11 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 			return Collections.emptyList();
 		}
 		List<StockBill> stockBills = getBaseMapper().selectForList(stockBill);
-		stockBills.forEach(node -> {
-			node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
-			final Long id = node.getOperatorId();
-			node.setUser(sysUserService.selectUserById(id));
-		});
+//		stockBills.forEach(node -> {
+//			node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
+//			final Long id = node.getOperatorId();
+//			node.setUser(sysUserService.selectUserById(id));
+//		});
 		return stockBills;
 	}
 	
@@ -157,27 +157,41 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 		entity.setType(1);
 		entity.setOperatorId(SecurityUtils.getUserId());
 		entity.setOperateDate(new Date());
-		List<StockBillItem> byBillId = stockBillItemService.getByBillId(entity.getId());
-		//把数据库查到的值转换成map，key是
-		Map<String, StockBillItem> map = byBillId.stream().collect(Collectors.toMap(StockBillItem::getId, r -> r));
-		entity.getItemFrom().forEach(node -> {
-			StockBillItem item = map.get(node.getId());
-			BigDecimal newPrice = node.getPrice();
-			if (newPrice.doubleValue() < 0) {
-				throw new ServiceException("钱不能为负数");
-			}
-			Integer amounts = item.getAmounts();
-			Integer newAmounts = node.getAmounts();
-			int i = amounts - newAmounts;
-			if (i < 0) {
-				throw new ServiceException("库存不够!!!");
-			}
-			node.setAmounts(i);
-		});
-		
-		stockBillItemService.deleteBillId(entity.getId());
-		stockBillItemService.updateList(entity.getItemFrom());
-		return super.updateById(entity);
+		final boolean ret = super.save(entity);
+		//存储子元素 TODO 未完成
+		final List<StockBillItem> items = entity.getItemFrom();
+		if (items.size() != 0) {
+			items.forEach(item -> {
+				item.setBillId(entity.getId());
+				item.setState("2");
+				final String storeId = entity.getStoreId();
+				final Long amounts = Long.valueOf(item.getAmounts());
+				final String goodsId = item.getGoodsId();
+				//数量
+				final Long mounts = goodsStoreMapper.selectByGoodsIdStoreId(goodsId, storeId);
+				if (Objects.isNull(mounts)) {
+					goodsStoreMapper.insert(
+							Builder.builder(GoodsStore::new)
+									.with(GoodsStore::setStoreId, storeId)
+									.with(GoodsStore::setAmounts, amounts)
+									.with(GoodsStore::setGoodsId, goodsId)
+									.builder());
+				}else {
+					if(mounts-amounts<0){
+						throw new ServiceException("库存不够");
+					}
+					goodsStoreMapper.updateByGoodsIdStoreId(
+							Builder.builder(GoodsStore::new)
+									.with(GoodsStore::setStoreId, storeId)
+									.with(GoodsStore::setAmounts, mounts-amounts)
+									.with(GoodsStore::setGoodsId, goodsId)
+									.builder()
+					);
+				}
+				stockBillItemService.save(item);
+			});
+		}
+		return ret;
 	}
 	
 	
