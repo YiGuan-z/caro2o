@@ -96,6 +96,7 @@ public class StockBill extends BaseEntity
     private String storeName;
 
     @Excel(name = "操作人")
+    @TableField(exist = false)
     private SysUser user;
 
     @TableField(exist = false)

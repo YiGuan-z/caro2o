@@ -40,8 +40,11 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
         if(count==0){
             return Collections.emptyList();
         }
-        getBaseMapper().selectForList(stockBill);
-        return getBaseMapper().selectStockBillList(stockBill);
+        List<StockBill> stockBills = getBaseMapper().selectForList(stockBill);
+        stockBills.stream().forEach(node -> {
+            node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
+        });
+        return stockBills;
     }
 
 
