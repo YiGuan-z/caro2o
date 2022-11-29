@@ -330,7 +330,7 @@
 </template>
 
 <script>
-import {listBill, getBill, delBill, addBill, updateBill, cancellation} from "@/api/store/bill";
+import {listBill, getBill, delBill, addBill, updateBill, cancellation,listAll} from "@/api/store/bill";
 import {listBillItem, getBillItem, delBillItem, addBillItem, updateBillItem} from "@/api/store/billItem";
 import {listAllStore} from "@/api/workflow/warehouse"
 import {listGoods} from "@/api/store/goods";
@@ -469,8 +469,9 @@ export default {
       }
       return result;
     },
-    handleAddGoods() {
-      this.openTwo = true
+    handleAddGoods(){
+      listAll()
+      this.openTwo=true
       this.title = "添加商品";
     },
     numChange(row) {
@@ -586,7 +587,6 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
-        console.log(this.form)
         if (valid) {
           if (this.type==1) {
             updateBill(this.form).then(response => {

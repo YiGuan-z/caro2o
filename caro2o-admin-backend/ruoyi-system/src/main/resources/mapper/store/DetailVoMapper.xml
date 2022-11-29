@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.store.mapper.DetailVoMapper">
+
+    <sql id="base_sql">
+        select sb.type,
+               g.id,
+               sb.operate_date,
+               g.goods_name,
+               g.brand,
+               sb.store_id,
+               s.store_name,
+               sbi.amounts,
+               sbi.price
+                 from stock_bill_item sbi
+                 join stock_bill sb
+                 on sbi.bill_id = sb.id
+                 join goods g on g.id = sbi.goods_id
+                 join store s on sb.store_id = s.id
+
+
+
+
+    </sql>
+    <select id="selectDetailList" resultType="DetailVo">
+        <include refid="base_sql"/>
+        where g.id = #{id}
+    </select>
+</mapper>

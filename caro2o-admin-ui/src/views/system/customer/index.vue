@@ -227,14 +227,10 @@
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
-
                 >
                 </el-option>
               </el-select>
 
-<!--                <v-distpicker @selected="onSelected" only-province v-model="form.province">-->
-
-<!--                </v-distpicker>-->
             </el-form-item>
           </el-col>
           <el-col :span="12">

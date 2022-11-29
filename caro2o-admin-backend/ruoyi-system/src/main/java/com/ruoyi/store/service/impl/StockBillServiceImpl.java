@@ -16,10 +16,10 @@ import com.ruoyi.common.utils.builder.Builder;
 import com.ruoyi.store.domain.GoodsStore;
 import com.ruoyi.store.domain.StockBillItem;
 import com.ruoyi.store.mapper.GoodsMapper;
+import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.store.mapper.GoodsStoreMapper;
 import com.ruoyi.store.service.IGoodsStoreService;
 import com.ruoyi.store.service.IStockBillItemService;
-import com.ruoyi.system.service.ISysUserService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,12 +39,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill> implements IStockBillService {
 	@Autowired
 	private IStockBillItemService stockBillItemService;
-	
+
 	@Autowired
 	private GoodsStoreMapper goodsStoreMapper;
 	@Autowired
 	private ISysUserService sysUserService;
-	
+
 	/**
 	 * 查询出入库单据列表
 	 *
@@ -66,7 +66,7 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 //		});
 		return stockBills;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void updateStatusById(Long id) {
@@ -78,8 +78,8 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 			List<StockBillItem> byBillList = stockBillItemService.getByBillId(bill.getId());
 			//所有物品id
 			List<String> goodIds = byBillList.stream().map(StockBillItem::getGoodsId).collect(Collectors.toList());
-			
-			
+
+
 			Map<String, StockBillItem> map = byBillList.stream().collect(Collectors.toMap(StockBillItem::getGoodsId, r -> r));
 			LambdaQueryWrapper<GoodsStore> wa = new LambdaQueryWrapper<>();
 			wa.eq(GoodsStore::getStoreId, bill.getStoreId());
@@ -95,13 +95,13 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 			wrapper.in(GoodsStore::getGoodsId, goodIds).eq(GoodsStore::getStoreId, bill.getStoreId());
 			goodsStoreMapper.delete(wrapper);
 			goodsStoreMapper.updateList(goodsStores);
-			
+
 			bill.setStatus(-1);
 			baseMapper.updateById(bill);
 		}
 	}
-	
-	
+
+
 	@Override
 	public boolean removeBatchByIds(Collection<?> list) {
 		LambdaUpdateWrapper<StockBill> wrapper = new LambdaUpdateWrapper<>();
@@ -110,7 +110,7 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 		int update = baseMapper.update(null, wrapper);
 		return update > 0;
 	}
-	
+
 	@Override
 	@Transactional(rollbackFor = Throwable.class)
 	public boolean save(StockBill entity) {
@@ -150,7 +150,7 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 		}
 		return ret;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateById(StockBill entity) {
@@ -193,6 +193,6 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 		}
 		return ret;
 	}
-	
-	
+
+
 }

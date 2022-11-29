@@ -42,3 +42,13 @@ export function delGoods(id) {
     method: 'delete'
   })
 }
+
+
+export function listAll(id) {
+  return request({
+    url: '/store/detail/list/' + id,
+    method: 'get',
+
+  })
+}
+

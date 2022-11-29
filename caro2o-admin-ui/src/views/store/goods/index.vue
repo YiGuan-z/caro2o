@@ -113,6 +113,13 @@
             v-hasPermi="['system:goods:remove']"
           >删除
           </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleDetail(scope.row)"
+            v-hasPermi="['system:goods:remove']"
+          >出入库明细
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -170,9 +177,35 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
     <el-dialog :visible.sync="imageVisible">
       <el-image width="100%" :src="viewImage" alt=""/>
     </el-dialog>
+
+
+
+    <!--   出入库明细表对话框-->
+    <el-dialog :visible.sync="detailVisible" width="60%">
+      <el-table v-loading="loading" border :data="detail">
+        <el-table-column label="序号" align="center" prop="id"/>
+<!--        <el-table-column  width="55" align="center"/>-->
+<!--        <el-table-column label="序号" align="center" prop="id"/>-->
+        <el-table-column label="类型" align="center" prop="type">
+          <template v-slot="scope">
+            {{scope.row.type == 0 ? '入库' : '出库'}}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作时间" align="center" prop="operateDate"/>
+        <el-table-column label="物品" align="center" prop="goodsName"/>
+        <el-table-column label="品牌" align="center" prop="brand"/>
+        <el-table-column label="仓库" align="center" prop="storeName"/>
+        <el-table-column label="数量" align="center" prop="amounts"/>
+        <el-table-column label="单价" align="center" prop="price"/>
+      </el-table>
+    </el-dialog>
+
+
+
     <el-dialog :visible.sync="storeVisible" width="1000px">
       <Category/>
     </el-dialog>
@@ -183,7 +216,7 @@
 </template>
 
 <script>
-import {listGoods, getGoods, delGoods, addGoods, updateGoods} from "@/api/store/goods";
+import {listGoods, getGoods, delGoods, addGoods, updateGoods, listAll} from "@/api/store/goods";
 import {getToken} from "@/utils/auth";
 import {listCategory} from "@/api/workflow/category";
 import {listWarehouse} from "@/api/workflow/warehouse";
@@ -201,6 +234,11 @@ export default {
       storeVisible: false,
       //分类可见性
       classifyVisible: false,
+
+      detail:[],
+      // 出入库明细显示
+      detailVisible: false,
+
       //所有仓库的选择区
       allStoreList: [],
       classify: [],
@@ -235,7 +273,7 @@ export default {
         brand: null,
         spec: null,
         goodsDesc: null,
-        params: {}
+        params:{}
       },
       // 表单参数
       form: {},
@@ -257,10 +295,11 @@ export default {
     this.getList();
     this.getAllStore()
     this.getAllCateGory()
+
+
   }, filters: {
     handle({row}) {
-      console.log(row)
-    }
+  }
   },
   methods: {
     async getAllStore() {
@@ -385,6 +424,13 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
+    },
+    /** 出入库明细表按钮操作 */
+    handleDetail(row) {
+      this.detailVisible = true;
+      listAll(row.id).then(res =>{
+        this.detail = res.data
+      })
     },
     /** 导出按钮操作 */
     handleExport() {
