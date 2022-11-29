@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
+
+
+
       <el-form-item label="法定代表人" prop="legalLeader">
         <el-input
           v-model="queryParams.legalLeader"
@@ -20,7 +23,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属省份" prop="province">
-        <el-select v-model="form.province" placeholder="请选择" clearable>
+        <el-select v-model="queryParams.province" placeholder="请选择" clearable>
           <el-option
             v-for="dict in dict.type.sys_city_status"
             :key="dict.value"
@@ -29,6 +32,8 @@
           >
           </el-option>
         </el-select>
+<!--        <v-distpicker @selected="onSelected" only-province v-model="queryParams.province">-->
+<!--        </v-distpicker>-->
       </el-form-item>
       <el-form-item label="所属行业" prop="industry">
         <el-input
@@ -68,18 +73,7 @@
         >修改
         </el-button>
       </el-col>
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="danger"-->
-      <!--          plain-->
-      <!--          icon="el-icon-delete"-->
-      <!--          size="mini"-->
-      <!--          :disabled="multiple"-->
-      <!--          @click="handleDelete"-->
-      <!--          v-hasPermi="['system:customer:remove']"-->
-      <!--        >删除-->
-      <!--        </el-button>-->
-      <!--      </el-col>-->
+
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -94,7 +88,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="customerList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" border :data="customerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
       <el-table-column label="企业名称" align="center" prop="customerName"/>
@@ -120,7 +114,7 @@
       <el-table-column label="注册地址" align="center" prop="regAddr"/>
       <el-table-column label="录入人" align="center" prop="inputUserName"/>
       <el-table-column label="营销人" align="center" prop="userMarket"/>
-      <el-table-column label="录入时间" align="center" prop="inputTime" width="180">
+      <el-table-column label="录入时间" align="center" prop="inputTime" width="180" value-format="yyyy-MM-dd HH:mm:ss">
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -192,23 +186,21 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="企业名称" prop="customerName">
-              <el-input v-model="form.customerName" placeholder="请输入企业名称"/>
+              <el-input v-model="form.customerName" maxlength="100"
+                        show-word-limit placeholder="请输入企业名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="法定代表人" prop="legalLeader">
-              <el-input v-model="form.legalLeader" placeholder="请输入法定代表人"/>
+              <el-input v-model="form.legalLeader" maxlength="30"
+                        show-word-limit placeholder="请输入法定代表人"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="成立时间" prop="registerDate">
-              <el-date-picker clearable
-                              v-model="form.registerDate"
-                              type="date"
-                              value-format="yyyy-MM-dd"
-                              placeholder="请选择成立时间">
+              <el-date-picker clearable v-model="form.registerDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择成立时间">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -235,14 +227,20 @@
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
+
                 >
                 </el-option>
               </el-select>
+
+<!--                <v-distpicker @selected="onSelected" only-province v-model="form.province">-->
+
+<!--                </v-distpicker>-->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="form.industry" placeholder="请输入所属行业"/>
+              <el-input v-model="form.industry" maxlength="30"
+                        show-word-limit placeholder="请输入所属行业"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -252,12 +250,11 @@
         </el-form-item>
 
         <el-form-item label="经营范围" prop="scope">
-          <el-input v-model="form.scope" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.scope" type="textarea" maxlength="500" show-word-limit placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="注册地址" prop="regAddr">
-          <el-input v-model="form.regAddr" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.regAddr" type="textarea" maxlength="500" show-word-limit placeholder="请输入内容"/>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -265,16 +262,23 @@
       </div>
     </el-dialog>
   </div>
+
+
 </template>
 
 <script>
   import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/system/customer";
-
+  import VDistpicker from 'v-distpicker'
+  // Vue.component('v-distpicker',VDistpicker);
   export default {
+    components:{VDistpicker},
     name: "Customer",
     dicts: ['sys_customer_status', 'sys_city_status'],
     data() {
       return {
+
+        show:false,
+
         selectInfo: {},
         // 遮罩层
         loading: true,
@@ -282,6 +286,7 @@
         ids: [],
         // 非单个禁用
         single: true,
+
         // 非多个禁用
         multiple: true,
         // 显示搜索条件
@@ -305,7 +310,8 @@
           industry: null,
         },
         // 表单参数
-        form: {},
+        form: {
+        },
         particulars: {},
         // 表单校验
         rules: {
@@ -328,7 +334,9 @@
             {required: true, message: "所属行业不能为空", trigger: "blur"}
           ],
           regCapital: [
-            {required: true, message: "注册资金不能为空", trigger: "blur"}
+            { required:true, message:'请输入注册金额', trigger:'blur'},
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+              message: '请输入正确格式,可保留两位小数'}
           ],
         }
       };
@@ -337,6 +345,11 @@
       this.getList();
     },
     methods: {
+
+      // onSelected(data){
+      //   this.form.province = data.province.value
+      //   console.log(this.form.province);
+      // },
 
 
       /** 查询客户信息列表 */
@@ -368,7 +381,8 @@
           scope: null,
           regAddr: null,
           inputTime: null,
-          inputUser: null
+          inputUser: null,
+          // city: []
         };
         this.resetForm("form");
       },
@@ -391,6 +405,8 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
+        //设置初始状态为开业
+        this.form.openState = 0
         this.open = true;
         this.title = "添加客户信息";
       },
@@ -426,6 +442,7 @@
       },
       //详情按钮查看数据
       handleSelect(row) {
+        this.title = "查看客户信息";
         this.opens = true;
         this.selectInfo = {...row}
       },
@@ -438,3 +455,37 @@
     }
   };
 </script>
+
+
+<style scoped>
+  .divwrap{
+    height: 400px;
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  .divwrap>>>.distpicker-address-wrapper{
+    color: #999;
+  }
+  .divwrap>>>.address-header{
+    position: fixed;
+    bottom: 400px;
+    width: 100%;
+    background: #000;
+    color:#fff;
+  }
+  .divwrap>>>.address-header ul li{
+    flex-grow: 1;
+    text-align: center;
+  }
+  .divwrap>>>.address-header .active{
+    color: #fff;
+    border-bottom:#666 solid 8px
+  }
+  .divwrap>>>.address-container .active{
+    color: #000;
+  }
+
+</style>

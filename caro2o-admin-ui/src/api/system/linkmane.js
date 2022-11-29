@@ -50,3 +50,15 @@ export function delLinkmane(id) {
     method: 'delete'
   })
 }
+
+// 整数范围值校验
+export const intRangeValidator = (min, max) => (rule, value, callback) => {
+  var isInRange = (value >= min) && (value <= max);
+  const reg = /^-?\d+$/;
+  var isInt = reg.test(value);
+  if (isInRange && isInt){
+    return callback();
+  }else{
+    return callback(new Error(`年龄要求在${min}-${max}的正整数`));
+  }
+}
