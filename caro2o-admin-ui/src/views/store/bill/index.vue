@@ -436,6 +436,8 @@ export default {
       }
       //检查通过后准许进入
       const object = createObject(node);
+      object.sum=0;
+      object.amounts=0;
       this.form.itemFrom.push(object)
 
     },
@@ -578,6 +580,7 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+        console.log(this.form)
         if (valid) {
           if (this.form.id != null) {
             updateBill(this.form).then(response => {

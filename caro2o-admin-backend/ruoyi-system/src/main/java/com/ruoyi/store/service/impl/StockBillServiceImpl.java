@@ -52,7 +52,7 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
             return Collections.emptyList();
         }
         List<StockBill> stockBills = getBaseMapper().selectForList(stockBill);
-        stockBills.stream().forEach(node -> {
+        stockBills.forEach(node -> {
             node.setPrice(node.getPrice().multiply(new BigDecimal(node.getAmounts())));
         });
         return stockBills;
@@ -106,10 +106,14 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
     public boolean save(StockBill entity) {
         entity.setType(0);
         entity.setOperatorId(SecurityUtils.getUserId());
-        //存储子元素
+        //存储子元素 TODO 未完成
         final List<StockBillItem> items = entity.getItemFrom();
         if (items.size()!=0){
-            items.forEach(item->stockBillItemService.save(item));
+            items.forEach(item-> {
+                item.setBillId(entity.getId());
+                item.setState("2");
+                stockBillItemService.save(item);
+            });
         }
         return super.save(entity);
     }

@@ -53,10 +53,10 @@ public class StockBillItem extends BaseEntity
     @Excel(name = "单价")
     private BigDecimal price;
 
-    /** 状态 */
     @Excel(name = "单据id")
     @TableField("bill_id")
     private String billId;
+    /** 状态 */
 
     @Excel(name = "状态")
     @TableField("state")
