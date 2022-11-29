@@ -153,6 +153,7 @@
                           v-model="form.busiDate"
                           type="date"
                           value-format="yyyy-MM-dd"
+                          :picker-options="expireTimeOption"
                           placeholder="请选择出入库时间">
           </el-date-picker>
         </el-form-item>
@@ -289,6 +290,12 @@ export default {
         itemFrom: [],
         storeId: null
       },
+      //时间校验(不超过当天的日期)
+      expireTimeOption:{
+        disabledDate(time){
+          return time.getTime() > Date.now() - 8.64e6;
+        }
+      },
       // 表单校验
       rules: {
         busiDate: [
@@ -297,12 +304,6 @@ export default {
         storeId: [
           {required: true, message: "仓库不能为空", trigger: "blur"}
         ],
-        // storeId: [
-        //   {required: true, message: "仓库不能为空", trigger: "blur"}
-        // ],
-        // storeId: [
-        //   {required: true, message: "仓库不能为空", trigger: "blur"}
-        // ],
       }
     };
   },
