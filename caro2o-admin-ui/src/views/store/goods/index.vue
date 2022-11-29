@@ -22,7 +22,7 @@
           <el-option v-for="item in classify"
                      :key="item.id"
                      :value="item.id"
-                     :label="item.categoryName"/>
+                     :label="item.label"/>
         </el-select>
       </el-form-item>
       <el-form-item>
