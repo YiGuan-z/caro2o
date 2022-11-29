@@ -105,4 +105,13 @@ public class StockBillController extends BaseController
         stockBillService.removeBatchByIds(Arrays.asList(ids));
         return AjaxResult.success(ids[0]);
     }
+
+    @PreAuthorize("@ss.hasPermi('store:bill:remove')")
+    @Log(title = "出入库单据", businessType = BusinessType.DELETE)
+    @DeleteMapping("/cancellation/{id}")
+    public AjaxResult updateStatus(@PathVariable Long id)
+    {
+        stockBillService.updateStatusById(id);
+        return AjaxResult.success("successs");
+    }
 }

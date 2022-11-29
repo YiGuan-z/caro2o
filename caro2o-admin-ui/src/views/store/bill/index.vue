@@ -322,7 +322,7 @@
 </template>
 
 <script>
-import {listBill, getBill, delBill, addBill, updateBill} from "@/api/store/bill";
+import {listBill, getBill, delBill, addBill, updateBill, cancellation} from "@/api/store/bill";
 import {listBillItem, getBillItem, delBillItem, addBillItem, updateBillItem} from "@/api/store/billItem";
 import {listAllStore} from "@/api/workflow/warehouse"
 
@@ -546,7 +546,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认删除出入库单据编号为"' + ids + '"的数据项？').then(function () {
-        return delBill(ids);
+        return cancellation(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
