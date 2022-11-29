@@ -44,7 +44,7 @@ public class StockBillController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(StockBill stockBill)
     {
-        startPage();
+//        startPage();
         List<StockBill> list = stockBillService.selectStockBillList(stockBill);
         return getDataTable(list);
     }

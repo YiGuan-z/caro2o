@@ -86,7 +86,7 @@
       <el-table-column label="仓库" align="center" prop="storeName"/>
       <el-table-column label="总数量" align="center" prop="amounts"/>
       <el-table-column label="总金额" align="center" prop="price"/>
-      <el-table-column label="录入人" align="center" prop="user.userName"/>
+      <el-table-column label="录入人" align="center" prop="createBy"/>
       <el-table-column label="出入库时间" align="center" prop="busiDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.busiDate, '{y}-{m}-{d}') }}</span>
@@ -335,10 +335,15 @@ import {listBillItem, getBillItem, delBillItem, addBillItem, updateBillItem} fro
 import {listAllStore} from "@/api/workflow/warehouse"
 import {listGoods} from "@/api/store/goods";
 import {createObject} from "@/utils";
-
+import goods from "@/views/store/goods";
+import Goods from "@/views/store/goods";
 export default {
   name: "Bill",
+  components: {Goods},
   dicts: ['sb_type', 'sb_status'],
+  comments:{
+    goods:goods
+  },
   data() {
     return {
       goodsList:null,
