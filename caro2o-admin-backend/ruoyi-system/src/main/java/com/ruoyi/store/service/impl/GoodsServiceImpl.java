@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 物品信息Service业务层处理
@@ -32,7 +34,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
      */
     @Override
     public List<Goods> selectGoodsList(Goods goods) {
-        return getBaseMapper().selectGoodsList(goods);
+		return getBaseMapper().selectGoodsList(goods);
     }
     
     @Override

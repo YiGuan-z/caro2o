@@ -112,6 +112,13 @@ public class GoodsCategoryController extends BaseController {
     {
         return toAjax(goodsCategoryService.updateById(goodsCategory));
     }
+    @PreAuthorize("@ss.hasPermi('workflow:category:edit')")
+    @Log(title = "物品迁移", businessType = BusinessType.UPDATE)
+    @PutMapping("/tree")
+    public AjaxResult editBranch(@RequestBody GoodsCategory goodsCategory)
+    {
+        return toAjax(goodsCategoryService.updateById(goodsCategory));
+    }
 
     /**
      * 删除物品分类信息

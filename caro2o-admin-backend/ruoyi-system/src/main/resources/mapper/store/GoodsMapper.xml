@@ -23,10 +23,11 @@
     </resultMap>
 
     <sql id="selectGoodsVo">
-        select good.id, goods_name, goods_cover, category_id, brand, spec, goods_desc,
-               gs.amounts amounts,gs.store_id store_id
+        select any_value(good.id)as id,any_value(goods_name)as goods_name ,any_value(goods_cover) as goods_cover ,any_value(category_id) as category_id ,
+               any_value(brand) as brand,any_value(spec) as spec , any_value(goods_desc) as goods_desc, any_value(gs.store_id) as store_id,
+               sum(gs.amounts) as amounts
         from goods good
-        join goods_store gs on good.id=gs.goods_id
+        left join goods_store gs on good.id=gs.goods_id
     </sql>
 
     <select id="selectGoodsList" parameterType="Goods" resultMap="GoodsResult">
@@ -50,6 +51,7 @@
                 and store_id=#{params.storeId}
             </if>
         </where>
+        group by good.id,goods_name
     </select>
     <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
         <include refid="selectGoodsVo"/>
