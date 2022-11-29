@@ -91,7 +91,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="分类名称" prop="categoryName">
-          <el-input v-model="form.categoryName" placeholder="请输入分类名称"/>
+          <el-input v-model="form.label" placeholder="请输入分类名称"/>
         </el-form-item>
         <el-form-item label="描述" prop="categoryDesc">
           <el-input v-model="form.categoryDesc" placeholder="请输入描述"/>
@@ -127,7 +127,8 @@ import {
   listCategory,
   updateCategory,
   getTreeDate,
-  listCategoryTree
+  listCategoryTree,
+  getCategoryTreeById
 } from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -143,7 +144,11 @@ export default {
       // 树结构分类
       treeList: [],
       form: {
-        parent: {}
+        parent: {
+          id: null,
+          categoryName: null
+        },
+        params: {}
       },
       defaultProps: {
         children: 'children',
@@ -170,11 +175,12 @@ export default {
         categoryName: null,
         categoryDesc: null,
         busiPath: null,
-        parentId: null,
+        parentid: null,
         parent: {
           id: null,
           categoryName: null
-        }
+        },
+        params: {}
       },
       // 表单校验
       rules: {}
@@ -279,8 +285,10 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.getTreeselect();
+      console.log(row)
       if (row != null) {
         this.form.busiPath = row.id;
+        this.form.categoryName=row.label
       }
       getCategory(row.id).then(response => {
         this.form = response.data;
@@ -292,6 +300,11 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          Object.keys(this.form.parent).forEach(key=>this.form.parent[key]=null)
+          // this.form.parent.id=this.queryParams.parent.id;
+          this.form.params.parentId=this.queryParams.parent.id
+          this.form.categoryName=this.form.label
+          console.log(this.form)
           if (this.form.id != null) {
             updateCategory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

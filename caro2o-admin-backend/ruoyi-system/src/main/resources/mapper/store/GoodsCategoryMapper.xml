@@ -109,8 +109,8 @@
             <if test="busiPath != null and busiPath != ''">
                 busi_path = #{busiPath},
             </if>
-            <if test="parent.id != null">
-                parent_id = #{parent.id}
+            <if test="params.id != null">
+                parent_id = #{params.id}
             </if>
         </set>
         where id = #{id}

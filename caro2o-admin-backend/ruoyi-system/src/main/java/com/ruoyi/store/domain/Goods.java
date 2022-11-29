@@ -60,4 +60,10 @@ public class Goods extends BaseEntity
     @Excel(name = "描述")
     @TableField("goods_desc")
     private String goodsDesc;
+    //物品数量
+    @TableField(exist = false)
+    private Long amounts;
+    //物品仓库id
+    @TableField(exist = false)
+    private Long storeId;
 }
