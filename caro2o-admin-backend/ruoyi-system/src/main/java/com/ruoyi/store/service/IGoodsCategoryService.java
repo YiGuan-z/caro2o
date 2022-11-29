@@ -24,7 +24,7 @@ public interface IGoodsCategoryService extends IService<GoodsCategory> {
 	 */
 	public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory);
 	
-	List<TreeData> queryTreeList();
+//	List<TreeData> queryTreeList();
 	
 	List<GoodsCategory> getTreeData();
 	

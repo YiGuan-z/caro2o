@@ -27,9 +27,18 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	 * @param goodsCategory 物品分类信息
 	 * @return 物品分类信息
 	 */
-	@Override
 	public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory) {
-		return getBaseMapper().selectGoodsCategoryList(goodsCategory);
+		final String id = (String) goodsCategory.getParent().get("id");
+		if (id ==null){
+			return getBaseMapper().selectGoodsCategoryList(goodsCategory);
+		}else {
+			final GoodsCategory result = baseMapper.selectById(id);
+			String path = result.getBusiPath();
+			//如果是顶级节点
+			if (path.length()==1) return getBaseMapper().selectByPath(path);
+			path=path.substring(0,path.length()-2);
+			return getBaseMapper().selectByPath(path);
+		}
 	}
 	
 	@Override
@@ -121,7 +130,6 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	}
 	
 	
-	@Override
 	public List<TreeData> queryTreeList() {
 		// 1. 创建 TreeData 集合
 		ArrayList<TreeData> treeList = new ArrayList<>();

@@ -5,24 +5,25 @@
 <mapper namespace="com.ruoyi.store.mapper.GoodsCategoryMapper">
 
     <resultMap type="GoodsCategory" id="GoodsCategoryResult">
-        <result property="id"    column="id"    />
-        <result property="label"    column="category_name"    />
-        <result property="categoryDesc"    column="category_desc"    />
-        <result property="busiPath"    column="busi_path"    />
+        <result property="id" column="id"/>
+        <result property="label" column="category_name"/>
+        <result property="categoryDesc" column="category_desc"/>
+        <result property="busiPath" column="busi_path"/>
         <result property="parentId" column="parent_id"/>
-        <association property="parent" column="parent_id"
-                     select="selectByParentId"/>
+        <!--        <association property="parent" column="parent_id"-->
+        <!--                     select="selectByParentId"/>-->
     </resultMap>
     <resultMap id="node" type="GoodsCateGory">
-        <result property="id"    column="id"    />
-        <result property="label"    column="category_name"    />
-        <result property="categoryDesc"    column="category_desc"    />
-        <result property="busiPath"    column="busi_path"    />
+        <result property="id" column="id"/>
+        <result property="label" column="category_name"/>
+        <result property="categoryDesc" column="category_desc"/>
+        <result property="busiPath" column="busi_path"/>
         <result property="parentId" column="parent_id"/>
     </resultMap>
 
     <sql id="selectGoodsCategoryVo">
-        select id, category_name, category_desc, busi_path, parent_id from goods_category
+        select id, category_name, category_desc, busi_path, parent_id
+        from goods_category
     </sql>
 
     <!--<select id="selectGoodsCategoryList" parameterType="GoodsCategory" resultMap="GoodsCategoryResult">-->
@@ -36,17 +37,13 @@
     <select id="selectByIdFormTree" resultMap="GoodsCategoryResult">
         <include refid="selectGoodsCategoryVo"/>
         where id in (select id
-                     from goods_category
-                     where busi_path like concat('%',#{id},'%'))
+        from goods_category
+        where busi_path like concat('%',#{id},'%'))
     </select>
     <select id="selectByBusiPath" resultType="com.ruoyi.store.domain.GoodsCategory">
         <include refid="selectGoodsCategoryVo"/>
         where busi_path = #{busiPath}
     </select>
-    <!--<select id="selectByParentId" resultType="com.ruoyi.store.domain.GoodsCategory">-->
-    <!--    <include refid="selectGoodsCategoryVo"/>-->
-    <!--    where id = #{parentId}-->
-    <!--</select>-->
     <select id="selectParentByPath" resultType="com.ruoyi.store.domain.GoodsCategory">
         <include refid="selectGoodsCategoryVo"/>
         where id in (select id
@@ -68,8 +65,8 @@
                 and (category_name like concat('%', #{categoryName}, '%') or category_desc like concat('%',
                 #{categoryName}, '%'))
             </if>
-            <if test="parentId != null">
-                and parent_id = #{parentId}
+            <if test="parent.id != null">
+                and parent_id = #{parent.id}
             </if>
         </where>
     </select>
@@ -117,7 +114,9 @@
     </update>
 
     <delete id="deleteForId">
-        delete from goods_category where id = #{id}
+        delete
+        from goods_category
+        where id = #{id}
     </delete>
 
     <select id="selectChild" resultMap="GoodsCategoryResult">
@@ -126,6 +125,12 @@
         where parent_id = #{id}
     </select>
     <select id="selectAllData" resultMap="node">
-        select * from goods_category
+        select *
+        from goods_category
+    </select>
+    <select id="selectByPath" resultType="com.ruoyi.store.domain.GoodsCategory">
+        select id, category_name, category_desc, busi_path, parent_id
+        from goods_category
+        where busi_path like concat(#{path}, '%')
     </select>
 </mapper>
