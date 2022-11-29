@@ -184,9 +184,16 @@
             width="150">
           </el-table-column>
           <el-table-column
-            prop="goodsId"
+            prop="goodsCover"
             label="物品"
             width="120">
+            <template v-slot="scope">
+              <el-image v-if="scope.row.goodsCover"
+                        :src="scope.row.goodsCover"
+                        class="avatar"/>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <el-tag type="message">{{scope.row.goodsName}}</el-tag>
+            </template>
           </el-table-column>
           <el-table-column
             prop="price"
@@ -255,50 +262,51 @@
         </el-row>
 
         <el-table
-          :data="form.itemFrom"
+          :data="goodsList"
           border
-          style="width: 1000px">
+          style="width: 1000px;">
           <el-table-column
-            fixed
             prop="id"
             label="序号"
-            width="150">
+            width="100">
           </el-table-column>
           <el-table-column
-            prop="goodsId"
+            prop="goodsCover"
             label="物品"
             width="120">
+            <template v-slot="scope">
+              <el-image v-if="scope.row.goodsCover"
+                        :src="scope.row.goodsCover"
+                        class="avatar"/>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <el-tag type="message">{{scope.row.goodsName}}</el-tag>
+            </template>
           </el-table-column>
           <el-table-column
-            prop="price"
-            label="价格"
-            width="120">
-            <template slot-scope="scope">
-              <el-form-item :prop="'itemFrom.'+scope.$index+'.price'" label-width="0px">
-                <el-input @change="numChange(scope.row)" v-model="scope.row.price" type="text"
-                />
-              </el-form-item>
-            </template>
+            prop="goodsName"
+            label="名称"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="brand"
+            label="品牌"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="category.label"
+            label="分类"
+            width="150"
+          >
           </el-table-column>
           <el-table-column
             prop="amounts"
             label="数量"
-            width="120">
-            <template slot-scope="scope">
-              <el-form-item :prop="'itemFrom.'+scope.$index+'.amounts'" label-width="0px" :rules="rules.price">
-                <el-input @change="numChange(scope.row)" v-model="scope.row.amounts" type="text"
-                />
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="sum"
-            label="小计"
-            width="300"
+            width="150"
           >
           </el-table-column>
           <el-table-column
-            fixed="right"
             label="操作"
             v-if="onoff"
           >
@@ -307,14 +315,14 @@
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
-                @click="itemDelete(scope.row)"
-              >删除
+                @click="handleItemPush(scope.row)"
+              >选择此物品
               </el-button>
             </template>
           </el-table-column>
         </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelGoods">关闭</el-button>
+        <el-button @click="openTwo=false">关闭</el-button>
       </div>
     </el-dialog>
 
@@ -325,12 +333,24 @@
 import {listBill, getBill, delBill, addBill, updateBill} from "@/api/store/bill";
 import {listBillItem, getBillItem, delBillItem, addBillItem, updateBillItem} from "@/api/store/billItem";
 import {listAllStore} from "@/api/workflow/warehouse"
+import {listGoods} from "@/api/store/goods";
+import {createObject} from "@/utils";
 
 export default {
   name: "Bill",
   dicts: ['sb_type', 'sb_status'],
   data() {
     return {
+      goodsList:null,
+      goodsParams: {
+        pageNum: 1,
+        pageSize: 10,
+        goodsName: null,
+        brand: null,
+        spec: null,
+        goodsDesc: null,
+        params:{}
+      },
       openTwo:false,
       disabled: false,
       storeList: [],
@@ -384,17 +404,46 @@ export default {
         storeId: [
           {required: true, message: "仓库不能为空", trigger: "blur"}
         ],
+      },
+      cache:{
+        node:new Map()
       }
     };
   },
+
   created() {
     this.getList();
     listAllStore().then(res => {
       console.log("ww", res);
       this.storeList = res.rows
     })
+    this.getAllGoods()
   },
   methods: {
+    handleItemPush(node){
+      if (node.amounts<=0){
+        this.$message.warning(`${node.goodsName}没有库存了，请添加物品库存`)
+      }
+      const nodes = this.form.itemFrom.filter(item=>item.id===node.id);
+      if (nodes.length!==0){
+        this.$message.warning(`${node.goodsName}已存在，请勿重新添加`)
+        return
+      }
+      //检查通过后准许进入
+      const object = createObject(node);
+      this.form.itemFrom.push(object)
+
+    },
+    async getAllGoods(){
+      const {rows}=await listGoods(this.goodsParams);
+      rows.map(row=>{
+        return {
+          ...row,
+          flag:false
+        }
+      })
+      this.goodsList=rows
+    },
     validateField(form, index) {
       let result = true;
       for (let item of this.$refs[form].fields) {

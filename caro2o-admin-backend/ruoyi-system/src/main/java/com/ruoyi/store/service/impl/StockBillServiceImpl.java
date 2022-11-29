@@ -9,6 +9,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.store.domain.StockBillItem;
 import com.ruoyi.store.service.IStockBillItemService;
+import com.ruoyi.system.service.ISysUserService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,9 +59,15 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public boolean save(StockBill entity) {
         entity.setType(0);
         entity.setOperatorId(SecurityUtils.getUserId());
+        //存储子元素
+        final List<StockBillItem> items = entity.getItemFrom();
+        if (items.size()!=0){
+            items.forEach(item->stockBillItemService.save(item));
+        }
         return super.save(entity);
     }
 
