@@ -19,7 +19,7 @@ public interface GoodsStoreMapper extends BaseMapper<GoodsStore> {
    * @param goodsStore 物品库存
    * @return 物品库存集合
    */
-  public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
+   List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
 
     void updateList(@Param("goodsStores") List<GoodsStore> goodsStores);
 	

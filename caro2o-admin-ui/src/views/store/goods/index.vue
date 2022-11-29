@@ -47,24 +47,18 @@
         <el-button
           type="success"
           plain
-          icon="el-icon-edit"
           size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:goods:edit']"
-        >修改
+          @click="storeVisible=true"
+        >仓库管理
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="success"
           plain
-          icon="el-icon-delete"
           size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:goods:remove']"
-        >删除
+          @click="classifyVisible=true"
+        >分类管理
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -95,8 +89,8 @@
       <el-table-column label="品牌" align="center" prop="brand"/>
       <el-table-column label="分类" align="center" prop="categoryId">
         <template v-slot="scope">
-<!--          {{scope|handle}}-->
-          {{scope.row.category.label}}
+          <!--          {{scope|handle}}-->
+          {{ scope.row.category.label }}
         </template>
       </el-table-column>
       <el-table-column label="数量" align="center" prop="amounts"/>
@@ -179,6 +173,12 @@
     <el-dialog :visible.sync="imageVisible">
       <el-image width="100%" :src="viewImage" alt=""/>
     </el-dialog>
+    <el-dialog :visible.sync="storeVisible" width="1000px">
+      <Category/>
+    </el-dialog>
+    <el-dialog :visible.sync="classifyVisible" width="1000px">
+      <Store/>
+    </el-dialog>
   </div>
 </template>
 
@@ -187,11 +187,20 @@ import {listGoods, getGoods, delGoods, addGoods, updateGoods} from "@/api/store/
 import {getToken} from "@/utils/auth";
 import {listCategory} from "@/api/workflow/category";
 import {listWarehouse} from "@/api/workflow/warehouse";
+//分类
+import Category from "@/views/workflow/category";
+//仓库
+import Store from "@/views/store/store";
 
 export default {
   name: "Goods",
+  components: {Store, Category},
   data() {
     return {
+      //仓库可见性
+      storeVisible: false,
+      //分类可见性
+      classifyVisible: false,
       //所有仓库的选择区
       allStoreList: [],
       classify: [],
@@ -226,7 +235,7 @@ export default {
         brand: null,
         spec: null,
         goodsDesc: null,
-        params:{}
+        params: {}
       },
       // 表单参数
       form: {},
@@ -248,8 +257,8 @@ export default {
     this.getList();
     this.getAllStore()
     this.getAllCateGory()
-  },filters:{
-    handle({row}){
+  }, filters: {
+    handle({row}) {
       console.log(row)
     }
   },

@@ -1,6 +1,9 @@
 package com.ruoyi.store.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.utils.Assert;
 import com.ruoyi.store.domain.Goods;
@@ -8,6 +11,7 @@ import com.ruoyi.store.mapper.GoodsMapper;
 import com.ruoyi.store.service.IGoodsService;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +42,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 	@Override
 	public boolean selectCategoryGoods(Collection<?> list) {
 		return baseMapper.selectCategoryGoods(list)==0;
+	}
+	
+	@Override
+	public Goods getById(Serializable id) {
+		return baseMapper.selectList(new LambdaQueryWrapper<Goods>().eq(Goods::getId,id)).get(0);
 	}
 	
 	@Override
