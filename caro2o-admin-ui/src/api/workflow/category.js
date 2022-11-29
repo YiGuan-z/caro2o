@@ -40,7 +40,8 @@ export function getCategory(id) {
     method: 'get'
   })
 }
-
+//通过id获取树结构
+export const getCategoryTreeById=(id)=>request({url:`/workflow/category/tree/${id}`})
 // 新增物品分类信息
 export function addCategory(data) {
   return request({

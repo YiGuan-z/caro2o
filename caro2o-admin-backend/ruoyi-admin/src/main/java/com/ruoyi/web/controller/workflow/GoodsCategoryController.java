@@ -78,6 +78,18 @@ public class GoodsCategoryController extends BaseController {
     {
         return AjaxResult.success(goodsCategoryService.getById(id));
     }
+    
+    /**
+     * 获取物品分类信息详细信息树
+     * @param id
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('workflow:category:query')")
+    @GetMapping(value = "/tree/{id}")
+    public AjaxResult getTrereInfo(@PathVariable("id") Long id)
+    {
+        return AjaxResult.success(goodsCategoryService.getTreeById(id));
+    }
 
     /**
      * 新增物品分类信息

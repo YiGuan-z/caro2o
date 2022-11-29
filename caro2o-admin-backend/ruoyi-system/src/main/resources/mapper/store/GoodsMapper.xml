@@ -12,6 +12,8 @@
         <result property="brand" column="brand"/>
         <result property="spec" column="spec"/>
         <result property="goodsDesc" column="goods_desc"/>
+        <result property="amounts" column="amounts"/>
+        <result property="storeId" column="store_id"/>
         <association property="category"
                      column="category_id"
                      select="com.ruoyi.store.mapper.GoodsCategoryMapper.selectByParentId"/>
@@ -21,7 +23,8 @@
     </resultMap>
 
     <sql id="selectGoodsVo">
-        select good.id, goods_name, goods_cover, category_id, brand, spec, goods_desc
+        select good.id, goods_name, goods_cover, category_id, brand, spec, goods_desc,
+               gs.amounts amounts,gs.store_id store_id
         from goods good
         join goods_store gs on good.id=gs.goods_id
     </sql>

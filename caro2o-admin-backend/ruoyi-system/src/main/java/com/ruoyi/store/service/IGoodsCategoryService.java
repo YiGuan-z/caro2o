@@ -27,4 +27,6 @@ public interface IGoodsCategoryService extends IService<GoodsCategory> {
 	List<TreeData> queryTreeList();
 	
 	List<GoodsCategory> getTreeData();
+	
+	GoodsCategory getTreeById(Long id);
 }

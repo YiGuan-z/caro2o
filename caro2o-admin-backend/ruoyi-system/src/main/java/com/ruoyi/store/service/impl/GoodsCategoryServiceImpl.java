@@ -7,6 +7,7 @@ import com.ruoyi.store.domain.TreeData;
 import com.ruoyi.store.mapper.GoodsCategoryMapper;
 import com.ruoyi.store.service.IGoodsCategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.*;
@@ -57,8 +58,15 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	//通过id获取它的子结构
 	@Override
 	public GoodsCategory getById(Serializable id) {
+		return baseMapper.selectById(id);
+	}
+	public GoodsCategory getTreeById(Long id){
 		//获取它与它的子集，直接从数据库中查询，再经过树结构处理
-		final List<GoodsCategory> categories = baseMapper.selectByIdFormTree((Long) id);
+		final List<GoodsCategory> categories = baseMapper.selectByIdFormTree(id);
+		//没有子集就将子集返回出去
+		if (categories.size() == 0) {
+			return baseMapper.selectById(id);
+		}
 		//如果没有子集，就直接返回
 		if (categories.size() == 1) return categories.get(0);
 		final GoodsCategory rootNode = categories.get(0);
@@ -98,12 +106,14 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 		
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateById(GoodsCategory entity) {
 		this.getBusiPath(entity);
 		return getBaseMapper().updateForId(entity);
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean save(GoodsCategory entity) {
 		this.getBusiPath(entity);
@@ -161,9 +171,9 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	
 	private void getBusiPath(GoodsCategory entity) {
 		if (entity.getCategoryName() == null) {
-			throw new ServiceException("非法操作");
+			throw new ServiceException("非法操作，没有设置分类名称");
 		}
-		String busiPath = entity.getCategoryName().substring(2).replace("-", ":");
-		entity.setBusiPath(busiPath);
+		final String busiPath = baseMapper.selectById(entity.getParentId()).getBusiPath();
+		entity.setBusiPath(busiPath + ':' + '1');
 	}
 }
