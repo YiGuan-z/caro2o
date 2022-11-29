@@ -268,17 +268,13 @@
 
 <script>
   import {listCustomer, getCustomer, addCustomer, updateCustomer} from "@/api/system/customer";
-  import VDistpicker from 'v-distpicker'
-  // Vue.component('v-distpicker',VDistpicker);
+
   export default {
-    components:{VDistpicker},
     name: "Customer",
     dicts: ['sys_customer_status', 'sys_city_status'],
     data() {
       return {
-
         show:false,
-
         selectInfo: {},
         // 遮罩层
         loading: true,
