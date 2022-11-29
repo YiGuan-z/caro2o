@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -51,5 +52,5 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>
     /** 上级分类 */
     @Excel(name = "上级分类")
     @TableField("parent_id")
-    private GoodsCategory parent;
+    private HashMap<String,Object> parent=new HashMap<>();
 }

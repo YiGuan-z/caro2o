@@ -41,4 +41,6 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
 	void deleteForId(Long id);
 
 	boolean updateForId(GoodsCategory entity);
+	
+	List<GoodsCategory> selectByPath(String path);
 }

@@ -10,8 +10,10 @@
         />
       </el-form-item>
       <el-form-item label="上级分类">
-        <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree">
-          <el-option :key="queryParams.parent.id" :value="queryParams.parentId" :label="queryParams.parent.categoryName"
+        <el-select v-model="queryParams.parentId" placeholder="请选择" ref="insertTree" clearable>
+          <el-option :key="queryParams.parent.id"
+                     :value="queryParams.parentId"
+                     :label="queryParams.parent.categoryName"
                      hidden/>
           <el-tree :data="treeList"
                    :props="defaultProps"
@@ -204,13 +206,14 @@ export default {
     insertNodeClick(data) {
       this.queryParams.parent.id = data.id
       this.queryParams.parent.categoryName = data.label
-      console.log(this.queryParams.parent.categoryName)
+      // console.log(this.queryParams.parent.categoryName)
       // 使 input 失去焦点，并隐藏下拉框
       this.$refs.insertTree.blur()
     },
     /** 查询物品分类信息列表 */
     getList() {
       this.loading = true;
+
       listCategory(this.queryParams).then(response => {
         this.categoryList = this.handleTree(response.data, "id", "busiPath");
         this.loading = false;
@@ -248,8 +251,19 @@ export default {
         categoryName: null,
         categoryDesc: null,
         busiPath: null,
-        parentId: null
+        parentId: null,
       };
+      this.queryParams={
+        categoryName: null,
+        categoryDesc: null,
+        busiPath: null,
+        parentid: null,
+        parent: {
+          id: null,
+          categoryName: null
+        },
+        params: {}
+      }
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -259,7 +273,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.handleQuery();
+      this.reset()
     },
     /** 新增按钮操作 */
     handleAdd(row) {
@@ -304,6 +318,7 @@ export default {
           // this.form.parent.id=this.queryParams.parent.id;
           this.form.params.parentId=this.queryParams.parent.id
           this.form.categoryName=this.form.label
+          delete this.form.parent
           console.log(this.form)
           if (this.form.id != null) {
             updateCategory(this.form).then(response => {

@@ -123,13 +123,4 @@ public class GoodsCategoryController extends BaseController {
     {
         return toAjax(goodsCategoryService.removeBatchByIds(Arrays.asList(ids)));
     }
-
-//    /**
-//     * 获取部门下拉树列表
-//     */
-//    @GetMapping("/treeList")
-//    public AjaxResult treeList() {
-//        List<TreeData> treeList = goodsCategoryService.queryTreeList();
-//        return AjaxResult.success(treeList);
-//    }
 }
