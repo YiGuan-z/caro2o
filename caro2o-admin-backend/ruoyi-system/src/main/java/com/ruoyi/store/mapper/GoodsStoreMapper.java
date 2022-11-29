@@ -22,4 +22,10 @@ public interface GoodsStoreMapper extends BaseMapper<GoodsStore> {
   public List<GoodsStore> selectGoodsStoreList(GoodsStore goodsStore);
 
     void updateList(@Param("goodsStores") List<GoodsStore> goodsStores);
+	
+	Long selectByGoodsIdStoreId(@Param("goodsId") String goodsId, @Param("storeId") String storeId);
+	
+	void deleteByGoodsIdStoreId(@Param("goodsId") String goodsId, @Param("storeId") String storeId);
+	
+	void updateByGoodsIdStoreId(GoodsStore store);
 }

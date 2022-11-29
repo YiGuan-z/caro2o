@@ -179,7 +179,7 @@
           style="width: 1000px">
           <el-table-column
             fixed
-            prop="id"
+            prop="goodsId"
             label="序号"
             width="150">
           </el-table-column>
@@ -433,6 +433,8 @@ export default {
       const object = createObject(node);
       object.sum=0;
       object.amounts=0;
+      object.goodsId=object.id;
+      object.id=null;
       this.form.itemFrom.push(object)
 
     },

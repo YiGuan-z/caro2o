@@ -31,28 +31,28 @@ public class StockBillItem extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 物品id */
+ 
     @Excel(name = "id")
     @TableId(type = IdType.ASSIGN_ID)
     private String id;
-
-    /** 数量 */
+    
+    /** 物品id */
     @Excel(name = "物品id")
     @TableField("goods_id")
     private String goodsId;
-
+    /** 数量 */
+   
+    @Excel(name = "数量")
+    private Integer amounts;
     /**
      * 单价
      */
-    @Excel(name = "数量")
-    private Integer amounts;
-
+    @Excel(name = "单价")
+    private BigDecimal price;
+    
     /**
      * 单据id
      */
-    @Excel(name = "单价")
-    private BigDecimal price;
-
     @Excel(name = "单据id")
     @TableField("bill_id")
     private String billId;

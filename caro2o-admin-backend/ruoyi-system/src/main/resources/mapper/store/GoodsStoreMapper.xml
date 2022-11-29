@@ -23,6 +23,14 @@
             (#{goods.id},#{goods.goodsId},#{goods.storeId},#{goods.amounts})
         </foreach>
     </insert>
+    <update id="updateByGoodsIdStoreId">
+        update goods_store
+        set amounts=#{amounts}
+        where goods_id=#{goodsId} and store_id=#{storeId}
+    </update>
+    <delete id="deleteByGoodsIdStoreId">
+        delete from goods_store where goods_id=#{goodsId} and store_id=#{storeId}
+    </delete>
 
     <select id="selectGoodsStoreList" parameterType="GoodsStore" resultMap="GoodsStoreResult">
         <include refid="selectGoodsStoreVo"/>
@@ -34,5 +42,8 @@
                 and cate.id=${params.classify}
             </if>
         </where>
+    </select>
+    <select id="selectByGoodsIdStoreId" resultType="java.lang.Long">
+        select amounts from goods_store where goods_id=#{goodsId} and store_id=#{storeId}
     </select>
 </mapper>
