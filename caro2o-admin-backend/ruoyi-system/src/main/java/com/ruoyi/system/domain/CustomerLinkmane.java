@@ -27,7 +27,6 @@ public class CustomerLinkmane extends BaseEntity
 
     /** $column.columnComment */
     @TableId(type = IdType.AUTO)
-    @TableField("id")
     private String id;
 
     /** 客户 */

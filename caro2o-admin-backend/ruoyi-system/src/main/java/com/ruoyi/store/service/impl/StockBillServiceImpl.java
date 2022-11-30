@@ -1,26 +1,18 @@
 package com.ruoyi.store.service.impl;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.builder.Builder;
 import com.ruoyi.store.domain.GoodsStore;
 import com.ruoyi.store.domain.StockBillItem;
-import com.ruoyi.store.mapper.GoodsMapper;
 import com.ruoyi.store.mapper.GoodsStoreMapper;
-import com.ruoyi.store.service.IGoodsStoreService;
 import com.ruoyi.store.service.IStockBillItemService;
 import com.ruoyi.system.service.ISysUserService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -87,7 +79,7 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 				n -> {
 					StockBillItem stockBillItem = map.get(n.getGoodsId());
 					if (Objects.nonNull(stockBillItem)){
-						n.setAmounts(amounts.apply(n.getAmounts(), Long.valueOf(stockBillItem.getAmounts())));
+						n.setAmounts(amounts.calCulateTwoValues(n.getAmounts(), Long.valueOf(stockBillItem.getAmounts())));
 					}
 				}
 		);
@@ -197,6 +189,6 @@ public class StockBillServiceImpl extends ServiceImpl<StockBillMapper, StockBill
 	
 	@FunctionalInterface
 	interface SFunction<T, R> {
-		T apply(T t, R r);
+		T calCulateTwoValues(T t, R r);
 	}
 }

@@ -53,10 +53,10 @@
         </where>
         group by good.id,goods_name
     </select>
-    <select id="selectById" resultType="com.ruoyi.store.domain.Goods">
-        <include refid="selectGoodsVo"/>
-        where good.id=#{id}
-    </select>
+<!--    <select id="selectById" resultType="com.ruoyi.store.domain.Goods">-->
+<!--        <include refid="selectGoodsVo"/>-->
+<!--        where good.id=#{id}-->
+<!--    </select>-->
     <select id="selectCategoryGoods" resultMap="GoodsResult">
         select gs.amounts from goods_category cate
         join goods good on cate.id=good.category_id
