@@ -43,4 +43,13 @@ public interface GoodsCategoryMapper extends BaseMapper<GoodsCategory> {
 	boolean updateForId(GoodsCategory entity);
 	
 	List<GoodsCategory> selectByPath(String path);
+	
+	String selectLasePath(String targetPath);
+	
+	/**
+	 * 查询某个路径下的子集
+	 * @param formPath
+	 * @return
+	 */
+	List<GoodsCategory> selectChildByPath(String formPath);
 }

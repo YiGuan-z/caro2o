@@ -84,10 +84,10 @@
         </where>
     </select>
 
-    <select id="selectById" resultMap="GoodsCategoryResult">
-        <include refid="selectGoodsCategoryVo"/>
-        where id = #{id}
-    </select>
+<!--    <select id="selectById" resultMap="GoodsCategoryResult">-->
+<!--        <include refid="selectGoodsCategoryVo"/>-->
+<!--        where id = #{id}-->
+<!--    </select>-->
 
     <insert id="save">
         insert into goods_category (category_name, category_desc, busi_path, parent_id)
@@ -132,5 +132,12 @@
         select id, category_name, category_desc, busi_path, parent_id
         from goods_category
         where busi_path like concat(#{path}, '%')
+    </select>
+    <select id="selectLasePath" resultType="java.lang.String">
+        select max(busi_path)from goods_category where busi_path like concat(${path},'_');
+    </select>
+    <select id="selectChildByPath" resultType="com.ruoyi.store.domain.GoodsCategory">
+        select id, category_name, category_desc, busi_path, parent_id
+        from goods_category where busi_path like concat(#{path},'%');
     </select>
 </mapper>

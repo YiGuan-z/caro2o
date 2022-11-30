@@ -114,10 +114,10 @@ public class GoodsCategoryController extends BaseController {
     }
     @PreAuthorize("@ss.hasPermi('workflow:category:edit')")
     @Log(title = "物品迁移", businessType = BusinessType.UPDATE)
-    @PutMapping("/tree")
+    @PutMapping("/move")
     public AjaxResult editBranch(@RequestBody GoodsCategory goodsCategory)
     {
-        return toAjax(goodsCategoryService.updateById(goodsCategory));
+        return toAjax(goodsCategoryService.moveTree(goodsCategory));
     }
 
     /**

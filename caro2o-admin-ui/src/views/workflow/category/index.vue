@@ -52,6 +52,16 @@
         >展开/折叠
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-sort"
+          size="mini"
+          @click="moveViewOpen=true"
+        >分类移动
+        </el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -118,6 +128,9 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="物品移动" :visible.sync="moveViewOpen" width="1000px" append-to-body>
+      <MoveCategory/>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,15 +147,18 @@ import {
 } from "@/api/workflow/category";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import move_category from "@/views/workflow/category/components/move_category";
 import {listMenu} from "@/api/system/menu";
 
 export default {
   name: "Category",
   components: {
-    Treeselect
+    Treeselect,
+    MoveCategory:move_category
   },
   data() {
     return {
+      moveViewOpen:false,
       // 树结构分类
       treeList: [],
       form: {

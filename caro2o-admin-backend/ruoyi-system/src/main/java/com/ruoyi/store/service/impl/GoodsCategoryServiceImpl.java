@@ -28,15 +28,19 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	 * @return 物品分类信息
 	 */
 	public List<GoodsCategory> selectGoodsCategoryList(GoodsCategory goodsCategory) {
+		//获取id参数
 		final String id = (String) goodsCategory.getParent().get("id");
-		if (id ==null){
+		//如果没有id参数就代表是查询所有
+		if (id == null) {
 			return getBaseMapper().selectGoodsCategoryList(goodsCategory);
-		}else {
+		} else {
+			//有id参数的化就进行处理
 			final GoodsCategory result = baseMapper.selectById(id);
 			String path = result.getBusiPath();
-			//如果是顶级节点
-			if (path.length()==1) return getBaseMapper().selectByPath(path);
-			path=path.substring(0,path.length()-2);
+			//如果是顶级节点就直接返回
+			if (path.length() == 1) return getBaseMapper().selectByPath(path);
+			//构建需要查找的子路径
+			path = path.substring(0, path.length() - 2);
 			return getBaseMapper().selectByPath(path);
 		}
 	}
@@ -48,19 +52,28 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	}
 	
 	public List<GoodsCategory> buildTreeData(List<GoodsCategory> data) {
+		//将查询出的对象转化为一个Map集合BusiPath为key
 		final Map<String, GoodsCategory> map = data.stream()
 				.collect(Collectors.toMap(GoodsCategory::getBusiPath, goods -> goods));
-		final List<GoodsCategory> ret = data.stream().filter(node -> node.getParentId() == null).collect(Collectors.toList());
+		//将根节点作为返回值，这一步没有顺序要求
+		final List<GoodsCategory> ret = data.stream()
+				.filter(node -> node.getParentId() == null)
+				.collect(Collectors.toList());
+		//对map进行循环操作
 		map.forEach((key, node) -> {
+			//判断是否是根节点，不对根节点进行处理
 			final int nodeLenght = key.split(":").length;
 			if (nodeLenght != 1) {
+				//通过path获取父节点
 				final String parentKey = key.substring(0, key.length() - 2);
 				final GoodsCategory goodsCategory = map.get(parentKey);
 				if (Objects.nonNull(goodsCategory)) {
+					//将当前对象添加到父节点对象中
 					goodsCategory.getChildren().add(node);
 				}
 			}
 		});
+		//最后对对象进行返回操作
 		return ret;
 	}
 	
@@ -69,7 +82,8 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 	public GoodsCategory getById(Serializable id) {
 		return baseMapper.selectById(id);
 	}
-	public GoodsCategory getTreeById(Long id){
+	
+	public GoodsCategory getTreeById(Long id) {
 		//获取它与它的子集，直接从数据库中查询，再经过树结构处理
 		final List<GoodsCategory> categories = baseMapper.selectByIdFormTree(id);
 		//没有子集就将子集返回出去
@@ -183,5 +197,75 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
 		}
 		final String busiPath = baseMapper.selectById(entity.getParentId()).getBusiPath();
 		entity.setBusiPath(busiPath + ':' + '1');
+	}
+	
+	/**
+	 * 移动分类以及子分类
+	 *
+	 * @param record
+	 * @return
+	 */
+	@Transactional(rollbackFor = Throwable.class)
+	public boolean moveTree(GoodsCategory record) {
+		//获取是否移动子分类的参数
+		final String param = ((String) record.getParams().get("son"));
+		final boolean son = Boolean.parseBoolean(param);
+		//获取参数
+		final Map<String, Object> params = record.getParams();
+		//需要移动的节点
+		final Long form = (Long) params.get("from");
+		//移动到的目标节点
+		final Long to = (Long) params.get("to");
+		//查询两个节点的信息
+		final GoodsCategory source = baseMapper.selectById(form);
+		final GoodsCategory target = baseMapper.selectById(to);
+		// form 1:2:3
+		// to 1:4:[123]:[123]
+		//获取两个节点的路径
+		//需要移动的节点路径
+		final String formPath = source.getBusiPath();
+		//移动到的目标节点路径
+		final String targetPath = target.getBusiPath();
+		//在目标节点中查找最大的那个节点
+		String pathId = baseMapper.selectLasePath(targetPath);
+		//构建节点路径
+		source.setBusiPath(buildPath(pathId));
+		//设置父节点id
+		source.setParentId(target.getId());
+		baseMapper.updateById(source);
+		//如果要移动子节点
+		if (son) {
+			moveChildCatrgory(
+					baseMapper.selectChildByPath(formPath),
+					baseMapper.selectLasePath(targetPath),
+					source.getId()
+			);
+		}
+		return true;
+	}
+	
+	/**
+	 * 将子分类移动到目标上
+	 *
+	 * @param child      子分类
+	 * @param targetPath 目标
+	 */
+	void moveChildCatrgory(List<GoodsCategory> child, String targetPath, Long paretnId) {
+		//没有子节点的时候就直接结束
+		if (child.size() == 0) return;
+		child.forEach(node -> {
+			node.setBusiPath(buildPath(baseMapper.selectLasePath(targetPath)));
+			node.setParentId(paretnId);
+			baseMapper.save(node);
+		});
+		
+		
+	}
+	
+	String buildPath(String path) {
+		final String[] split = path.split(":");
+		final int pathTemp = Integer.parseInt(split[split.length - 1]);
+		split[split.length - 1] = String.valueOf(pathTemp + 1);
+		return String.join(":", split);
 	}
 }
